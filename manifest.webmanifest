@@ -1,0 +1,16 @@
+{
+  "name": "Mi legyen a kaja?",
+  "short_name": "Mi a kaja?",
+  "description": "Családi étkezéstervező: mi van otthon, mi jár le, mit főzzünk.",
+  "lang": "hu",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#fff1d0",
+  "theme_color": "#e4472b",
+  "icons": [
+    { "src": "icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" },
+    { "src": "icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "maskable" }
+  ]
+}

@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Mi legyen a kaja?</title>
+<meta name="theme-color" content="#e4472b">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon.svg">
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600&family=Press+Start+2P&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#fff1d0;--panel:#fffaf0;--ink:#4a2a1c;--red:#e4472b;--amber:#f2a33a;--ok:#3fae5a;--warn:#f0b31f;--bad:#e4472b;--muted:#8a6650;--sh:rgba(74,42,28,.3);--tile:#fff1d0;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#241a3d;--panel:#33275a;--ink:#fff1d0;--muted:#c3b3e6;--sh:rgba(0,0,0,.45)}}
+:root[data-theme="dark"]{--bg:#241a3d;--panel:#33275a;--ink:#fff1d0;--muted:#c3b3e6;--sh:rgba(0,0,0,.45)}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Fredoka",ui-rounded,system-ui,sans-serif;font-size:17px;line-height:1.3}
+.wrap{max-width:520px;margin:0 auto;padding:12px 14px 36px}
+.sign{position:relative;background:var(--red);border:7px dotted #ffd84a;border-radius:26px;padding:16px 12px 14px;text-align:center;box-shadow:0 7px 0 var(--sh);margin-top:6px}
+.sign h1{font-family:"Press Start 2P",monospace;font-weight:400;font-size:17px;line-height:1.6;margin:0;color:#fff4d6;text-shadow:3px 3px 0 #8c2415}
+.sign p{margin:6px 0 0;color:#ffe9b3;font-size:15px}
+.check{height:18px;margin:14px 6px 4px;border-radius:9px;background:repeating-conic-gradient(var(--ink) 0 25%,var(--panel) 0 50%) 0 0/18px 18px;opacity:.85}
+.card{background:var(--panel);border-radius:24px;padding:14px;margin:14px 0;box-shadow:0 6px 0 var(--sh)}
+.card h2{font-size:15px;font-weight:600;margin:0 0 8px;color:var(--muted)}
+.bar{height:20px;background:var(--bg);border-radius:12px;overflow:hidden;margin-top:8px}
+.bar b{display:block;height:100%;width:68%;border-radius:12px;background:linear-gradient(#ffc866,var(--amber))}
+.tabs{display:flex;gap:8px;margin-top:14px}
+.tabs button{flex:1;font:inherit;font-weight:600;padding:11px 4px;border:0;border-radius:18px;background:var(--panel);color:var(--ink);box-shadow:0 5px 0 var(--sh);cursor:pointer}
+.tabs button[aria-selected="true"]{background:var(--amber);color:#4a2a1c}
+button:focus-visible{outline:3px dashed var(--amber);outline-offset:3px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.slot{background:var(--bg);border-radius:20px;padding:10px}
+.tile{width:64px;height:64px;border-radius:18px;background:var(--tile);display:grid;place-items:center}
+.tile svg{width:54px;height:54px}
+.o{stroke:#4a2a1c;stroke-width:3;stroke-linejoin:round;stroke-linecap:round}
+.n{font-weight:600;margin-top:6px}.q{color:var(--muted);font-size:15px}
+.hp{height:12px;border-radius:8px;background:var(--panel);margin:7px 0 3px;overflow:hidden}
+.hp b{display:block;height:100%;border-radius:8px}
+.ok b{background:var(--ok)}.warn b{background:var(--warn)}.bad b{background:var(--bad)}
+.d{font-size:15px}.bad .d{color:var(--bad);font-weight:600}
+.start{display:block;width:100%;margin:18px 0 6px;padding:12px 8px 14px;border:0;border-radius:30px;font:inherit;font-weight:600;font-size:21px;color:#fff4d6;cursor:pointer;
+background:linear-gradient(#f2674b,var(--red));box-shadow:0 8px 0 #9c2a17,0 14px 18px var(--sh),inset 0 4px 0 rgba(255,255,255,.35);text-shadow:0 2px 0 #9c2a17}
+.start:active{transform:translateY(6px);box-shadow:0 2px 0 #9c2a17}
+.start svg{width:110px;height:73px;display:block;margin:0 auto 2px}
+.steam{display:flex;justify-content:center;gap:16px;height:18px}
+.steam i{width:10px;height:10px;border-radius:50%;background:#fff4d6;opacity:0}
+.go .steam i{animation:up 1s ease-out 2}.go .steam i:nth-child(2){animation-delay:.2s}.go .steam i:nth-child(3){animation-delay:.4s}
+@keyframes up{0%{opacity:.9;transform:translateY(14px) scale(.6)}100%{opacity:0;transform:translateY(-10px) scale(1.3)}}
+@media (prefers-reduced-motion:reduce){.go .steam i{animation:none}.start:active{transform:none}}
+.say{position:relative;background:#fff4d6;color:#4a2a1c;border-radius:22px;padding:12px 14px;margin:14px 0 0;box-shadow:0 6px 0 var(--sh)}
+.say::before{content:"";position:absolute;top:-12px;left:34px;border:12px solid transparent;border-top:0;border-bottom-color:#fff4d6}
+.say h2{font-size:19px;color:var(--red);margin:0 0 4px;font-weight:600}
+.say ul{margin:6px 0 0;padding-left:20px}.tag{color:var(--bad);font-weight:600}
+.app{display:flex;gap:10px;flex-wrap:wrap}
+.app button{flex:1;min-width:150px;font:inherit;font-weight:600;padding:11px 10px;border:0;border-radius:18px;background:var(--amber);color:#4a2a1c;box-shadow:0 5px 0 var(--sh);cursor:pointer}
+.app button:active{transform:translateY(4px);box-shadow:none}
+#st{width:100%;color:var(--muted);font-size:15px;margin:4px 2px 0}
+.note{color:var(--muted);font-size:14px;text-align:center;margin-top:14px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="sign"><h1>Mi legyen<br>a kaja?</h1><p>Nyitva: mindig, amíg van mit főzni</p></header>
+  <div class="check" aria-hidden="true"></div>
+
+  <section class="card" aria-label="Napi költségkeret">
+    <h2>Mai keret</h2>
+    <div>1 700 Ft maradt 2 500 Ft-ból</div>
+    <div class="bar" role="img" aria-label="A napi keret 68 százaléka maradt"><b></b></div>
+  </section>
+
+  <div class="tabs" role="tablist" aria-label="Hol van az étel?">
+    <button role="tab" aria-selected="true" data-t="fridge">Hűtő</button>
+    <button role="tab" aria-selected="false" data-t="pantry">Spájz</button>
+    <button role="tab" aria-selected="false" data-t="freezer">Fagyasztó</button>
+  </div>
+  <section class="card" aria-live="polite"><div class="grid" id="grid"></div></section>
+
+  <button class="start" id="go"><span class="steam" aria-hidden="true"><i></i><i></i><i></i></span><span id="bowl"></span>Mit főzzek ebből?</button>
+  <section class="say" id="say" hidden></section>
+
+  <section class="card">
+    <h2>Az app</h2>
+    <div class="app">
+      <button id="upd">Frissítés keresése</button>
+      <button id="inst">Letöltés a telefonra</button>
+      <div id="st">Verzió 0.2</div>
+    </div>
+  </section>
+  <p class="note">Minta-adatokkal készült prototípus.</p>
+</div>
+
+<script>
+var VER="0.2";
+function svg(i,v){return '<svg viewBox="'+(v||"0 0 64 64")+'" aria-hidden="true">'+i+"</svg>"}
+var S={
+egg:svg('<path class="o" d="M9 31C7 18 19 10 32 12s24 8 22 21-12 21-24 20S11 43 9 31z" fill="#fff"/><circle class="o" cx="32" cy="32" r="11" fill="#f7b500"/><circle cx="28" cy="28" r="3.5" fill="#fff3b0"/>'),
+milk:svg('<path class="o" d="M18 17l8-9h12l8 9v42H18z" fill="#fff"/><rect x="19.5" y="31" width="25" height="17" fill="#4aa3e8"/><circle cx="32" cy="39.5" r="5" fill="#fff"/><path class="o" d="M18 17h28" fill="none"/><path d="M24 11h6" stroke="#bfe0ff" stroke-width="3" stroke-linecap="round"/>'),
+cheese:svg('<path class="o" d="M6 42L36 22l22 20z" fill="#ffe27a"/><path class="o" d="M6 42h52v14H6z" fill="#ffc928"/><circle cx="16" cy="49" r="3.2" fill="#e69a00"/><circle cx="32" cy="50" r="4" fill="#e69a00"/><circle cx="48" cy="48" r="2.8" fill="#e69a00"/><circle cx="38" cy="33" r="2.5" fill="#f0b800"/>'),
+carrot:svg('<g transform="rotate(35 32 32)"><path class="o" d="M32 14c-6-8-12-6-14-4M32 14c0-8 0-10 2-12M32 14c6-8 12-6 14-4" fill="none" stroke="#3fae5a" stroke-width="5"/><path class="o" d="M22 14h20c0 20-6 40-10 47-4-7-10-27-10-47z" fill="#ff8a1f"/><path d="M25 26h6M34 36h6M27 45h5" stroke="#d96a00" stroke-width="2.6" stroke-linecap="round"/></g>'),
+tomato:svg('<circle class="o" cx="32" cy="36" r="22" fill="#ee3b2b"/><ellipse cx="22" cy="32" rx="4" ry="8" fill="#fff" opacity=".45" transform="rotate(20 22 32)"/><path class="o" d="M32 13l4 8 8-2-5 7 6 5-9 0-4 8-4-8-9 0 6-5-5-7 8 2z" fill="#3fae5a" stroke-width="2.4"/>'),
+rice:svg('<path class="o" d="M16 36c0-13 7-20 16-20s16 7 16 20z" fill="#fff"/><path class="o" d="M7 35h50c0 14-10 24-25 24S7 49 7 35z" fill="#3b78c4"/><path d="M15 45h34" stroke="#fff" opacity=".6" stroke-width="3" stroke-linecap="round"/>'),
+bowl:svg('<path class="o" d="M8 30h80c0 18-16 30-40 30S8 48 8 30z" fill="#fff4d6"/><path d="M14 38h68c-4 12-16 18-34 18S18 50 14 38z" fill="#e4472b"/><ellipse class="o" cx="48" cy="30" rx="40" ry="8" fill="#f2a33a"/><path d="M18 30q6-6 12 0t12 0 12 0 12 0" fill="none" stroke="#fff1d0" stroke-width="4" stroke-linecap="round"/><circle class="o" cx="66" cy="27" r="7" fill="#fff"/><circle cx="66" cy="27" r="3.4" fill="#f7b500"/><rect class="o" x="28" y="15" width="10" height="14" rx="2" fill="#2e5a3a"/>',"0 0 96 64")
+};
+var STOCK={
+fridge:[{n:"Tojás",s:"egg",q:"6 db",d:2},{n:"Tej",s:"milk",q:"1 l",d:1},{n:"Sajt",s:"cheese",q:"20 dkg",d:5},{n:"Répa",s:"carrot",q:"4 db",d:8},{n:"Paradicsom",s:"tomato",q:"3 db",d:3}],
+pantry:[{n:"Rizs",s:"rice",q:"1 kg",d:240}],freezer:[]};
+var tab="fridge";
+function cls(d){return d<=1?"bad":d<=4?"warn":"ok"}
+function dtxt(d){return d<=0?"ma lejár":d===1?"holnap lejár":d<30?d+" nap":"hosszú"}
+function draw(){var a=STOCK[tab];
+document.getElementById("grid").innerHTML=a.length?a.map(function(i){var p=Math.max(8,Math.min(i.d,7)/7*100);
+return '<div class="slot '+cls(i.d)+'"><div class="tile">'+S[i.s]+'</div><div class="n">'+i.n+'</div><div class="q">'+i.q+'</div><div class="hp"><b style="width:'+p+'%"></b></div><div class="d">'+dtxt(i.d)+"</div></div>"}).join(""):'<div class="q">Itt még nincs semmi. Add hozzá az első terméket.</div>';
+document.querySelectorAll(".tabs button").forEach(function(b){b.setAttribute("aria-selected",b.dataset.t===tab)})}
+document.querySelectorAll(".tabs button").forEach(function(b){b.onclick=function(){tab=b.dataset.t;draw()}});
+document.getElementById("bowl").innerHTML=S.bowl;
+var R=[{n:"Sajtos tojásos paradicsomos",need:["Tojás","Paradicsom","Sajt"],cost:850},{n:"Sajtos répakrémleves",need:["Répa","Sajt","Tej"],cost:700},{n:"Rántotta tejjel és rizzsel",need:["Tojás","Tej","Rizs"],cost:600}];
+function all(){return [].concat(STOCK.fridge,STOCK.pantry,STOCK.freezer)}
+document.getElementById("go").onclick=function(){var el=this,a=all(),best=null,bs=-1;
+el.classList.remove("go");void el.offsetWidth;el.classList.add("go");
+R.forEach(function(r){var s=0;r.need.forEach(function(x){a.forEach(function(i){if(i.n===x)s+=10-Math.min(i.d,9)})});if(s>bs){bs=s;best=r}});
+var c=document.getElementById("say");
+c.innerHTML="<h2>Egy adag "+best.n+" a pultra!</h2><div>Ára kb. "+best.cost+" Ft, belefér a mai keretbe.</div><ul>"+best.need.map(function(x){var i=a.filter(function(y){return y.n===x})[0];return "<li>"+x+(i&&i.d<=2?' <span class="tag">(hamar lejár)</span>':"")+"</li>"}).join("")+"</ul>";
+c.hidden=false};
+draw();
+
+var st=document.getElementById("st"),upd=document.getElementById("upd"),inst=document.getElementById("inst"),REG=null,NEW=null,DEF=null;
+function say(t){st.textContent=t}
+if("serviceWorker" in navigator){
+navigator.serviceWorker.register("sw.js").then(function(r){REG=r;
+r.addEventListener("updatefound",function(){var w=r.installing;if(!w)return;w.addEventListener("statechange",function(){if(w.state==="installed"&&navigator.serviceWorker.controller){NEW=w;upd.textContent="Frissítés telepítése";say("Új verzió letöltve, koppints a frissítésre.")}})})}).catch(function(){});
+navigator.serviceWorker.addEventListener("controllerchange",function(){location.reload()})}
+upd.onclick=function(){
+if(NEW){NEW.postMessage("skip");return}
+if(!REG){say("A frissítés a telepített appban működik. Verzió "+VER);return}
+say("Keresem az új verziót...");
+REG.update().then(function(){setTimeout(function(){if(!NEW)say("A legfrissebb verziót használod ("+VER+").")},1200)}).catch(function(){say("Nincs kapcsolat. Az app így is működik offline.")})};
+window.addEventListener("beforeinstallprompt",function(e){e.preventDefault();DEF=e});
+inst.onclick=function(){if(DEF){DEF.prompt();DEF=null}else say("Telepítés: böngésző menü, majd Hozzáadás a kezdőképernyőhöz. A Google Play verzió később érkezik.")};
+window.addEventListener("offline",function(){say("Offline vagy, az app így is működik.")});
+</script>
+</body>
+</html>
