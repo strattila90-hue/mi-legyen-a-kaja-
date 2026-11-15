@@ -57,6 +57,16 @@ background:linear-gradient(#f2674b,var(--red));box-shadow:0 8px 0 #9c2a17,0 14px
 .app button:active{transform:translateY(4px);box-shadow:none}
 #st{width:100%;color:var(--muted);font-size:15px;margin:4px 2px 0}
 .note{color:var(--muted);font-size:14px;text-align:center;margin-top:14px}
+.add{display:block;width:100%;margin:0 0 6px;padding:12px;border:0;border-radius:18px;font:inherit;font-weight:600;font-size:18px;background:var(--ok);color:#fff;box-shadow:0 5px 0 var(--sh);cursor:pointer}
+.slot{cursor:pointer}.edit{font-size:14px;color:var(--muted);margin-top:4px}
+dialog{border:0;border-radius:24px;padding:16px;width:min(92vw,420px);background:var(--panel);color:var(--ink);box-shadow:0 8px 0 var(--sh)}
+dialog::backdrop{background:rgba(0,0,0,.5)}dialog h3{margin:0;font-size:21px}
+label{display:block;font-weight:600;margin:12px 0 4px;font-size:15px}
+input,select{width:100%;font:inherit;padding:10px 12px;border-radius:14px;border:3px solid var(--bg);background:var(--bg);color:var(--ink)}
+.row{display:flex;gap:10px}.row>div{flex:1}
+.btns{display:flex;gap:10px;margin-top:18px}
+.btns button{flex:1;font:inherit;font-weight:600;padding:11px 6px;border:0;border-radius:16px;cursor:pointer;box-shadow:0 4px 0 var(--sh)}
+.save{background:var(--ok);color:#fff}.del{background:var(--bad);color:#fff}.cancel{background:var(--bg);color:var(--ink)}
 </style>
 </head>
 <body>
@@ -75,6 +85,7 @@ background:linear-gradient(#f2674b,var(--red));box-shadow:0 8px 0 #9c2a17,0 14px
     <button role="tab" aria-selected="false" data-t="pantry">Spájz</button>
     <button role="tab" aria-selected="false" data-t="freezer">Fagyasztó</button>
   </div>
+  <button class="add" id="add">+ Új termék</button>
   <section class="card" aria-live="polite"><div class="grid" id="grid"></div></section>
 
   <button class="start" id="go"><span class="steam" aria-hidden="true"><i></i><i></i><i></i></span><span id="bowl"></span>Mit főzzek ebből?</button>
@@ -85,14 +96,23 @@ background:linear-gradient(#f2674b,var(--red));box-shadow:0 8px 0 #9c2a17,0 14px
     <div class="app">
       <button id="upd">Frissítés keresése</button>
       <button id="inst">Letöltés a telefonra</button>
-      <div id="st">Verzió 0.2</div>
+      <div id="st">Verzió 0.3</div>
     </div>
   </section>
   <p class="note">Minta-adatokkal készült prototípus.</p>
 </div>
 
+<dialog id="dlg"><form id="f" onsubmit="return false">
+<h3 id="dt">Új termék</h3>
+<label for="fn">Név</label><input id="fn" list="cat" required autocomplete="off" placeholder="pl. Csirkemell"><datalist id="cat"></datalist>
+<div class="row"><div><label for="fq">Mennyiség</label><input id="fq" type="number" step="any" min="0.01" required inputmode="decimal"></div>
+<div><label for="fu">Mértékegység</label><select id="fu"><option>g</option><option>kg</option><option>ml</option><option>dl</option><option>l</option><option>db</option></select></div></div>
+<div class="row"><div><label for="fl">Hol van?</label><select id="fl"><option value="fridge">Hűtő</option><option value="pantry">Spájz</option><option value="freezer">Fagyasztó</option></select></div>
+<div><label for="fe">Lejárat</label><input id="fe" type="date" required></div></div>
+<div class="btns"><button type="button" class="save" id="fs">Mentés</button><button type="button" class="del" id="fd" hidden>Törlés</button><button type="button" class="cancel" id="fc">Mégse</button></div>
+</form></dialog>
 <script>
-var VER="0.2";
+var VER="0.3";
 function svg(i,v){return '<svg viewBox="'+(v||"0 0 64 64")+'" aria-hidden="true">'+i+"</svg>"}
 var S={
 egg:svg('<path class="o" d="M9 31C7 18 19 10 32 12s24 8 22 21-12 21-24 20S11 43 9 31z" fill="#fff"/><circle class="o" cx="32" cy="32" r="11" fill="#f7b500"/><circle cx="28" cy="28" r="3.5" fill="#fff3b0"/>'),
@@ -103,27 +123,58 @@ tomato:svg('<circle class="o" cx="32" cy="36" r="22" fill="#ee3b2b"/><ellipse cx
 rice:svg('<path class="o" d="M16 36c0-13 7-20 16-20s16 7 16 20z" fill="#fff"/><path class="o" d="M7 35h50c0 14-10 24-25 24S7 49 7 35z" fill="#3b78c4"/><path d="M15 45h34" stroke="#fff" opacity=".6" stroke-width="3" stroke-linecap="round"/>'),
 bowl:svg('<path class="o" d="M8 30h80c0 18-16 30-40 30S8 48 8 30z" fill="#fff4d6"/><path d="M14 38h68c-4 12-16 18-34 18S18 50 14 38z" fill="#e4472b"/><ellipse class="o" cx="48" cy="30" rx="40" ry="8" fill="#f2a33a"/><path d="M18 30q6-6 12 0t12 0 12 0 12 0" fill="none" stroke="#fff1d0" stroke-width="4" stroke-linecap="round"/><circle class="o" cx="66" cy="27" r="7" fill="#fff"/><circle cx="66" cy="27" r="3.4" fill="#f7b500"/><rect class="o" x="28" y="15" width="10" height="14" rx="2" fill="#2e5a3a"/>',"0 0 96 64")
 };
-var STOCK={
-fridge:[{n:"Tojás",s:"egg",q:"6 db",d:2},{n:"Tej",s:"milk",q:"1 l",d:1},{n:"Sajt",s:"cheese",q:"200 g",d:5},{n:"Répa",s:"carrot",q:"4 db",d:8},{n:"Paradicsom",s:"tomato",q:"3 db",d:3}],
-pantry:[{n:"Rizs",s:"rice",q:"1 kg",d:240}],freezer:[]};
-var tab="fridge";
+var KEYS={f:"fridge",p:"pantry",z:"freezer"};
+S.meat=svg('<path class="o" d="M38 8c11 0 18 9 15 19-3 9-12 14-20 11-8-3-10-12-7-19 3-7 6-11 12-11z" fill="#d9784a"/><rect class="o" x="12" y="36" width="8" height="18" rx="4" transform="rotate(40 16 45)" fill="#fff4d6"/><ellipse cx="40" cy="20" rx="6" ry="4" fill="#fff" opacity=".35"/>');
+S.veg=svg('<circle class="o" cx="22" cy="26" r="10" fill="#3fae5a"/><circle class="o" cx="42" cy="26" r="10" fill="#4fc46b"/><circle class="o" cx="32" cy="18" r="10" fill="#3fae5a"/><path class="o" d="M26 30h12l-2 24H28z" fill="#9bd06b"/>');
+S.fruit=svg('<path class="o" d="M32 20c-8-6-22-2-20 16 2 14 12 22 20 18 8 4 18-4 20-18 2-18-12-22-20-16z" fill="#e63b3b"/><path class="o" d="M36 14c4-4 10-3 12-1-2 4-8 5-12 1z" fill="#3fae5a"/><ellipse cx="22" cy="36" rx="3" ry="6" fill="#fff" opacity=".4"/>');
+S.bread=svg('<path class="o" d="M10 30c0-12 10-18 22-18s22 6 22 18c0 4-2 6-4 6v18H14V36c-2 0-4-2-4-6z" fill="#e0a050"/><path d="M24 22v8M32 20v8M40 22v8" stroke="#b8793a" stroke-width="3" stroke-linecap="round"/>');
+S.jar=svg('<rect class="o" x="14" y="20" width="36" height="38" rx="10" fill="#cfe9f5"/><rect class="o" x="18" y="10" width="28" height="12" rx="4" fill="#e4472b"/><rect x="20" y="34" width="24" height="14" rx="4" fill="#f2a33a"/>');
+var CAT="Csirkemell|hus|g|f|2;Csirkecomb|hus|g|f|2;Csirkeszárny|hus|g|f|2;Darált sertéshús|hus|g|f|2;Sertéskaraj|hus|g|f|3;Sertéscomb|hus|g|f|3;Marhahús|hus|g|f|3;Darált marhahús|hus|g|f|2;Pulykamell|hus|g|f|2;Füstölt kolbász|hus|g|f|21;Párizsi|hus|g|f|7;Sonka|hus|g|f|7;Szalonna|hus|g|f|30;Halfilé|hus|g|f|2;Csirkemell (fagyasztott)|fagy|g|z|180;Darált hús (fagyasztott)|fagy|g|z|120;Fagyasztott zöldborsó|fagy|g|z|180;Fagyasztott spenót|fagy|g|z|180;Fagyasztott zöldségkeverék|fagy|g|z|180;Tej|tej|l|f|6;Tejföl|tej|dl|f|10;Tejszín|tej|dl|f|7;Vaj|tej|g|f|45;Sajt|tej|g|f|14;Mozzarella|tej|g|f|10;Joghurt|tej|g|f|10;Túró|tej|g|f|7;Tojás|tej|db|f|21;Sárgarépa|zold|g|f|21;Petrezselyemgyökér|zold|g|f|21;Zellergumó|zold|g|f|21;Burgonya|zold|kg|p|30;Édesburgonya|zold|g|p|21;Vöröshagyma|zold|db|p|30;Fokhagyma|zold|db|p|30;Paradicsom|zold|db|f|7;Paprika|zold|db|f|7;Uborka|zold|db|f|7;Káposzta|zold|g|f|14;Karfiol|zold|db|f|7;Brokkoli|zold|g|f|5;Cukkini|zold|db|f|7;Saláta|zold|db|f|4;Gomba|zold|g|f|5;Spenót|zold|g|f|4;Alma|gyum|db|f|21;Banán|gyum|db|p|5;Citrom|gyum|db|f|21;Narancs|gyum|db|f|14;Szőlő|gyum|g|f|7;Kenyér|pek|db|p|4;Zsemle|pek|db|p|2;Tortilla|pek|db|p|30;Rizs|szaraz|kg|p|360;Tészta|szaraz|g|p|360;Liszt|szaraz|kg|p|180;Cukor|szaraz|kg|p|720;Zsemlemorzsa|szaraz|g|p|180;Zabpehely|szaraz|g|p|180;Bab|szaraz|g|p|360;Lencse|szaraz|g|p|360;Konzerv kukorica|szaraz|db|p|720;Konzerv paradicsom|szaraz|db|p|720;Étolaj|fuszer|l|p|360;Olívaolaj|fuszer|dl|p|360;Ecet|fuszer|dl|p|720;Só|fuszer|kg|p|720;Fekete bors|fuszer|g|p|720;Pirospaprika|fuszer|g|p|360;Kömény|fuszer|g|p|720;Babérlevél|fuszer|g|p|720;Mustár|fuszer|g|f|180;Ketchup|fuszer|g|f|120".split(";").map(function(x){var a=x.split("|");return{n:a[0],c:a[1],u:a[2],l:KEYS[a[3]],d:+a[4]}});
+var SP={"Tojás":"egg","Tej":"milk","Sajt":"cheese","Sárgarépa":"carrot","Paradicsom":"tomato","Rizs":"rice"},GC={hus:"meat",tej:"milk",zold:"veg",gyum:"fruit",pek:"bread",szaraz:"jar",fuszer:"jar",fagy:"veg"};
+function $(i){return document.getElementById(i)}
+function esc(s){return String(s).replace(/[&<>"]/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]})}
+function find(n){n=(n||"").trim().toLowerCase();return CAT.filter(function(c){return c.n.toLowerCase()===n})[0]}
+function ico(n){var c=find(n);return SP[n]||(c&&GC[c.c])||"jar"}
+function iso(t){return new Date(t.getTime()-t.getTimezoneOffset()*6e4).toISOString().slice(0,10)}
+function plus(n){var t=new Date();t.setDate(t.getDate()+n);return iso(t)}
+function days(e){return Math.round((new Date(e+"T00:00:00")-new Date(new Date().toDateString()))/864e5)}
+var KEY="kaja.raktar.v1",items=[],tab="fridge",cur=null,armed=false;
+function demo(){return [["Tojás",6,"db","fridge",2],["Tej",1,"l","fridge",1],["Sajt",200,"g","fridge",5],["Sárgarépa",4,"db","fridge",8],["Paradicsom",3,"db","fridge",3],["Rizs",1,"kg","pantry",240]].map(function(a,i){return{id:"d"+i,n:a[0],q:a[1],u:a[2],loc:a[3],exp:plus(a[4])}})}
+function load(){try{var r=localStorage.getItem(KEY);if(r)return JSON.parse(r)}catch(e){}return demo()}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(items))}catch(e){}}
 function cls(d){return d<=1?"bad":d<=4?"warn":"ok"}
-function dtxt(d){return d<=0?"ma lejár":d===1?"holnap lejár":d<30?d+" nap":"hosszú"}
-function draw(){var a=STOCK[tab];
-document.getElementById("grid").innerHTML=a.length?a.map(function(i){var p=Math.max(8,Math.min(i.d,7)/7*100);
-return '<div class="slot '+cls(i.d)+'"><div class="tile">'+S[i.s]+'</div><div class="n">'+i.n+'</div><div class="q">'+i.q+'</div><div class="hp"><b style="width:'+p+'%"></b></div><div class="d">'+dtxt(i.d)+"</div></div>"}).join(""):'<div class="q">Itt még nincs semmi. Add hozzá az első terméket.</div>';
+function dtxt(d){return d<0?"lejárt":d===0?"ma lejár":d===1?"holnap lejár":d<30?d+" nap":"hosszú"}
+function nf(q){return String(Math.round(q*100)/100).replace(".",",")}
+function draw(){var a=items.filter(function(i){return i.loc===tab}).sort(function(x,y){return days(x.exp)-days(y.exp)});
+$("grid").innerHTML=a.length?a.map(function(i){var d=days(i.exp),p=Math.max(8,Math.min(Math.max(d,0),7)/7*100);
+return '<div class="slot '+cls(d)+'" data-id="'+i.id+'" tabindex="0" role="button" aria-label="'+esc(i.n)+' szerkesztése"><div class="tile">'+S[ico(i.n)]+'</div><div class="n">'+esc(i.n)+'</div><div class="q">'+nf(i.q)+" "+i.u+'</div><div class="hp"><b style="width:'+p+'%"></b></div><div class="d">'+dtxt(d)+'</div><div class="edit">Szerkesztés</div></div>'}).join(""):'<div class="q">Itt még nincs semmi. Koppints az Új termék gombra.</div>';
 document.querySelectorAll(".tabs button").forEach(function(b){b.setAttribute("aria-selected",b.dataset.t===tab)})}
 document.querySelectorAll(".tabs button").forEach(function(b){b.onclick=function(){tab=b.dataset.t;draw()}});
-document.getElementById("bowl").innerHTML=S.bowl;
-var R=[{n:"Sajtos tojásos paradicsomos",need:["Tojás","Paradicsom","Sajt"],cost:850},{n:"Sajtos répakrémleves",need:["Répa","Sajt","Tej"],cost:700},{n:"Rántotta tejjel és rizzsel",need:["Tojás","Tej","Rizs"],cost:600}];
-function all(){return [].concat(STOCK.fridge,STOCK.pantry,STOCK.freezer)}
-document.getElementById("go").onclick=function(){var el=this,a=all(),best=null,bs=-1;
+$("grid").onclick=function(e){var s=e.target.closest(".slot");if(s)openDlg(s.dataset.id)};
+$("grid").onkeydown=function(e){var s=e.target.closest(".slot");if(s&&e.key==="Enter")openDlg(s.dataset.id)};
+$("cat").innerHTML=CAT.map(function(c){return '<option value="'+c.n+'">'}).join("");
+function openDlg(id){var d=$("dlg");cur=id?items.filter(function(x){return x.id===id})[0]:null;armed=false;
+$("dt").textContent=cur?"Termék szerkesztése":"Új termék";
+$("fn").value=cur?cur.n:"";$("fq").value=cur?cur.q:"";$("fu").value=cur?cur.u:"g";$("fl").value=cur?cur.loc:tab;$("fe").value=cur?cur.exp:plus(7);
+$("fd").hidden=!cur;$("fd").textContent="Törlés";d.showModal()}
+$("add").onclick=function(){openDlg(null)};
+$("fn").oninput=function(){var c=find(this.value);if(c&&!cur){$("fu").value=c.u;$("fl").value=c.l;$("fe").value=plus(c.d)}};
+$("fs").onclick=function(){if(!$("f").reportValidity())return;
+var o={n:$("fn").value.trim(),q:parseFloat($("fq").value),u:$("fu").value,loc:$("fl").value,exp:$("fe").value};
+if(cur){Object.assign(cur,o)}else{o.id="i"+Date.now()+Math.floor(Math.random()*1e3);items.push(o)}
+tab=o.loc;save();$("dlg").close();draw()};
+$("fd").onclick=function(){if(!armed){armed=true;this.textContent="Biztosan törlöd?";return}items=items.filter(function(x){return x!==cur});save();$("dlg").close();draw()};
+$("fc").onclick=function(){$("dlg").close()};
+$("bowl").innerHTML=S.bowl;
+var R=[{n:"Sajtos tojásos paradicsomos",need:["Tojás","Paradicsom","Sajt"],cost:850},{n:"Sajtos répakrémleves",need:["Sárgarépa","Sajt","Tej"],cost:700},{n:"Rántotta tejjel és rizzsel",need:["Tojás","Tej","Rizs"],cost:600}];
+function all(){return items.map(function(i){return{n:i.n,d:days(i.exp)}})}
+$("go").onclick=function(){var el=this,a=all(),best=null,bs=-1;
 el.classList.remove("go");void el.offsetWidth;el.classList.add("go");
-R.forEach(function(r){var s=0;r.need.forEach(function(x){a.forEach(function(i){if(i.n===x)s+=10-Math.min(i.d,9)})});if(s>bs){bs=s;best=r}});
-var c=document.getElementById("rcp");
-c.innerHTML="<h2>Egy adag "+best.n+" a pultra!</h2><div>Ára kb. "+best.cost+" Ft, belefér a mai keretbe.</div><ul>"+best.need.map(function(x){var i=a.filter(function(y){return y.n===x})[0];return "<li>"+x+(i&&i.d<=2?' <span class="tag">(hamar lejár)</span>':"")+"</li>"}).join("")+"</ul>";
+R.forEach(function(r){var s=0;r.need.forEach(function(x){a.forEach(function(i){if(i.n===x)s+=10-Math.min(Math.max(i.d,0),9)})});if(s>bs){bs=s;best=r}});
+var c=$("rcp");
+c.innerHTML="<h2>Egy adag "+best.n+" a pultra!</h2><div>Ára kb. "+best.cost+" Ft, belefér a mai keretbe.</div><ul>"+best.need.map(function(x){var i=a.filter(function(y){return y.n===x})[0];return "<li>"+x+(i?(i.d<=2?' <span class="tag">(hamar lejár)</span>':""):' <span class="tag">(hiányzik)</span>')+"</li>"}).join("")+"</ul>";
 c.hidden=false};
-draw();
+items=load();draw();
 
 var st=document.getElementById("st"),upd=document.getElementById("upd"),inst=document.getElementById("inst"),REG=null,NEW=null,DEF=null;
 function say(t){st.textContent=t}
