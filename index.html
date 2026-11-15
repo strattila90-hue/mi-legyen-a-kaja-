@@ -78,7 +78,7 @@ background:linear-gradient(#f2674b,var(--red));box-shadow:0 8px 0 #9c2a17,0 14px
   <section class="card" aria-live="polite"><div class="grid" id="grid"></div></section>
 
   <button class="start" id="go"><span class="steam" aria-hidden="true"><i></i><i></i><i></i></span><span id="bowl"></span>Mit főzzek ebből?</button>
-  <section class="say" id="say" hidden></section>
+  <section class="say" id="rcp" hidden></section>
 
   <section class="card">
     <h2>Az app</h2>
@@ -104,7 +104,7 @@ rice:svg('<path class="o" d="M16 36c0-13 7-20 16-20s16 7 16 20z" fill="#fff"/><p
 bowl:svg('<path class="o" d="M8 30h80c0 18-16 30-40 30S8 48 8 30z" fill="#fff4d6"/><path d="M14 38h68c-4 12-16 18-34 18S18 50 14 38z" fill="#e4472b"/><ellipse class="o" cx="48" cy="30" rx="40" ry="8" fill="#f2a33a"/><path d="M18 30q6-6 12 0t12 0 12 0 12 0" fill="none" stroke="#fff1d0" stroke-width="4" stroke-linecap="round"/><circle class="o" cx="66" cy="27" r="7" fill="#fff"/><circle cx="66" cy="27" r="3.4" fill="#f7b500"/><rect class="o" x="28" y="15" width="10" height="14" rx="2" fill="#2e5a3a"/>',"0 0 96 64")
 };
 var STOCK={
-fridge:[{n:"Tojás",s:"egg",q:"6 db",d:2},{n:"Tej",s:"milk",q:"1 l",d:1},{n:"Sajt",s:"cheese",q:"20 dkg",d:5},{n:"Répa",s:"carrot",q:"4 db",d:8},{n:"Paradicsom",s:"tomato",q:"3 db",d:3}],
+fridge:[{n:"Tojás",s:"egg",q:"6 db",d:2},{n:"Tej",s:"milk",q:"1 l",d:1},{n:"Sajt",s:"cheese",q:"200 g",d:5},{n:"Répa",s:"carrot",q:"4 db",d:8},{n:"Paradicsom",s:"tomato",q:"3 db",d:3}],
 pantry:[{n:"Rizs",s:"rice",q:"1 kg",d:240}],freezer:[]};
 var tab="fridge";
 function cls(d){return d<=1?"bad":d<=4?"warn":"ok"}
@@ -120,7 +120,7 @@ function all(){return [].concat(STOCK.fridge,STOCK.pantry,STOCK.freezer)}
 document.getElementById("go").onclick=function(){var el=this,a=all(),best=null,bs=-1;
 el.classList.remove("go");void el.offsetWidth;el.classList.add("go");
 R.forEach(function(r){var s=0;r.need.forEach(function(x){a.forEach(function(i){if(i.n===x)s+=10-Math.min(i.d,9)})});if(s>bs){bs=s;best=r}});
-var c=document.getElementById("say");
+var c=document.getElementById("rcp");
 c.innerHTML="<h2>Egy adag "+best.n+" a pultra!</h2><div>Ára kb. "+best.cost+" Ft, belefér a mai keretbe.</div><ul>"+best.need.map(function(x){var i=a.filter(function(y){return y.n===x})[0];return "<li>"+x+(i&&i.d<=2?' <span class="tag">(hamar lejár)</span>':"")+"</li>"}).join("")+"</ul>";
 c.hidden=false};
 draw();

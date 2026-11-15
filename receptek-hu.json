@@ -1,0 +1,215 @@
+{
+"verzio": 1,
+"egysegek": {
+  "g": {"alap": "g", "szorzo": 1},
+  "dkg": {"alap": "g", "szorzo": 10},
+  "kg": {"alap": "g", "szorzo": 1000},
+  "ml": {"alap": "ml", "szorzo": 1},
+  "cl": {"alap": "ml", "szorzo": 10},
+  "dl": {"alap": "ml", "szorzo": 100},
+  "l": {"alap": "ml", "szorzo": 1000},
+  "ek": {"alap": "ml", "szorzo": 15, "megj": "evőkanál, kb."},
+  "tk": {"alap": "ml", "szorzo": 5, "megj": "teáskanál, kb."},
+  "db": {"alap": "db", "szorzo": 1},
+  "csipet": {"alap": "csipet", "szorzo": 1}
+},
+"receptek": [
+{
+ "id": "huh-001", "nev": "Marhahúsleves cérnametélttel", "kategoria": "leves", "eredet": "magyar",
+ "adag": 4, "ido_perc": 170, "nehezseg": 2,
+ "hozzavalok": [
+  {"nev": "csontos marhaleveshús", "menny": 600, "egyseg": "g"},
+  {"nev": "víz", "menny": 2.5, "egyseg": "l"},
+  {"nev": "sárgarépa", "menny": 200, "egyseg": "g"},
+  {"nev": "petrezselyemgyökér", "menny": 100, "egyseg": "g"},
+  {"nev": "zellergumó", "menny": 80, "egyseg": "g"},
+  {"nev": "vöröshagyma", "menny": 1, "egyseg": "db"},
+  {"nev": "egész fekete bors", "menny": 6, "egyseg": "db"},
+  {"nev": "só", "menny": 2, "egyseg": "tk"},
+  {"nev": "cérnametélt", "menny": 100, "egyseg": "g"}
+ ],
+ "lepesek": [
+  "A húst hideg, sózatlan vízbe tesszük, lassan felforraljuk, és a habját folyamatosan leszedjük.",
+  "Hozzáadjuk a megtisztított zöldségeket és a borsot, majd takaréklángon 2-2,5 órán át főzzük.",
+  "A húst és a zöldségeket kivesszük, a levest sózzuk, és leszűrjük.",
+  "A cérnametéltet külön, sós vízben megfőzzük, majd a leves tányérjába tesszük."
+ ],
+ "kritikus": ["A leves ne forrjon hevesen, különben zavaros lesz.", "A tésztát külön főzzük, így a leves tiszta marad."],
+ "allergenek": ["glutén", "zeller", "tojás (a tészta miatt)"],
+ "talalas": "A főtt húst és a répát külön tálon, mártással vagy tormával is lehet adni.",
+ "eltarthato": "hűtőben 3 nap, fagyasztva 3 hónap (tészta nélkül)"
+},
+{
+ "id": "huh-002", "nev": "Gulyásleves csipetkével", "kategoria": "leves", "eredet": "magyar",
+ "adag": 4, "ido_perc": 140, "nehezseg": 2,
+ "hozzavalok": [
+  {"nev": "marhahús (lábszár vagy lapocka), kockázva", "menny": 500, "egyseg": "g"},
+  {"nev": "étolaj vagy zsír", "menny": 3, "egyseg": "ek"},
+  {"nev": "vöröshagyma", "menny": 250, "egyseg": "g"},
+  {"nev": "édes pirospaprika", "menny": 2, "egyseg": "ek"},
+  {"nev": "őrölt kömény", "menny": 1, "egyseg": "tk"},
+  {"nev": "fokhagyma", "menny": 2, "egyseg": "db", "megj": "gerezd"},
+  {"nev": "burgonya", "menny": 400, "egyseg": "g"},
+  {"nev": "sárgarépa", "menny": 150, "egyseg": "g"},
+  {"nev": "zöldpaprika", "menny": 1, "egyseg": "db"},
+  {"nev": "paradicsom", "menny": 1, "egyseg": "db"},
+  {"nev": "víz", "menny": 1.5, "egyseg": "l"},
+  {"nev": "só", "menny": 2, "egyseg": "tk"},
+  {"nev": "búzaliszt (csipetkéhez)", "menny": 100, "egyseg": "g"},
+  {"nev": "tojás (csipetkéhez)", "menny": 1, "egyseg": "db"}
+ ],
+ "lepesek": [
+  "A felkockázott hagymát az olajon üvegesre pirítjuk.",
+  "A tűzről levéve belekeverjük a pirospaprikát, majd azonnal hozzáadjuk a húst, és fehéresre pároljuk.",
+  "Hozzáadjuk a köményt, a zúzott fokhagymát és a sót, felöntjük kevés vízzel, és fedő alatt puhítjuk.",
+  "Amikor a hús félpuha, jön a felkockázott répa, paprika, paradicsom és a maradék víz.",
+  "20 perc múlva hozzáadjuk a burgonyát, és puhára főzzük.",
+  "A tojásból, lisztből és csipet sóból tésztát gyúrunk, csipetkét szaggatunk, és a levesben 5 percig főzzük."
+ ],
+ "kritikus": ["A pirospaprikát csak tűzről levéve keverjük a hagymához, mert megégve keserű lesz.", "A húsnak puhának kell lennie, mielőtt a burgonya bekerül."],
+ "allergenek": ["glutén", "tojás"],
+ "talalas": "Friss kenyérrel, erős paprikával kínáljuk.",
+ "eltarthato": "hűtőben 3 nap, fagyasztva 3 hónap (csipetke nélkül)"
+},
+{
+ "id": "huh-003", "nev": "Paprikás csirke", "kategoria": "foetel", "eredet": "magyar",
+ "adag": 4, "ido_perc": 55, "nehezseg": 2,
+ "hozzavalok": [
+  {"nev": "csirkecomb (alsó- és felsőcomb, bőrös)", "menny": 800, "egyseg": "g"},
+  {"nev": "vöröshagyma", "menny": 250, "egyseg": "g"},
+  {"nev": "étolaj", "menny": 3, "egyseg": "ek"},
+  {"nev": "édes pirospaprika", "menny": 2, "egyseg": "ek"},
+  {"nev": "zöldpaprika", "menny": 1, "egyseg": "db"},
+  {"nev": "paradicsom", "menny": 1, "egyseg": "db"},
+  {"nev": "só", "menny": 1.5, "egyseg": "tk"},
+  {"nev": "víz", "menny": 300, "egyseg": "ml"},
+  {"nev": "tejföl", "menny": 2, "egyseg": "dl"},
+  {"nev": "búzaliszt", "menny": 1, "egyseg": "ek"}
+ ],
+ "lepesek": [
+  "A hagymát az olajon üvegesre pároljuk.",
+  "Levesszük a tűzről, belekeverjük a pirospaprikát, majd rárakjuk a sózott csirkét.",
+  "Hozzáadjuk a felcsíkozott paprikát és paradicsomot, felöntjük a vízzel, és fedő alatt 35-40 percig főzzük.",
+  "A tejfölt elkeverjük a liszttel és kevés főzőlével, majd a szaftba keverjük, és még 3-4 percig forraljuk."
+ ],
+ "kritikus": ["A csirke belső hőmérséklete a legvastagabb résznél legalább 75 °C legyen.", "A tejfölös keveréket már ne forraljuk sokáig, hogy ne csapódjon ki."],
+ "allergenek": ["tej", "glutén"],
+ "talalas": "Nokedlivel és uborkasalátával.",
+ "eltarthato": "hűtőben 2 nap, felmelegítéskor alaposan átforrósítjuk"
+},
+{
+ "id": "huh-004", "nev": "Nokedli", "kategoria": "koret", "eredet": "magyar",
+ "adag": 4, "ido_perc": 25, "nehezseg": 1,
+ "hozzavalok": [
+  {"nev": "finomliszt", "menny": 300, "egyseg": "g"},
+  {"nev": "tojás", "menny": 2, "egyseg": "db"},
+  {"nev": "víz", "menny": 150, "egyseg": "ml"},
+  {"nev": "só (a tésztába)", "menny": 1, "egyseg": "tk"},
+  {"nev": "víz (a főzéshez)", "menny": 2, "egyseg": "l"},
+  {"nev": "só (a főzővízbe)", "menny": 2, "egyseg": "tk"}
+ ],
+ "lepesek": [
+  "A lisztet a tojással, a vízzel és a sóval sűrű, habosra kevert tésztává verjük.",
+  "A tésztát 10 percig pihentetjük.",
+  "A forró, sós vízbe nokedliszaggatóval vagy kis adagokban szaggatjuk.",
+  "Amikor a nokedli feljön a víz tetejére, még 1-2 percig főzzük, majd leszűrjük."
+ ],
+ "kritikus": ["A tészta legyen elég laza, ne kemény, különben a nokedli nehéz lesz."],
+ "allergenek": ["glutén", "tojás"],
+ "talalas": "Paprikás, pörkölt vagy gulyás mellé.",
+ "eltarthato": "hűtőben 2 nap"
+},
+{
+ "id": "huh-005", "nev": "Lecsó kolbásszal", "kategoria": "foetel", "eredet": "magyar",
+ "adag": 4, "ido_perc": 40, "nehezseg": 1,
+ "hozzavalok": [
+  {"nev": "friss, húsos paprika (TV vagy kaliforniai)", "menny": 600, "egyseg": "g"},
+  {"nev": "érett paradicsom", "menny": 500, "egyseg": "g"},
+  {"nev": "vöröshagyma", "menny": 200, "egyseg": "g"},
+  {"nev": "étolaj", "menny": 3, "egyseg": "ek"},
+  {"nev": "füstölt kolbász", "menny": 150, "egyseg": "g"},
+  {"nev": "édes pirospaprika", "menny": 1, "egyseg": "tk"},
+  {"nev": "só", "menny": 1, "egyseg": "tk"}
+ ],
+ "lepesek": [
+  "A hagymát az olajon megpároljuk, majd levesszük a tűzről, és belekeverjük a pirospaprikát.",
+  "Hozzáadjuk a karikára vágott kolbászt, és 3 percig pirítjuk.",
+  "Jön a felszeletelt paprika, 10 perc múlva a felkockázott paradicsom és a só.",
+  "Fedő nélkül, kis lángon 15-20 percig főzzük, amíg a leve besűrűsödik."
+ ],
+ "kritikus": ["A paprika maradjon harapható, ne főzzük péppé."],
+ "allergenek": [],
+ "talalas": "Friss kenyérrel, vagy rizzsel. Ha szeretnéd, 4 tojást is ráüthetsz az utolsó 5 percben.",
+ "eltarthato": "hűtőben 3 nap"
+},
+{
+ "id": "huh-006", "nev": "Rántott sertésszelet", "kategoria": "foetel", "eredet": "magyar",
+ "adag": 4, "ido_perc": 35, "nehezseg": 2,
+ "hozzavalok": [
+  {"nev": "sertéskaraj (kb. 1 cm vastag szeletek)", "menny": 600, "egyseg": "g"},
+  {"nev": "só", "menny": 1, "egyseg": "tk"},
+  {"nev": "búzaliszt", "menny": 100, "egyseg": "g"},
+  {"nev": "tojás", "menny": 2, "egyseg": "db"},
+  {"nev": "zsemlemorzsa", "menny": 120, "egyseg": "g"},
+  {"nev": "étolaj a sütéshez", "menny": 5, "egyseg": "dl"}
+ ],
+ "lepesek": [
+  "A húst enyhén kiverjük, és mindkét oldalán megsózzuk.",
+  "A szeleteket sorban lisztbe, felvert tojásba, majd zsemlemorzsába forgatjuk, a morzsát finoman rányomjuk.",
+  "Az olajat 170-180 °C-ra hevítjük, a szeleteket 3-4 perc alatt, megfordítva aranybarnára sütjük.",
+  "Papírtörlőn lecsepegtetjük."
+ ],
+ "kritikus": ["A hús közepe is süljön át, nem maradhat benne rózsaszín rész.", "Az olaj ne legyen túl forró, mert a panír megég, mielőtt a hús megsül."],
+ "allergenek": ["glutén", "tojás"],
+ "talalas": "Citromkarikával, petrezselymes burgonyával vagy rizzsel.",
+ "eltarthato": "hűtőben 2 nap"
+},
+{
+ "id": "huh-007", "nev": "Rakott krumpli", "kategoria": "foetel", "eredet": "magyar",
+ "adag": 4, "ido_perc": 90, "nehezseg": 2,
+ "hozzavalok": [
+  {"nev": "burgonya", "menny": 1, "egyseg": "kg"},
+  {"nev": "tojás", "menny": 6, "egyseg": "db"},
+  {"nev": "füstölt kolbász", "menny": 200, "egyseg": "g"},
+  {"nev": "tejföl", "menny": 3, "egyseg": "dl"},
+  {"nev": "vaj a tepsi kikenéséhez", "menny": 20, "egyseg": "g"},
+  {"nev": "só", "menny": 2, "egyseg": "tk"}
+ ],
+ "lepesek": [
+  "A burgonyát héjában puhára főzzük, majd meghámozzuk és karikára vágjuk.",
+  "A tojásokat 10 percig keményre főzzük, és karikázzuk. A kolbászt is felszeleteljük.",
+  "A kivajazott tepsibe rétegezünk: burgonya, sós tojás, kolbász, tejföl, és így tovább. A tetejére burgonya és tejföl kerül.",
+  "180 °C-ra előmelegített sütőben 30-35 percig sütjük, amíg a teteje aranybarna."
+ ],
+ "kritikus": ["A burgonya legyen főtt, de ne széteső.", "A tojásnak teljesen megfőttnek kell lennie."],
+ "allergenek": ["tej", "tojás"],
+ "talalas": "Savanyúsággal.",
+ "eltarthato": "hűtőben 2 nap"
+},
+{
+ "id": "huh-008", "nev": "Palacsinta", "kategoria": "desszert", "eredet": "magyar",
+ "adag": 4, "ido_perc": 50, "nehezseg": 1,
+ "hozzavalok": [
+  {"nev": "búzaliszt", "menny": 250, "egyseg": "g"},
+  {"nev": "tej", "menny": 4, "egyseg": "dl"},
+  {"nev": "szódavíz", "menny": 1, "egyseg": "dl"},
+  {"nev": "tojás", "menny": 2, "egyseg": "db"},
+  {"nev": "étolaj a tésztába", "menny": 1, "egyseg": "ek"},
+  {"nev": "porcukor vagy kristálycukor", "menny": 1, "egyseg": "ek"},
+  {"nev": "só", "menny": 1, "egyseg": "csipet"},
+  {"nev": "étolaj a sütéshez", "menny": 2, "egyseg": "ek"},
+  {"nev": "lekvár a töltéshez", "menny": 200, "egyseg": "g"}
+ ],
+ "lepesek": [
+  "A tojást a tejjel, a szódavízzel, az olajjal, a cukorral és a sóval simára keverjük, majd fokozatosan hozzáadjuk a lisztet.",
+  "A tésztát 20-30 percig pihentetjük, a végén szükség esetén kevés tejjel hígítjuk.",
+  "Forró, enyhén olajozott serpenyőben vékonyra sütjük mindkét oldalon.",
+  "Lekvárral megkenjük, összehajtjuk, és szükség esetén porcukorral meghintjük."
+ ],
+ "kritikus": ["A serpenyő legyen jól felhevítve, de ne füstöljön."],
+ "allergenek": ["glutén", "tej", "tojás"],
+ "talalas": "Porcukorral, lekvárral vagy darált dióval.",
+ "eltarthato": "hűtőben 2 nap"
+}
+]
+}
