@@ -192,3 +192,25 @@ input[type=checkbox]{width:auto}
 .sv small{font-size:13px;color:var(--muted)}
 .dt i.from{font-size:13px;opacity:.95;margin-top:3px}
 .dt i.from b.loc{display:inline;font-size:13px;font-weight:600}
+.car-h{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:22px 2px 2px;scroll-margin-top:70px}
+.car-nav{display:flex;align-items:center;gap:6px}.car-nav .btn{min-width:40px;padding:4px 8px}
+.car-nav span{font-size:15px;min-width:52px;text-align:center}
+.car{display:flex;gap:12px;overflow-x:auto;scroll-snap-type:x mandatory;padding:4px 4px 14px;margin:0 -4px;-webkit-overflow-scrolling:touch;scrollbar-width:thin}
+.cc{flex:0 0 82%;max-width:340px;scroll-snap-align:start;display:flex;flex-direction:column;text-align:left;border:3px solid var(--line);background:var(--panel);color:var(--ink);box-shadow:4px 4px 0 var(--sh);padding:0;cursor:pointer}
+.cc:active{transform:translate(2px,2px);box-shadow:2px 2px 0 var(--sh)}
+.cc-top{display:flex;align-items:center;justify-content:space-between;background:#ffd36b;border-bottom:3px solid var(--line);padding:10px 12px;position:relative}
+.cc:nth-child(3n+2) .cc-top{background:#ffc285}.cc:nth-child(3n) .cc-top{background:#9fdcd4}
+.cc.best1 .cc-top{background:var(--red)}
+.cc.near .cc-top{background:var(--chip)}
+.cc-i{width:72px;height:72px;padding:6px;background:#fff4d6;border:3px solid var(--line);display:block}
+.cc-top em{font-style:normal;font-size:12px;font-weight:600;padding:2px 8px;background:#ffd84a;color:#3a2016;border:2px solid var(--line);align-self:flex-start}
+.cc-top em.ne{background:var(--panel)}
+.cc-b{display:flex;flex-direction:column;gap:4px;padding:10px 12px 12px;flex:1}
+.cc-b b{font-size:19px;font-weight:600;line-height:1.15}
+.cc-b i{font-style:normal;font-size:14px;color:var(--muted)}
+.cc-b i.from{font-size:13px;color:var(--ink)}
+.cc-b .bdg{display:flex;flex-wrap:wrap;gap:4px;margin-top:2px}
+.cc-go{margin-top:auto;padding-top:8px;font-weight:600;color:var(--red)}
+details.all{margin-top:8px}details.all>summary{cursor:pointer;font-weight:600;font-size:17px;padding:10px 12px;border:3px solid var(--line);background:var(--panel);box-shadow:3px 3px 0 var(--sh);list-style:none}
+details.all>summary::before{content:"▸ "}details.all[open]>summary::before{content:"▾ "}
+.cc-b i.from b.loc{display:inline;font-size:13px;font-weight:600;line-height:1.3}
