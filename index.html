@@ -42,6 +42,7 @@
     <button class="btn g full" id="add" type="button"><span class="ic" id="i-plus"></span>Új termék a raktárba</button>
     <section class="card" aria-live="polite"><div class="grid" id="grid"></div></section>
 
+    <div id="fxtoday"></div>
     <button class="start" id="go" type="button"><span class="pot" id="pot"></span>Mit főzzek abból, ami itthon van?<small id="gos"></small></button>
     <div class="chips" id="dfil" role="group" aria-label="Szűrés"></div>
     <div id="dishes"></div>
@@ -49,6 +50,8 @@
 
   <!-- RECEPTEK -->
   <main id="v-rec" hidden>
+    <section class="card" id="fxholi" hidden></section>
+    <section class="card" id="fxweek"></section>
     <section class="card">
       <h2><span class="ic" id="i-book"></span>Receptkönyv</h2>
       <input id="rq" type="search" placeholder="Keresés: étel vagy hozzávaló neve" autocomplete="off">
@@ -78,6 +81,8 @@
         <div><label for="su">Egység</label><select id="su"></select></div>
       </div>
       <button class="btn g full" id="sadd" type="button">+ Listára</button>
+      <div class="btns"><button class="btn t" id="fxshopmode" type="button">Bolti mód</button><button class="btn" id="fxrc" type="button">Blokk beolvasása</button></div>
+      <input type="file" id="rcfile" accept="image/*" capture="environment" hidden>
       <div id="slist" style="margin-top:8px"></div>
       <div id="stot"></div>
       <div class="btns" id="sbtns"></div>
@@ -93,6 +98,8 @@
 
   <!-- NAPLÓ -->
   <main id="v-stat" hidden>
+    <section class="card" id="fxlevel"></section>
+    <section class="card" id="fxwaste"></section>
     <section class="card"><h2><span class="ic" id="i-chart"></span>Ezen a héten</h2><div id="sw"></div></section>
     <section class="card"><h2>Javaslatok</h2><ul id="sug" style="margin:0;padding-left:20px"></ul></section>
     <button class="btn g full" id="madd" type="button">+ Mit ettünk?</button>
@@ -109,6 +116,8 @@
       <div class="prow"><div><b>Kisgyerek (1–3)</b><div class="q small">kb. negyed adag</div></div><div class="step"><button type="button" data-s="to" data-d="-1" aria-label="Kisgyerek mínusz">−</button><output id="o-to">0</output><button type="button" data-s="to" data-d="1" aria-label="Kisgyerek plusz">+</button></div></div>
       <div class="q" id="hsum" style="margin-top:8px"></div>
     </section>
+    <section class="card" id="fxdiet"></section>
+    <section class="card" id="fxnotif"></section>
     <section class="card" id="synccard">
       <h2><span class="ic" data-i="heart"></span>Közös raktár (család)</h2>
       <div id="syst" class="warnbox"></div>
@@ -175,7 +184,7 @@
 <dialog id="dlg"><form id="f" onsubmit="return false">
   <button type="button" class="dclose" data-close aria-label="Bezárás">×</button>
   <h3 id="dt">Új termék</h3>
-  <label for="fn">Név</label>
+  <div class="row" style="align-items:flex-end"><div style="flex:2"><label for="fn">Név</label></div><div style="flex:0 0 auto"><button type="button" class="btn sm p" id="fnbc">▦ Vonalkód</button></div></div>
   <input id="fn" required autocomplete="off" placeholder="Kezdd el írni, pl. tej" role="combobox" aria-autocomplete="list" aria-controls="fns">
   <div class="sugg" id="fns" role="listbox" hidden></div>
   <div class="q small" id="fph" style="margin-top:6px"></div>
@@ -222,6 +231,14 @@
   <div class="btns"><button type="button" class="btn g" id="gs">Mentés</button><button type="button" class="btn r" id="gdl" hidden>Törlés</button></div>
 </form></dialog>
 
+<dialog id="mp" class="big"><button type="button" class="dclose" data-close aria-label="Bezárás">×</button><h3>Heti menü</h3><div class="dbody" id="mpb"></div></dialog>
+<dialog id="ck" class="big"><button type="button" class="dclose" data-close aria-label="Bezárás">×</button><div class="dbody"></div></dialog>
+<dialog id="bm" class="big"><button type="button" class="dclose" data-close aria-label="Bezárás">×</button><div class="dbody"></div></dialog>
+<dialog id="rcd"><button type="button" class="dclose" data-close aria-label="Bezárás">×</button><h3>Blokk</h3><div class="dbody"></div></dialog>
+<dialog id="bc"><button type="button" class="dclose" data-close aria-label="Bezárás">×</button><h3>Vonalkód</h3>
+  <video id="bcv" playsinline muted></video><p class="q" id="bcst"></p>
+  <label for="bcman">Vagy írd be a számokat</label><div class="row"><div style="flex:3"><input id="bcman" inputmode="numeric" autocomplete="off"></div><div><button type="button" class="btn sm" id="bcgo" style="width:100%">Keres</button></div></div></dialog>
+<dialog id="kid" class="big kidd"><div class="dbody"></div></dialog>
 <datalist id="shops"><option value="Lidl"><option value="Aldi"><option value="Spar"><option value="Tesco"><option value="Penny"><option value="CBA"><option value="Coop"><option value="Auchan"><option value="Piac"></datalist>
 <datalist id="meals"></datalist>
 <div class="toast" id="toast" role="status" hidden></div>
@@ -232,5 +249,6 @@
 <script src="firebase-config.js"></script>
 <script src="app.js"></script>
 <script src="sync.js"></script>
+<script src="features.js"></script>
 </body>
 </html>

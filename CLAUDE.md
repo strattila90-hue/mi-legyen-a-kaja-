@@ -6,3 +6,4 @@
 - Az APK-t a `.github/workflows/apk.yml` építi (`apk-latest` kiadás); csak az `android/` mappa vagy a workflow módosításakor fut.
 - A felület nyelve magyar, stílusa retro pixel art.
 - Közös raktár: `sync.js` (Firestore, tételenkénti szinkron, `kaja/{kód}/...`), SDK a `vendor/` mappában, beállítás a `firebase-config.js`-ben. Szinkron-teszthez a service workert blokkolni kell a Playwright kontextusban (`serviceWorkers:"block"`), és a `vendor/firebase-*.js` kéréseket hamis SDK-val kiváltani.
+- Bővítmények: `features.js` (heti menü, kedvencek, diéta, maradék, szezon/ünnep, főzés mód, bolti mód, vonalkód, blokk-OCR, értesítés, kitűzők, pazarlás, gyerek mód). Az `app.js` csak horgokon (`window.FX`) keresztül hívja. Az OCR a `vendor/ocr/` mappából fut (tesseract.js + magyar nyelv), a service worker nem tárolja előre.
