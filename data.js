@@ -3,6 +3,9 @@
    Tájékoztató jellegűek, az appban átírhatók a saját blokkod alapján. */
 var CATALOG_SRC=[
 "Csirkemell|hus|g|f|2|2990|3290|2890",
+"Csirkehús|hus|g|f|2|1990|2190|1890",
+"Sertéshús|hus|g|f|3|2290|2490|2190",
+"Darált hús|hus|g|f|2|1990|2290|1890",
 "Csirkecomb|hus|g|f|2|1590|1790|1490",
 "Csirke felsőcomb filé|hus|g|f|2|2690|2990|2590",
 "Csirkeszárny|hus|g|f|2|1290|1490|1190",
