@@ -1,4 +1,4 @@
-var VER="1.8";
+var VER="1.9";
 /* ---------- alapok ---------- */
 function $(i){return document.getElementById(i)}
 function esc(s){return String(s==null?"":s).replace(/[&<>"']/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]})}
@@ -153,7 +153,7 @@ function drawStock(){var a=items.filter(function(i){return i.loc===tab}).sort(fu
     :'<div class="q">Itt még nincs semmi. Koppints az Új termék gombra.</div>';
   var cnt={};items.forEach(function(i){cnt[i.loc]=(cnt[i.loc]||0)+1});
   document.querySelectorAll(".tabs button").forEach(function(b){b.setAttribute("aria-selected",b.dataset.t===tab);var c=b.querySelector(".cnt");if(c)c.textContent=cnt[b.dataset.t]||"";b.setAttribute("aria-label",LOCN[b.dataset.t]+", "+(cnt[b.dataset.t]||0)+" tétel")});
-  drawDishes()}
+  if(window.drawValue)drawValue();drawDishes()}
 document.querySelectorAll(".tabs button").forEach(function(b){b.onclick=function(){tab=b.dataset.t;drawStock()}});
 $("grid").onclick=function(e){var x=e.target.closest("[data-x]");if(x){e.stopPropagation();delItem(x.dataset.x);return}var s=e.target.closest(".slot");if(s)openItem(s.dataset.id)};
 $("grid").onkeydown=function(e){var s=e.target.closest(".slot");if(s&&e.target===s&&e.key==="Enter")openItem(s.dataset.id);if(s&&e.target===s&&e.key==="Delete")delItem(s.dataset.id)};
