@@ -1,5 +1,5 @@
 /* Service worker: hálózat először (mindig a legfrissebb verzió), offline a tárolt másolat. */
-var CACHE="kaja-v1.1";
+var CACHE="kaja-v1.2";
 var FILES=["./","index.html","style.css","sprites.js","data.js","app.js","manifest.webmanifest","icon.svg","icon-192.png","icon-512.png"];
 self.addEventListener("install",function(e){self.skipWaiting();e.waitUntil(caches.open(CACHE).then(function(c){return c.addAll(FILES)}).catch(function(){}))});
 self.addEventListener("activate",function(e){e.waitUntil(caches.keys().then(function(k){return Promise.all(k.filter(function(x){return x!==CACHE}).map(function(x){return caches.delete(x)}))}).then(function(){return self.clients.claim()}))});
