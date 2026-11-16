@@ -1,4 +1,4 @@
-var VER="1.3";
+var VER="1.4";
 /* ---------- alapok ---------- */
 function $(i){return document.getElementById(i)}
 function esc(s){return String(s==null?"":s).replace(/[&<>"']/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]})}
@@ -12,7 +12,7 @@ function uid(p){return p+Date.now().toString(36)+Math.floor(Math.random()*1e4).t
 function ic(n){return spr(n)}
 var K={items:"kaja.raktar.v1",bud:"kaja.keret.v1",exps:"kaja.kiadas.v1",meals:"kaja.naplo.v1",set:"kaja.beall.v1",rec:"kaja.recept.v1",shop:"kaja.lista.v1",price:"kaja.ar.v1",prod:"kaja.termek.v1"};
 function ld(k,d){try{var r=localStorage.getItem(k);if(r!=null)return JSON.parse(r)}catch(e){}return d}
-function sv(k,v){try{localStorage.setItem(k,JSON.stringify(v));return true}catch(e){toast("Nem sikerült menteni. Tele a tárhely?");return false}}
+function sv(k,v){try{localStorage.setItem(k,JSON.stringify(v));if(window.SYNC)SYNC.push(k,v);return true}catch(e){toast("Nem sikerült menteni. Tele a tárhely?");return false}}
 var toastT=null;
 function toast(msg,act,fn){var t=$("toast");t.innerHTML="<span>"+esc(msg)+"</span>"+(act?'<button type="button">'+esc(act)+"</button>":"");t.hidden=false;
   if(act)t.querySelector("button").onclick=function(){t.hidden=true;fn()};clearTimeout(toastT);toastT=setTimeout(function(){t.hidden=true},act?6000:3200)}
@@ -413,7 +413,7 @@ $("mlist").onkeydown=function(e){var r=e.target.closest(".li");if(r&&e.key==="En
 
 /* ---------- BEÁLLÍTÁSOK ---------- */
 var BASICS=["Só","Fekete bors","Pirospaprika","Étolaj","Cukor","Liszt","Ecet","Babérlevél","Majoránna","Kömény","Oregánó","Fahéj"];
-function drawSet(){["ad","te","ch","to"].forEach(function(k){$("o-"+k).textContent=set[k]});
+function drawSet(){if(window.drawSync)drawSync();["ad","te","ch","to"].forEach(function(k){$("o-"+k).textContent=set[k]});
   $("hsum").textContent="Összesen kb. "+nf(portions())+" adag egy étkezéshez. A receptek mennyiségeit és árait erre számolom.";
   $("hht").textContent=people()+" ("+nf(portions())+" adag)";
   $("basics").innerHTML=BASICS.map(function(b){return '<button type="button" class="chip" data-b="'+esc(b)+'" aria-pressed="'+isBasic(b)+'">'+(isBasic(b)?"✓ ":"")+esc(b)+"</button>"}).join("");
@@ -452,7 +452,7 @@ function restore(txt){var o;try{o=JSON.parse(txt)}catch(e){toast("Ez nem érvén
     location.reload()},null);
   $("gs").textContent="Visszatöltés";
   $("g_nt").innerHTML="A mentés dátuma: <b>"+esc(o.date?new Date(o.date).toLocaleString("hu-HU"):"ismeretlen")+"</b>, "+raw.length+" raktártétel.<br><br>A jelenlegi adatok helyére ez kerül. Folytatod?"}
-$("reset").onclick=function(){gform("Minden adat törlése",[{k:"nt",t:"note"}],null,function(){var ks=[];for(var i=0;i<localStorage.length;i++){var k=localStorage.key(i);if(k&&k.indexOf("kaja.")===0)ks.push(k)}ks.forEach(function(k){localStorage.removeItem(k)});location.reload()},null);
+$("reset").onclick=function(){gform("Minden adat törlése",[{k:"nt",t:"note"}],null,function(){var ks=[];for(var i=0;i<localStorage.length;i++){var k=localStorage.key(i);if(k&&k.indexOf("kaja.")===0)ks.push(k)}ks.forEach(function(k){localStorage.removeItem(k)});["kajasync.last","kajasync.cfg"].forEach(function(k){localStorage.removeItem(k)});location.reload()},null);
   $("gs").textContent="Igen, törlöm";$("g_nt").textContent="A raktár, a receptjeid, a lista, a napló és a kiadások is törlődnek. Előtte érdemes menteni. Biztos?"};
 if(navigator.storage&&navigator.storage.persist)navigator.storage.persist().catch(function(){});
 

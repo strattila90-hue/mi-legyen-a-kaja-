@@ -109,6 +109,16 @@
       <div class="prow"><div><b>Kisgyerek (1–3)</b><div class="q small">kb. negyed adag</div></div><div class="step"><button type="button" data-s="to" data-d="-1" aria-label="Kisgyerek mínusz">−</button><output id="o-to">0</output><button type="button" data-s="to" data-d="1" aria-label="Kisgyerek plusz">+</button></div></div>
       <div class="q" id="hsum" style="margin-top:8px"></div>
     </section>
+    <section class="card" id="synccard">
+      <h2><span class="ic" data-i="heart"></span>Közös raktár (család)</h2>
+      <div id="syst" class="warnbox"></div>
+      <div id="sycfg" hidden>
+        <label for="sycfgta">Firebase beállítás (firebaseConfig)</label>
+        <textarea id="sycfgta" spellcheck="false" placeholder="const firebaseConfig = { apiKey: &quot;...&quot;, projectId: &quot;...&quot;, ... }"></textarea>
+        <button type="button" class="btn g full" id="sycfgsave">Beállítás mentése</button>
+      </div>
+      <div class="btns" id="sybtns"></div>
+    </section>
     <section class="card">
       <h2>Ami mindig van otthon</h2>
       <div class="q small">Ezeket nem kell felvenned a raktárba, a receptek úgy veszik, hogy megvannak.</div>
@@ -218,6 +228,8 @@
 
 <script src="sprites.js"></script>
 <script src="data.js"></script>
+<script src="firebase-config.js"></script>
 <script src="app.js"></script>
+<script src="sync.js"></script>
 </body>
 </html>
