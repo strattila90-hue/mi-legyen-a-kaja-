@@ -70,12 +70,19 @@ input,select{width:100%;font:inherit;padding:10px 12px;border-radius:14px;border
 .bg{position:fixed;inset:0;z-index:-1;overflow:hidden;pointer-events:none;
 background:radial-gradient(ellipse 80% 40% at 50% 0,var(--glow),transparent 70%),repeating-linear-gradient(90deg,rgba(74,42,28,.06) 0 2px,transparent 2px 58px),linear-gradient(var(--w1),var(--w2))}
 .ft{position:absolute;opacity:.2}.ft svg{width:100%;height:100%;display:block}
-.top{position:fixed;left:0;right:0;top:env(safe-area-inset-top,0px);width:100%;height:64px;z-index:0;pointer-events:none}
+.top{position:fixed;left:0;right:0;top:env(safe-area-inset-top,0px);width:100%;height:64px;z-index:-1;pointer-events:none}
 .bulb{animation:tw 2.4s ease-in-out infinite}.bulb:nth-child(odd){animation-delay:1.2s}
 @keyframes tw{50%{opacity:.4}}
 @media (prefers-reduced-motion:reduce){.bulb{animation:none}}
 .cloth{height:64px;margin-top:6px;background:repeating-conic-gradient(var(--red) 0 25%,#fff4d6 0 50%) 0 0/32px 32px;border-top:6px solid var(--ink)}
 .note{background:var(--panel);border-radius:14px;padding:8px 12px}
+.vnav{display:flex;gap:8px;margin-top:14px}
+.vnav button{flex:1;font:inherit;font-weight:600;padding:11px 4px;border:0;border-radius:18px;background:var(--panel);color:var(--ink);box-shadow:0 5px 0 var(--sh);cursor:pointer}
+.vnav button[aria-selected="true"]{background:var(--red);color:#fff4d6}
+.li{display:flex;justify-content:space-between;gap:10px;padding:10px 4px;border-bottom:2px dashed var(--bg);cursor:pointer}
+.li:last-child{border-bottom:0}
+.dh{font-weight:600;color:var(--muted);margin:12px 0 2px;font-size:15px}
+#sug{margin:0;padding-left:20px}#sug li{margin:6px 0}
 </style>
 </head>
 <body>
@@ -85,10 +92,16 @@ background:radial-gradient(ellipse 80% 40% at 50% 0,var(--glow),transparent 70%)
   <header class="sign"><h1>Mi legyen<br>a kaja?</h1><p>Nyitva: mindig, amíg van mit főzni</p></header>
   <div class="check" aria-hidden="true"></div>
 
+  <div class="vnav" role="tablist" aria-label="Oldalak">
+    <button role="tab" aria-selected="true" data-v="stock">Raktár</button>
+    <button role="tab" aria-selected="false" data-v="cost">Költség</button>
+    <button role="tab" aria-selected="false" data-v="stat">Statisztika</button>
+  </div>
+  <div id="v-stock">
   <section class="card" aria-label="Napi költségkeret">
     <h2>Mai keret</h2>
-    <div>1 700 Ft maradt 2 500 Ft-ból</div>
-    <div class="bar" role="img" aria-label="A napi keret 68 százaléka maradt"><b></b></div>
+    <div id="bt"></div>
+    <div class="bar"><b id="bb" style="width:0%"></b></div>
   </section>
 
   <div class="tabs" role="tablist" aria-label="Hol van az étel?">
@@ -101,19 +114,35 @@ background:radial-gradient(ellipse 80% 40% at 50% 0,var(--glow),transparent 70%)
 
   <button class="start" id="go"><span class="steam" aria-hidden="true"><i></i><i></i><i></i></span><span id="bowl"></span>Mit főzzek ebből?</button>
   <section class="say" id="rcp" hidden></section>
+  </div>
+  <div id="v-cost" hidden>
+    <section class="card"><h2>Költségkeret</h2><div id="bsum"></div><div class="app" style="margin-top:12px"><button id="bset">Keret beállítása</button></div></section>
+    <button class="add" id="xadd">+ Új kiadás</button>
+    <section class="card"><h2>Kiadások</h2><div id="xlist"></div></section>
+  </div>
+  <div id="v-stat" hidden>
+    <section class="card"><h2>Ezen a héten</h2><div id="sw"></div></section>
+    <section class="card"><h2>Javaslatok</h2><ul id="sug"></ul></section>
+    <button class="add" id="madd">+ Mit ettem?</button>
+    <section class="card"><h2>Étkezési napló</h2><div id="mlist"></div></section>
+  </div>
 
   <section class="card">
     <h2>Az app</h2>
     <div class="app">
       <button id="upd">Frissítés keresése</button>
       <button id="inst">Letöltés a telefonra</button>
-      <div id="st">Verzió 0.4</div>
+      <div id="st">Verzió 0.5</div>
     </div>
   </section>
   <p class="note">Minta-adatokkal készült prototípus.</p>
 </div>
 
 <div class="cloth" aria-hidden="true"></div>
+<dialog id="gd"><form id="gf" onsubmit="return false"><h3 id="gt"></h3><div id="gb"></div>
+<div class="btns"><button type="button" class="save" id="gs">Mentés</button><button type="button" class="del" id="gdl" hidden>Törlés</button><button type="button" class="cancel" id="gc">Mégse</button></div></form></dialog>
+<datalist id="shops"><option value="Lidl"><option value="Aldi"><option value="Spar"><option value="Tesco"><option value="Penny"><option value="CBA"><option value="Coop"><option value="Piac"></datalist>
+<datalist id="meals"></datalist>
 <dialog id="dlg"><form id="f" onsubmit="return false">
 <h3 id="dt">Új termék</h3>
 <label for="fn">Név</label><input id="fn" list="cat" required autocomplete="off" placeholder="pl. Csirkemell"><datalist id="cat"></datalist>
@@ -124,7 +153,7 @@ background:radial-gradient(ellipse 80% 40% at 50% 0,var(--glow),transparent 70%)
 <div class="btns"><button type="button" class="save" id="fs">Mentés</button><button type="button" class="del" id="fd" hidden>Törlés</button><button type="button" class="cancel" id="fc">Mégse</button></div>
 </form></dialog>
 <script>
-var VER="0.4";
+var VER="0.5";
 function svg(i,v){return '<svg viewBox="'+(v||"0 0 64 64")+'" aria-hidden="true">'+i+"</svg>"}
 var S={
 egg:svg('<path class="o" d="M9 31C7 18 19 10 32 12s24 8 22 21-12 21-24 20S11 43 9 31z" fill="#fff"/><circle class="o" cx="32" cy="32" r="11" fill="#f7b500"/><circle cx="28" cy="28" r="3.5" fill="#fff3b0"/>'),
@@ -178,20 +207,105 @@ tab=o.loc;save();$("dlg").close();draw()};
 $("fd").onclick=function(){if(!armed){armed=true;this.textContent="Biztosan törlöd?";return}items=items.filter(function(x){return x!==cur});save();$("dlg").close();draw()};
 $("fc").onclick=function(){$("dlg").close()};
 $("bowl").innerHTML=S.bowl;
-var R=[{n:"Sajtos tojásos paradicsomos",need:["Tojás","Paradicsom","Sajt"],cost:850},{n:"Sajtos répakrémleves",need:["Sárgarépa","Sajt","Tej"],cost:700},{n:"Rántotta tejjel és rizzsel",need:["Tojás","Tej","Rizs"],cost:600}];
+var R=[{n:"Sajtos tojásos paradicsomos",need:["Tojás","Paradicsom","Sajt"],cost:850,cat:"zoldseg"},{n:"Sajtos répakrémleves",need:["Sárgarépa","Sajt","Tej"],cost:700,cat:"leves"},{n:"Rántotta tejjel és rizzsel",need:["Tojás","Tej","Rizs"],cost:600,cat:"egyeb"}];
 function all(){return items.map(function(i){return{n:i.n,d:days(i.exp)}})}
 $("go").onclick=function(){var el=this,a=all(),best=null,bs=-1;
 el.classList.remove("go");void el.offsetWidth;el.classList.add("go");
 R.forEach(function(r){var s=0;r.need.forEach(function(x){a.forEach(function(i){if(i.n===x)s+=10-Math.min(Math.max(i.d,0),9)})});if(s>bs){bs=s;best=r}});
 var c=$("rcp");
 c.innerHTML="<h2>Egy adag "+best.n+" a pultra!</h2><div>Ára kb. "+best.cost+" Ft, belefér a mai keretbe.</div><ul>"+best.need.map(function(x){var i=a.filter(function(y){return y.n===x})[0];return "<li>"+x+(i?(i.d<=2?' <span class="tag">(hamar lejár)</span>':""):' <span class="tag">(hiányzik)</span>')+"</li>"}).join("")+"</ul>";
+c.innerHTML+='<button class="add" id="cooked" style="margin-top:12px">Ezt főztem</button>';
+$("cooked").onclick=function(){meals.push({id:"m"+Date.now(),n:best.n,date:iso(new Date()),type:new Date().getHours()<16?"ebed":"vacsora",cat:best.cat});sv(MK,meals);this.textContent="Beírva az étkezési naplóba";this.disabled=true;refresh()};
 c.hidden=false};
 (function(){var k=["egg","tomato","cheese","carrot","meat","bread","fruit","veg","milk","jar","rice"],o="",s=7;
 function r(){s=(s*9301+49297)%233280;return s/233280}
 for(var y=0;y<7;y++)for(var x=0;x<4;x++){var n=k[(x*3+y*5)%k.length],z=52+Math.round(r()*34);
 o+='<div class="ft" style="left:'+Math.round(x*25+(y%2?12:2)+r()*6)+'%;top:'+Math.round(y*15+r()*6)+'%;width:'+z+'px;height:'+z+'px;transform:rotate('+Math.round(r()*50-25)+'deg)">'+S[n]+"</div>"}
 $("ft").innerHTML=o})();
-items=load();draw();
+var BK="kaja.keret.v1",XK="kaja.kiadas.v1",MK="kaja.naplo.v1";
+function ld(k,d){try{var r=localStorage.getItem(k);if(r)return JSON.parse(r)}catch(e){}return d}
+function sv(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}
+var bud=ld(BK,null),exps=ld(XK,[]),meals=ld(MK,[]);
+function ft(n){return Math.round(n).toLocaleString("hu-HU")+" Ft"}
+function wk(){var dw=(new Date().getDay()+6)%7;return[plus(-dw),plus(6-dw)]}
+function sum(a,b){return exps.filter(function(x){return x.date>=a&&x.date<=b}).reduce(function(s,x){return s+x.a},0)}
+function pbar(l,sp,lim){var p=lim>0?Math.min(100,sp/lim*100):0,ov=lim>0&&sp>lim;return '<div style="margin:12px 0 2px">'+l+': <b>'+ft(sp)+'</b>'+(lim>0?" / "+ft(lim):"")+'</div><div class="bar"><b style="width:'+p+'%'+(ov?";background:var(--bad)":"")+'"></b></div>'}
+function gform(title,fields,vals,onSave,onDel){
+var d=$("gd"),armed=false;$("gt").textContent=title;
+$("gb").innerHTML=fields.map(function(f){var v=vals&&vals[f.k]!=null?vals[f.k]:(f.v!=null?f.v:""),inp;
+if(f.t==="note")return '<div class="q" id="g_'+f.k+'" style="margin-top:12px"></div>';
+if(f.t==="select")inp='<select id="g_'+f.k+'">'+f.o.map(function(o){return '<option value="'+o[0]+'"'+(o[0]===v?" selected":"")+">"+o[1]+"</option>"}).join("")+"</select>";
+else inp='<input id="g_'+f.k+'" type="'+f.t+'"'+(f.t==="number"?' step="any" min="0" inputmode="decimal"':"")+(f.list?' list="'+f.list+'"':"")+' value="'+esc(v)+'"'+(f.r?" required":"")+' autocomplete="off">';
+return '<label for="g_'+f.k+'">'+f.l+"</label>"+inp}).join("");
+fields.forEach(function(f){if(f.on)$("g_"+f.k).oninput=function(){f.on(this.value,function(k){return $("g_"+k)})}});
+fields.forEach(function(f){if(f.init)f.init($("g_"+f.k).value,function(k){return $("g_"+k)})});
+$("gdl").hidden=!onDel;$("gdl").textContent="Törlés";
+$("gs").onclick=function(){if(!$("gf").reportValidity())return;var o={};fields.forEach(function(f){if(f.t==="note")return;var v=$("g_"+f.k).value;o[f.k]=f.t==="number"?(parseFloat(v)||0):v});onSave(o);d.close()};
+$("gdl").onclick=function(){if(!armed){armed=true;this.textContent="Biztosan törlöd?";return}onDel();d.close()};
+$("gc").onclick=function(){d.close()};d.showModal()}
+function bcalc(p,a){var d=p==="d"?a:p==="w"?a/7:a*12/365;return{d:Math.round(d),w:Math.round(d*7),m:Math.round(d*365/12)}}
+function bpv(x,g){var r=bcalc(g("p").value,parseFloat(g("a").value)||0);g("pv").textContent="Ez napi "+ft(r.d)+", heti "+ft(r.w)+", havi "+ft(r.m)+"."}
+function bset(){var b=bud||{p:"m",a:""};gform("Költségkeret",[
+{k:"p",l:"Milyen időszakra adod meg?",t:"select",o:[["d","Napi keret"],["w","Heti keret"],["m","Havi keret"]],v:b.p||"m",on:bpv,init:bpv},
+{k:"a",l:"Összeg (Ft)",t:"number",r:1,v:b.a||"",on:bpv},{k:"pv",t:"note"}],
+bud,function(o){var r=bcalc(o.p,o.a);bud={p:o.p,a:o.a,m:r.m,w:r.w,d:r.d};sv(BK,bud);refresh()},
+bud?function(){bud=null;try{localStorage.removeItem(BK)}catch(e){}refresh()}:null)}
+function xform(x){gform(x?"Kiadás szerkesztése":"Új kiadás",[
+{k:"a",l:"Összeg (Ft)",t:"number",r:1,v:x?x.a:""},{k:"n",l:"Mire költöttél?",t:"text",r:1,v:x?x.n:""},
+{k:"shop",l:"Bolt",t:"text",list:"shops",v:x?x.shop:""},{k:"date",l:"Dátum",t:"date",r:1,v:x?x.date:plus(0)}],
+x,function(o){if(x)Object.assign(x,o);else{o.id="x"+Date.now();exps.push(o)}sv(XK,exps);refresh()},
+x?function(){exps=exps.filter(function(y){return y!==x});sv(XK,exps);refresh()}:null)}
+var HUC={"Marhahúsleves":"leves","Gulyásleves":"leves","Paprikás csirke":"hus","Nokedli":"teszta","Lecsó":"zoldseg","Rántott sertésszelet":"hus","Rakott krumpli":"egyeb","Palacsinta":"desszert"};
+R.forEach(function(r){HUC[r.n]=r.cat});
+$("meals").innerHTML=Object.keys(HUC).map(function(n){return '<option value="'+n+'">'}).join("");
+var CATS=[["hus","Hús"],["hal","Hal"],["zoldseg","Zöldség, főzelék"],["teszta","Tészta, rizs"],["leves","Leves"],["desszert","Desszert"],["egyeb","Egyéb"]],CN={};CATS.forEach(function(c){CN[c[0]]=c[1]});
+var TY=[["reggeli","Reggeli"],["ebed","Ebéd"],["vacsora","Vacsora"],["snack","Köret, nasi"]],TN={};TY.forEach(function(c){TN[c[0]]=c[1]});
+function mform(m){gform(m?"Étkezés szerkesztése":"Mit ettem?",[
+{k:"n",l:"Étel neve",t:"text",list:"meals",r:1,v:m?m.n:"",on:function(x,g){if(HUC[x])g("cat").value=HUC[x]}},
+{k:"date",l:"Nap",t:"date",r:1,v:m?m.date:plus(0)},{k:"type",l:"Étkezés",t:"select",o:TY,v:m?m.type:"ebed"},{k:"cat",l:"Típus",t:"select",o:CATS,v:m?m.cat:"egyeb"}],
+m,function(o){if(m)Object.assign(m,o);else{o.id="m"+Date.now();meals.push(o)}sv(MK,meals);refresh()},
+m?function(){meals=meals.filter(function(y){return y!==m});sv(MK,meals);refresh()}:null)}
+function drawBudget(){var t=plus(0),sp=sum(t,t);
+if(bud&&bud.d>0){var l=bud.d-sp;$("bt").textContent=l>=0?ft(l)+" maradt "+ft(bud.d)+"-ból":ft(-l)+" a napi kereten túl";$("bb").style.width=Math.max(0,l)/bud.d*100+"%"}
+else{$("bt").textContent="Állítsd be a keretet a Költség oldalon.";$("bb").style.width="0%"}}
+function drawCost(){var t=plus(0),w=wk(),m=t.slice(0,7);
+$("bsum").innerHTML=bud?'<div class="q">Megadott keret: '+({d:"napi",w:"heti",m:"havi"}[bud.p||"m"])+" "+ft(bud.a||bud.m||0)+"</div>"+pbar("Ma",sum(t,t),bud.d)+pbar("Ezen a héten",sum(w[0],w[1]),bud.w)+pbar("Ebben a hónapban",sum(m+"-01",m+"-31"),bud.m):'<div class="q">Még nincs keret beállítva.</div>';
+$("bset").textContent=bud?"Keret szerkesztése":"Keret beállítása";
+var a=exps.slice().sort(function(x,y){return x.date<y.date?1:-1});
+$("xlist").innerHTML=a.length?a.map(function(x){return '<div class="li" data-id="'+x.id+'" tabindex="0" role="button"><span>'+esc(x.date)+" "+esc(x.n)+(x.shop?" ("+esc(x.shop)+")":"")+"</span><b>"+ft(x.a)+"</b></div>"}).join(""):'<div class="q">Még nincs kiadás. Koppints az Új kiadás gombra.</div>'}
+function sugg(wm,cnt,nm,sp){var L=[];
+if(!wm.length)L.push("Még nincs naplózott étkezés ezen a héten. Koppints a Mit ettem? gombra, és pontosabb javaslatokat kapsz.");
+if(cnt.hus>=4)L.push("Sok húsos étel volt a héten ("+cnt.hus+"). Jöhet egy zöldséges vagy főzelékes nap.");
+if(wm.length>=3&&!cnt.zoldseg)L.push("Nem volt zöldséges étel a héten. Egy lecsó vagy főzelék jól kiegészítené.");
+if(wm.length>=5&&!cnt.hal)L.push("Hal még nem szerepelt a héten.");
+Object.keys(nm).forEach(function(k){if(nm[k]>=3)L.push("A(z) "+k+" már "+nm[k]+"-szor szerepelt a héten, érdemes változtatni.")});
+if(bud&&bud.w>0){if(sp>bud.w)L.push("Túlléptétek a heti keretet "+ft(sp-bud.w)+"-tal. Főzzetek a raktárból, olcsó alapanyagokból.");else if(sp>bud.w*.8)L.push("A heti keret 80%-át elköltöttétek, "+ft(bud.w-sp)+" maradt.");else L.push("A heti keretből még "+ft(bud.w-sp)+" maradt.")}
+var ex=[];items.forEach(function(i){if(days(i.exp)<=2&&ex.indexOf(i.n)<0)ex.push(i.n)});
+if(ex.length)L.push("Hamarosan lejár: "+ex.join(", ")+". Főzz ezekből előbb.");
+return L}
+function drawStat(){var w=wk(),wm=meals.filter(function(m){return m.date>=w[0]&&m.date<=w[1]}),cnt={},nm={},mx=1;
+wm.forEach(function(m){cnt[m.cat]=(cnt[m.cat]||0)+1;nm[m.n]=(nm[m.n]||0)+1});
+CATS.forEach(function(c){if((cnt[c[0]]||0)>mx)mx=cnt[c[0]]});
+var sp=sum(w[0],w[1]);
+$("sw").innerHTML='<div>Kiadás: <b>'+ft(sp)+"</b>"+(bud&&bud.w?" / "+ft(bud.w):"")+"</div><div>Naplózott étkezés: <b>"+wm.length+"</b>, különböző étel: <b>"+Object.keys(nm).length+"</b></div>"+
+CATS.filter(function(c){return cnt[c[0]]}).map(function(c){return '<div style="margin:10px 0 2px">'+c[1]+": "+cnt[c[0]]+'</div><div class="bar"><b style="width:'+cnt[c[0]]/mx*100+'%"></b></div>'}).join("");
+$("sug").innerHTML=sugg(wm,cnt,nm,sp).map(function(s){return "<li>"+esc(s)+"</li>"}).join("");
+var a=meals.slice().sort(function(x,y){return x.date<y.date?1:x.date>y.date?-1:0}).slice(0,40),last="",o="";
+a.forEach(function(m){if(m.date!==last){last=m.date;o+='<div class="dh">'+new Date(m.date+"T00:00:00").toLocaleDateString("hu-HU",{weekday:"long",month:"long",day:"numeric"})+"</div>"}
+o+='<div class="li" data-id="'+m.id+'" tabindex="0" role="button"><span>'+TN[m.type]+": "+esc(m.n)+'</span><span class="q">'+CN[m.cat]+"</span></div>"});
+$("mlist").innerHTML=o||'<div class="q">Még nincs bejegyzés. Koppints a Mit ettem? gombra.</div>'}
+function refresh(){drawBudget();drawCost();drawStat()}
+function pick(l,id){return l.filter(function(x){return x.id===id})[0]}
+$("xlist").onclick=function(e){var r=e.target.closest(".li");if(r)xform(pick(exps,r.dataset.id))};
+$("mlist").onclick=function(e){var r=e.target.closest(".li");if(r)mform(pick(meals,r.dataset.id))};
+$("xlist").onkeydown=function(e){var r=e.target.closest(".li");if(r&&e.key==="Enter")xform(pick(exps,r.dataset.id))};
+$("mlist").onkeydown=function(e){var r=e.target.closest(".li");if(r&&e.key==="Enter")mform(pick(meals,r.dataset.id))};
+$("bset").onclick=bset;$("xadd").onclick=function(){xform(null)};$("madd").onclick=function(){mform(null)};
+function showView(v){["stock","cost","stat"].forEach(function(k){$("v-"+k).hidden=k!==v});
+document.querySelectorAll(".vnav button").forEach(function(b){b.setAttribute("aria-selected",b.dataset.v===v)});
+if(v==="cost")drawCost();if(v==="stat")drawStat();window.scrollTo(0,0)}
+document.querySelectorAll(".vnav button").forEach(function(b){b.onclick=function(){showView(b.dataset.v)}});
+items=load();draw();refresh();
 
 var st=document.getElementById("st"),upd=document.getElementById("upd"),inst=document.getElementById("inst"),REG=null,NEW=null,DEF=null;
 function say(t){st.textContent=t}
