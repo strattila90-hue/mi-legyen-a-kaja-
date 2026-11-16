@@ -1,4 +1,4 @@
-var VER="1.0";
+var VER="1.1";
 /* ---------- alapok ---------- */
 function $(i){return document.getElementById(i)}
 function esc(s){return String(s==null?"":s).replace(/[&<>"']/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]})}
@@ -450,12 +450,23 @@ drawAll();
 var st=$("st"),upd=$("upd"),inst=$("inst"),REG=null,NEW=null,DEF=null;
 function say(t){st.textContent=t}
 say("Verzió "+VER+" · "+allRec().length+" recept · "+allProds().length+" termék");
-if("serviceWorker" in navigator){
-  navigator.serviceWorker.register("sw.js").then(function(r){REG=r;
-    r.addEventListener("updatefound",function(){var w=r.installing;if(!w)return;w.addEventListener("statechange",function(){if(w.state==="installed"&&navigator.serviceWorker.controller){NEW=w;upd.textContent="Frissítés telepítése";say("Új verzió letöltve, koppints a frissítésre.");toast("Új verzió érhető el.","Frissítés",function(){NEW.postMessage("skip")})}})})}).catch(function(){});
-  var reloading=false;navigator.serviceWorker.addEventListener("controllerchange",function(){if(reloading)return;reloading=true;location.reload()})}
-upd.onclick=function(){if(NEW){NEW.postMessage("skip");return}if(!REG){say("A frissítés a telepített appban működik. Verzió "+VER);return}
-  say("Keresem az új verziót...");REG.update().then(function(){setTimeout(function(){if(!NEW)say("A legfrissebb verziót használod ("+VER+").")},1500)}).catch(function(){say("Nincs kapcsolat. Az app így is működik offline.")})};
+/* Automatikus frissítés: induláskor, visszatéréskor és óránként megnézi, van-e új verzió.
+   Ha van, magától átvált rá; ha épp nyitva van egy űrlap, megvárja, amíg bezárod vagy elhagyod az appot. */
+var pendingReload=false,hadCtrl=false;
+function busy(){return !!document.querySelector("dialog[open]")||(document.activeElement&&/INPUT|TEXTAREA|SELECT/.test(document.activeElement.tagName))}
+function doReload(){if(busy()&&!document.hidden){pendingReload=true;return}location.reload()}
+function checkUpd(){if(REG&&navigator.onLine!==false)REG.update().catch(function(){})}
+if("serviceWorker" in navigator){hadCtrl=!!navigator.serviceWorker.controller;
+  navigator.serviceWorker.register("sw.js",{updateViaCache:"none"}).then(function(r){REG=r;
+    r.addEventListener("updatefound",function(){var w=r.installing;if(!w)return;w.addEventListener("statechange",function(){if(w.state==="installed"&&navigator.serviceWorker.controller){NEW=w;say("Új verzió letöltve, telepítem...");w.postMessage("skip")}})});
+    setInterval(checkUpd,36e5)}).catch(function(){});
+  var reloading=false;navigator.serviceWorker.addEventListener("controllerchange",function(){if(reloading||!hadCtrl){hadCtrl=true;return}reloading=true;toast("Frissítettem az appot a legújabb verzióra.");setTimeout(doReload,600)})}
+document.addEventListener("visibilitychange",function(){if(document.hidden){if(pendingReload)location.reload()}else checkUpd()});
+document.addEventListener("close",function(){if(pendingReload&&!busy())location.reload()},true);
+window.addEventListener("online",checkUpd);
+upd.onclick=function(){if(NEW){NEW.postMessage("skip");return}if(!REG){say("Az automatikus frissítés a weboldalon és a telepített appban működik. Verzió "+VER);return}
+  say("Keresem az új verziót...");REG.update().then(function(){setTimeout(function(){if(!NEW)say("A legfrissebb verziót használod ("+VER+"). Az app magától is frissül.")},1500)}).catch(function(){say("Nincs kapcsolat. Az app így is működik offline.")})};
+if(/^android-app:/.test(document.referrer)||matchMedia("(display-mode: standalone)").matches)$("apk").hidden=true;
 window.addEventListener("beforeinstallprompt",function(e){e.preventDefault();DEF=e});
 inst.onclick=function(){if(DEF){DEF.prompt();DEF=null}else say("Telepítés: böngésző menü, majd Hozzáadás a kezdőképernyőhöz.")};
 window.addEventListener("offline",function(){toast("Offline vagy, az app így is működik.")});

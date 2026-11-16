@@ -40,7 +40,7 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
 .note{color:var(--muted);font-size:14px;text-align:center;margin-top:14px}
 
 /* gombok */
-.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border:3px solid var(--line);background:var(--amber);color:#3a2016;font-weight:600;padding:10px 14px;cursor:pointer;box-shadow:4px 4px 0 var(--sh);min-height:46px;text-align:center}
+.btn{text-decoration:none;display:inline-flex;align-items:center;justify-content:center;gap:8px;border:3px solid var(--line);background:var(--amber);color:#3a2016;font-weight:600;padding:10px 14px;cursor:pointer;box-shadow:4px 4px 0 var(--sh);min-height:46px;text-align:center}
 .btn:active{transform:translate(3px,3px);box-shadow:1px 1px 0 var(--sh)}
 .btn .ic{width:22px;height:22px;flex:none}
 .btn.g{background:var(--ok);color:#fff}.btn.r{background:var(--red);color:#fff}.btn.p{background:var(--panel);color:var(--ink)}.btn.t{background:var(--teal);color:#fff}
