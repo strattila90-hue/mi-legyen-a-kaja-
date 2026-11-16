@@ -182,3 +182,13 @@ input[type=checkbox]{width:auto}
 .toast button{border:2px solid var(--bg);background:var(--amber);color:#3a2016;font-weight:700;padding:4px 10px;cursor:pointer}
 .cloth{height:56px;margin-top:10px;background:repeating-conic-gradient(var(--red) 0 25%,#fff4d6 0 50%) 0 0/28px 28px;border-top:5px solid var(--line)}
 @media (prefers-reduced-motion:reduce){.bulb{animation:none}.btn:active,.dish:active,.start:active{transform:none}}
+.survey{background:var(--panel);border:3px solid var(--line);box-shadow:4px 4px 0 var(--sh);padding:12px;margin-top:14px}
+.sv-h{font-family:"Pixelify Sans",monospace;font-weight:600;font-size:17px;display:flex;align-items:center;gap:8px}
+.sv-h .ic{width:22px;height:22px}
+.sv-g{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:10px 0 8px}
+.sv{border:3px solid var(--line);background:var(--panel2);padding:6px;text-align:center}
+.sv .ic{width:28px;height:28px;display:block;margin:0 auto}
+.sv b{display:block;font-family:"Pixelify Sans",monospace;font-size:22px;line-height:1.1}
+.sv small{font-size:13px;color:var(--muted)}
+.dt i.from{font-size:13px;opacity:.95;margin-top:3px}
+.dt i.from b.loc{display:inline;font-size:13px;font-weight:600}
