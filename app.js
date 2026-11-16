@@ -1,4 +1,4 @@
-var VER="1.2";
+var VER="1.3";
 /* ---------- alapok ---------- */
 function $(i){return document.getElementById(i)}
 function esc(s){return String(s==null?"":s).replace(/[&<>"']/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]})}
@@ -180,7 +180,7 @@ function dishBtn(c,top){var r=c.r,P=portions(),cost=recCost(r,c,Math.min(P,c.can
   if(isCold(r))b.push('<span class="badge cold">hideg</span>');
   if(!c.enough)b.push('<span class="badge warn">csak kb. '+nf(Math.floor(c.can*2)/2)+" adagra elég</span>");else b.push('<span class="badge ok">elég '+nf(P)+" adag</span>");
   if(c.soon)b.push('<span class="badge bad">hamar lejár</span>');if(c.thaw.length)b.push('<span class="badge cold">ki kell olvasztani</span>');if(r.own)b.push('<span class="badge">saját</span>');
-  return '<button type="button" class="dish'+(top?" best1":"")+'" data-id="'+r.id+'"><span class="di">'+ic(RICO[r.cat]||"rice")+'</span><span class="dt">'+(top?"<em>Ma ezt ajánlom</em>":"")+"<b>"+esc(r.nev)+"</b><i>"+r.ido_perc+" perc · "+esc(RCN[r.cat]||"")+(cost.any&&!r.mini?" · kb. "+ft(Math.min.apply(null,cost.full)):"")+'</i>'+fromLine(c)+'<span class="bdg">'+b.join("")+"</span></span></button>"}
+  return '<button type="button" class="dish'+(top?" best1":"")+'" data-id="'+r.id+'"><span class="di">'+ic(RICO[r.cat]||"rice")+'</span><span class="dt">'+(top?"<em>Ma ezt ajánlom</em>":"")+"<b>"+esc(r.nev)+"</b><i>"+r.ido_perc+" perc · "+esc(RCN[r.cat]||"")+(cost.any?" · kb. "+ft(Math.min.apply(null,cost.full)):"")+'</i>'+fromLine(c)+'<span class="bdg">'+b.join("")+"</span></span></button>"}
 function fromLine(c){var g={};c.use.forEach(function(u){if(u.basic||!u.locs.length)return;var l=u.locs[0];var nm=(u.src||u.key).toLowerCase();g[l]=g[l]||[];if(g[l].indexOf(nm)<0)g[l].push(nm)});
   var o=["fridge","pantry","freezer"].filter(function(l){return g[l]}).map(function(l){return '<b class="loc">'+LOCN[l]+':</b> '+esc(g[l].join(", "))});return o.length?'<i class="from">'+o.join(" · ")+"</i>":""}
 function drawDishes(){var f=feas(),sl=solos(),el=$("dishes"),live=items.filter(function(i){return days(i.exp)>=0&&i.q>0}).length;
@@ -239,11 +239,15 @@ function openRecipe(id,keepP){var r=recById(id);if(!r)return;if(!keepP)rdP=porti
     toast("Recept törölve.","Visszavonás",function(){ownRec.splice(pos,0,r);sv(K.rec,ownRec);drawAll()})}}
 function cook(r,c){var f=Math.min(rdP,c.can)/r.adag,out=[],hr=new Date().getHours();
   meals.push({id:uid("m"),n:r.nev,date:plus(0),type:hr<10?"reggeli":hr<16?"ebed":"vacsora",cat:mcat(r.cat)});sv(K.meals,meals);
-  if(!r.mini)c.use.forEach(function(u){if(u.basic||!(u.need>0))return;var left=u.need*f,tot=left;
+  var gone=[];c.use.forEach(function(u){if(u.basic||!(u.need>0))return;var left=u.need*f,tot=left,l0=liveOf(u.key)[0],sbt=l0&&BASE[l0.u]?BASE[l0.u][0]:u.bt;
     liveOf(u.key).filter(function(i){return same((BASE[i.u]||["db"])[0],u.bt)}).sort(function(x,y){return x.exp<y.exp?-1:1}).forEach(function(i){if(left<=0)return;var b=BASE[i.u][1],hv=i.q*b,t=Math.min(hv,left);i.q=Math.round((hv-t)/b*100)/100;left-=t});
-    if(tot-Math.max(left,0)>0)out.push(u.key+" "+fmtQ(tot-Math.max(left,0),u.bt))});
-  items=items.filter(function(i){return i.q>0.0001});saveItems();drawAll();
-  $("cmsg").innerHTML="<b>Jó étvágyat!</b> Beírtam a naplóba. "+(r.mini?"Gyors étel, ezért a raktárt nem módosítottam.":out.length?"Levontam a raktárból: "+esc(out.join(", "))+".":"");
+    if(tot-Math.max(left,0)>0)out.push(u.key+" "+fmtQ(tot-Math.max(left,0),sbt))});
+  items.forEach(function(i){if(!(i.q>0.0001)&&gone.indexOf(i.n)<0)gone.push(i.n)});
+  items=items.filter(function(i){return i.q>0.0001});
+  /* ami elfogyott (és nincs belőle más a raktárban), az a bevásárlólistára kerül */
+  var listed=[];gone.forEach(function(n){if(liveOf(n).length||shop.some(function(s){return !s.done&&norm(s.n)===norm(n)}))return;var cc=find(n);addShop(n,cc?defQ(cc.u,cc.n):1,cc?cc.u:"db");listed.push(n)});
+  saveItems();drawAll();
+  $("cmsg").innerHTML="<b>Jó étvágyat!</b> Beírtam a naplóba. "+(out.length?"Levontam a raktárból: "+esc(out.join(", "))+".":"Ehhez nincs mennyiség megadva, a raktárt nem módosítottam.")+(listed.length?" <b>Elfogyott:</b> "+esc(listed.join(", "))+", felírtam a bevásárlólistára.":"");
   if($("rcook"))$("rcook").disabled=true}
 function mcat(c){return{hal:"hal",leves:"leves",hus:"hus",teszta:"teszta",foz:"zoldseg",zoldseg:"zoldseg",salata:"hideg",szendvics:"hideg",hidegtal:"hideg",hideg:"hideg",desszert:"desszert",reggeli:"egyeb"}[c]||"egyeb"}
 
@@ -261,7 +265,7 @@ function drawRec(){var q=norm($("rq").value),P=portions();
   a.sort(function(x,y){return (y.ok-x.ok)||(x.miss.length-y.miss.length)||x.r.nev.localeCompare(y.r.nev,"hu")});
   $("rcount").textContent=a.length+" recept"+(rmode==="all"?", ebből "+a.filter(function(c){return c.ok}).length+" most elkészíthető":"");
   $("rlist").innerHTML=a.length?a.map(function(c){var r=c.r,cost=recCost(r,c,P/r.adag),st=c.ok?'<span class="badge ok">megvan</span>':'<span class="badge'+(c.miss.length<=2?" warn":"")+'">hiányzik '+c.miss.length+"</span>";
-    return '<button type="button" class="dish'+(c.ok?"":" solo")+'" data-id="'+r.id+'"><span class="di">'+ic(RICO[r.cat]||"rice")+'</span><span class="dt"><b>'+esc(r.nev)+"</b><i>"+r.ido_perc+" perc · "+esc(RCN[r.cat]||"")+(cost.any&&!r.mini?" · "+nf(P)+" adag kb. "+ft(Math.min.apply(null,cost.full)):"")+'</i><span class="bdg">'+st+(isCold(r)?'<span class="badge cold">hideg</span>':"")+(r.own?'<span class="badge">saját</span>':"")+"</span></span></button>"}).join("")
+    return '<button type="button" class="dish'+(c.ok?"":" solo")+'" data-id="'+r.id+'"><span class="di">'+ic(RICO[r.cat]||"rice")+'</span><span class="dt"><b>'+esc(r.nev)+"</b><i>"+r.ido_perc+" perc · "+esc(RCN[r.cat]||"")+(cost.any?" · "+nf(P)+" adag kb. "+ft(Math.min.apply(null,cost.full)):"")+'</i><span class="bdg">'+st+(isCold(r)?'<span class="badge cold">hideg</span>':"")+(r.own?'<span class="badge">saját</span>':"")+"</span></span></button>"}).join("")
     :'<div class="empty">Nincs ilyen recept. Írj egy sajátot!</div>'}
 $("rlist").onclick=function(e){var b=e.target.closest("[data-id]");if(b)openRecipe(b.dataset.id)};
 
@@ -304,7 +308,7 @@ function editPrice(c){var p=priceOf(c.n)||[0,0,0],u=punit(c);
   gform("Ár: "+c.n,SHOPS.map(function(s,i){return{k:s[0],l:s[1]+" (Ft / "+u+")",t:"number",v:p[i]||""}}).concat([{k:"nt",t:"note"}]),null,
     function(o){prices[c.n]=[o.p,o.t,o.l];sv(K.price,prices);showPrice(c);drawShop()},prices[c.n]?function(){delete prices[c.n];sv(K.price,prices);showPrice(c);drawShop()}:null,"Visszaállítás az alapárra");
   $("g_nt").textContent="Az árat 1 "+u+"-ra számold. Pl. 330 g tejföl 599 Ft = kb. 1815 Ft/kg."}
-function defQ(u){return{g:500,kg:1,dkg:20,ml:500,dl:2,l:1,db:1}[u]||1}
+function defQ(u,n){if(n==="Tojás")return 10;return{g:500,kg:1,dkg:20,ml:500,dl:2,l:1,db:1}[u]||1}
 $("su").innerHTML=["db","g","dkg","kg","ml","dl","l"].map(function(u){return"<option>"+u+"</option>"}).join("");
 ac($("sn"),$("sns"),function(c){$("su").value=c.u;$("sq").value=defQ(c.u)});
 $("sn").addEventListener("keydown",function(e){if(e.key==="Enter"&&$("sns").hidden){e.preventDefault();$("sadd").click()}});
