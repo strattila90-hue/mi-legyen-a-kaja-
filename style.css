@@ -214,3 +214,40 @@ input[type=checkbox]{width:auto}
 details.all{margin-top:8px}details.all>summary{cursor:pointer;font-weight:600;font-size:17px;padding:10px 12px;border:3px solid var(--line);background:var(--panel);box-shadow:3px 3px 0 var(--sh);list-style:none}
 details.all>summary::before{content:"▸ "}details.all[open]>summary::before{content:"▾ "}
 .cc-b i.from b.loc{display:inline;font-size:13px;font-weight:600;line-height:1.3}
+/* ---- animált helyszínek (hűtő, spájz, fagyasztó) ---- */
+.tabs{align-items:stretch}
+.tabs button.loc{flex-direction:column;gap:6px;padding:8px 6px 6px;justify-content:flex-start}
+.tabs button.loc[aria-selected="true"]{transform:none;box-shadow:3px 3px 0 var(--sh);background:var(--amber)}
+.sc{position:relative;width:100%;max-width:86px;aspect-ratio:20/24;margin:0 auto;perspective:420px}
+.sc svg{position:absolute;inset:0;width:100%;height:100%;display:block}
+.door{position:absolute;transform-style:preserve-3d;transition:transform .5s steps(5,end);z-index:2}
+.door svg{backface-visibility:hidden;-webkit-backface-visibility:hidden}
+.door svg.b{transform:rotateY(180deg)}
+.sc-fridge .door{left:0;top:0;width:100%;height:95.84%;transform-origin:left center}
+.pdoor{left:52.5%;top:31.25%;width:42.5%;height:62.5%;transform-origin:left center}
+.loc[aria-selected="true"] .sc-fridge .door,.loc:focus-visible .sc-fridge .door{transform:rotateY(-74deg)}
+.loc[aria-selected="true"] .pdoor,.loc:focus-visible .pdoor{transform:rotateY(-80deg)}
+.fd{position:absolute;left:0;width:100%;height:54.167%;clip-path:inset(46.15% 0 0 0);transition:transform .45s steps(4,end),clip-path .45s steps(4,end);transform-origin:50% 100%}
+.fd1{top:4.167%;z-index:3}.fd2{top:37.5%;z-index:2;transition-delay:.12s}
+.loc[aria-selected="true"] .fd,.loc:focus-visible .fd{clip-path:inset(0 0 0 0)}
+.loc[aria-selected="true"] .fd1,.loc:focus-visible .fd1{transform:translateY(26%) scale(1.08)}
+.loc[aria-selected="true"] .fd2,.loc:focus-visible .fd2{transform:translateY(12%) scale(1.04)}
+@media (hover:hover){
+  .loc:hover .sc-fridge .door{transform:rotateY(-74deg)}
+  .loc:hover .pdoor{transform:rotateY(-80deg)}
+  .loc:hover .fd{clip-path:inset(0 0 0 0)}
+  .loc:hover .fd1{transform:translateY(26%) scale(1.08)}
+  .loc:hover .fd2{transform:translateY(12%) scale(1.04)}}
+.sc-fridge::after{content:"";position:absolute;left:8%;right:8%;top:6%;height:30%;background:radial-gradient(ellipse at 50% 0,rgba(255,240,150,.55),transparent 70%);opacity:0;transition:opacity .3s steps(3);pointer-events:none;z-index:1}
+.loc[aria-selected="true"] .sc-fridge::after{opacity:1;animation:hum 2.4s steps(2) infinite}
+@keyframes hum{50%{opacity:.75}}
+.frost{position:absolute;width:7%;aspect-ratio:1;background:#fff;opacity:0;z-index:4;pointer-events:none}
+.f1{left:22%;top:30%}.f2{left:55%;top:24%}.f3{left:78%;top:34%}
+.loc[aria-selected="true"] .frost{animation:frost 1.8s steps(6) infinite}
+.loc[aria-selected="true"] .f2{animation-delay:.6s}.loc[aria-selected="true"] .f3{animation-delay:1.2s}
+@keyframes frost{0%{opacity:0;transform:translateY(0)}20%{opacity:.9}100%{opacity:0;transform:translateY(-260%)}}
+.lbl{display:flex;align-items:center;justify-content:center;gap:5px;font-family:"Pixelify Sans",monospace;font-weight:600;font-size:15px;line-height:1.1}
+.lbl .cnt{display:inline-block;min-width:22px;padding:0 5px;border:2px solid var(--line);background:var(--panel);color:var(--ink);font-size:13px;text-align:center}
+.lbl .cnt:empty{display:none}
+@media (prefers-reduced-motion:reduce){.door,.fd,.sc-fridge::after{transition:none}.frost{animation:none!important}.loc .sc-fridge::after{animation:none!important}}
+.sc-pantry{perspective-origin:30% 60%}.sc-fridge{perspective-origin:10% 50%}
