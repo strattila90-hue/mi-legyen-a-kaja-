@@ -5,3 +5,4 @@
 - Élesítés: a GitHub Pages a `main` ágból szolgálja ki a weboldalt; az Android app (TWA) ezt tölti be, és a service worker magától frissül. Minden kiadásnál emeld a `VER`-t (`app.js`) és a `CACHE` nevét (`sw.js`).
 - Az APK-t a `.github/workflows/apk.yml` építi (`apk-latest` kiadás); csak az `android/` mappa vagy a workflow módosításakor fut.
 - A felület nyelve magyar, stílusa retro pixel art.
+- Közös raktár: `sync.js` (Firestore, tételenkénti szinkron, `kaja/{kód}/...`), SDK a `vendor/` mappában, beállítás a `firebase-config.js`-ben. Szinkron-teszthez a service workert blokkolni kell a Playwright kontextusban (`serviceWorkers:"block"`), és a `vendor/firebase-*.js` kéréseket hamis SDK-val kiváltani.
