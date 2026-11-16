@@ -4,373 +4,218 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Mi legyen a kaja?</title>
+<meta name="description" content="Családi étkezéstervező: mi van otthon, mit főzzünk belőle, mennyibe kerül.">
 <meta name="theme-color" content="#e4472b">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icon.svg">
-<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600&family=Press+Start+2P&display=swap" rel="stylesheet">
-<style>
-:root{--bg:#fff1d0;--panel:#fffaf0;--ink:#4a2a1c;--red:#e4472b;--amber:#f2a33a;--ok:#3fae5a;--warn:#f0b31f;--bad:#e4472b;--muted:#8a6650;--sh:rgba(74,42,28,.3);--tile:#fff1d0;--w1:#ffd79a;--w2:#ffeccb;--glow:rgba(255,255,255,.7);
-box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#241a3d;--panel:#33275a;--ink:#fff1d0;--muted:#c3b3e6;--sh:rgba(0,0,0,.45);--w1:#3b2a60;--w2:#241a3d;--glow:rgba(242,163,58,.25)}}
-:root[data-theme="dark"]{--bg:#241a3d;--panel:#33275a;--ink:#fff1d0;--muted:#c3b3e6;--sh:rgba(0,0,0,.45);--w1:#3b2a60;--w2:#241a3d;--glow:rgba(242,163,58,.25)}
-html{scroll-padding-top:env(safe-area-inset-top,0px)}
-*{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--ink);font-family:"Fredoka",ui-rounded,system-ui,sans-serif;font-size:17px;line-height:1.3}
-.wrap{max-width:520px;margin:0 auto;padding:64px 14px 20px}
-.sign{position:relative;background:var(--red);border:7px dotted #ffd84a;border-radius:26px;padding:16px 12px 14px;text-align:center;box-shadow:0 7px 0 var(--sh);margin-top:6px}
-.sign h1{font-family:"Press Start 2P",monospace;font-weight:400;font-size:17px;line-height:1.6;margin:0;color:#fff4d6;text-shadow:3px 3px 0 #8c2415}
-.sign p{margin:6px 0 0;color:#ffe9b3;font-size:15px}
-.check{height:18px;margin:14px 6px 4px;border-radius:9px;background:repeating-conic-gradient(var(--ink) 0 25%,var(--panel) 0 50%) 0 0/18px 18px;opacity:.85}
-.card{background:var(--panel);border-radius:24px;padding:14px;margin:14px 0;box-shadow:0 6px 0 var(--sh)}
-.card h2{font-size:15px;font-weight:600;margin:0 0 8px;color:var(--muted)}
-.bar{height:20px;background:var(--bg);border-radius:12px;overflow:hidden;margin-top:8px}
-.bar b{display:block;height:100%;width:68%;border-radius:12px;background:linear-gradient(#ffc866,var(--amber))}
-.tabs{display:flex;gap:8px;margin-top:14px}
-.tabs button{flex:1;font:inherit;font-weight:600;padding:11px 4px;border:0;border-radius:18px;background:var(--panel);color:var(--ink);box-shadow:0 5px 0 var(--sh);cursor:pointer}
-.tabs button[aria-selected="true"]{background:var(--amber);color:#4a2a1c}
-button:focus-visible{outline:3px dashed var(--amber);outline-offset:3px}
-.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-.slot{background:var(--bg);border-radius:20px;padding:10px}
-.tile{width:64px;height:64px;border-radius:18px;background:var(--tile);display:grid;place-items:center}
-.tile svg{width:54px;height:54px}
-.o{stroke:#4a2a1c;stroke-width:3;stroke-linejoin:round;stroke-linecap:round}
-.n{font-weight:600;margin-top:6px}.q{color:var(--muted);font-size:15px}
-.hp{height:12px;border-radius:8px;background:var(--panel);margin:7px 0 3px;overflow:hidden}
-.hp b{display:block;height:100%;border-radius:8px}
-.ok b{background:var(--ok)}.warn b{background:var(--warn)}.bad b{background:var(--bad)}
-.d{font-size:15px}.bad .d{color:var(--bad);font-weight:600}
-.start{display:block;width:100%;margin:18px 0 6px;padding:12px 8px 14px;border:0;border-radius:30px;font:inherit;font-weight:600;font-size:21px;color:#fff4d6;cursor:pointer;
-background:linear-gradient(#f2674b,var(--red));box-shadow:0 8px 0 #9c2a17,0 14px 18px var(--sh),inset 0 4px 0 rgba(255,255,255,.35);text-shadow:0 2px 0 #9c2a17}
-.start:active{transform:translateY(6px);box-shadow:0 2px 0 #9c2a17}
-.start svg{width:110px;height:73px;display:block;margin:0 auto 2px}
-.steam{display:flex;justify-content:center;gap:16px;height:18px}
-.steam i{width:10px;height:10px;border-radius:50%;background:#fff4d6;opacity:0}
-.go .steam i{animation:up 1s ease-out 2}.go .steam i:nth-child(2){animation-delay:.2s}.go .steam i:nth-child(3){animation-delay:.4s}
-@keyframes up{0%{opacity:.9;transform:translateY(14px) scale(.6)}100%{opacity:0;transform:translateY(-10px) scale(1.3)}}
-@media (prefers-reduced-motion:reduce){.go .steam i{animation:none}.start:active{transform:none}}
-.say{position:relative;background:#fff4d6;color:#4a2a1c;border-radius:22px;padding:12px 14px;margin:14px 0 0;box-shadow:0 6px 0 var(--sh)}
-.say::before{content:"";position:absolute;top:-12px;left:34px;border:12px solid transparent;border-top:0;border-bottom-color:#fff4d6}
-.say h2{font-size:19px;color:var(--red);margin:0 0 4px;font-weight:600}
-.say ul{margin:6px 0 0;padding-left:20px}.tag{color:var(--bad);font-weight:600}
-.app{display:flex;gap:10px;flex-wrap:wrap}
-.app button{flex:1;min-width:150px;font:inherit;font-weight:600;padding:11px 10px;border:0;border-radius:18px;background:var(--amber);color:#4a2a1c;box-shadow:0 5px 0 var(--sh);cursor:pointer}
-.app button:active{transform:translateY(4px);box-shadow:none}
-#st{width:100%;color:var(--muted);font-size:15px;margin:4px 2px 0}
-.note{color:var(--muted);font-size:14px;text-align:center;margin-top:14px}
-.add{display:block;width:100%;margin:0 0 6px;padding:12px;border:0;border-radius:18px;font:inherit;font-weight:600;font-size:18px;background:var(--ok);color:#fff;box-shadow:0 5px 0 var(--sh);cursor:pointer}
-.slot{cursor:pointer}.edit{font-size:14px;color:var(--muted);margin-top:4px}
-dialog{border:0;border-radius:24px;padding:16px;width:min(92vw,420px);background:var(--panel);color:var(--ink);box-shadow:0 8px 0 var(--sh)}
-dialog::backdrop{background:rgba(0,0,0,.5)}dialog h3{margin:0;font-size:21px}
-label{display:block;font-weight:600;margin:12px 0 4px;font-size:15px}
-input,select{width:100%;font:inherit;padding:10px 12px;border-radius:14px;border:3px solid var(--bg);background:var(--bg);color:var(--ink)}
-.row{display:flex;gap:10px}.row>div{flex:1}
-.btns{display:flex;gap:10px;margin-top:18px}
-.btns button{flex:1;font:inherit;font-weight:600;padding:11px 6px;border:0;border-radius:16px;cursor:pointer;box-shadow:0 4px 0 var(--sh)}
-.save{background:var(--ok);color:#fff}.del{background:var(--bad);color:#fff}.cancel{background:var(--bg);color:var(--ink)}
-.bg{position:fixed;inset:0;z-index:-1;overflow:hidden;pointer-events:none;
-background:radial-gradient(ellipse 80% 40% at 50% 0,var(--glow),transparent 70%),repeating-linear-gradient(90deg,rgba(74,42,28,.06) 0 2px,transparent 2px 58px),linear-gradient(var(--w1),var(--w2))}
-.ft{position:absolute;opacity:.2}.ft svg{width:100%;height:100%;display:block}
-.top{position:fixed;left:0;right:0;top:env(safe-area-inset-top,0px);width:100%;height:64px;z-index:-1;pointer-events:none}
-.bulb{animation:tw 2.4s ease-in-out infinite}.bulb:nth-child(odd){animation-delay:1.2s}
-@keyframes tw{50%{opacity:.4}}
-@media (prefers-reduced-motion:reduce){.bulb{animation:none}}
-.cloth{height:64px;margin-top:6px;background:repeating-conic-gradient(var(--red) 0 25%,#fff4d6 0 50%) 0 0/32px 32px;border-top:6px solid var(--ink)}
-.note{background:var(--panel);border-radius:14px;padding:8px 12px}
-.vnav{display:flex;gap:8px;margin-top:14px}
-.vnav button{flex:1;font:inherit;font-weight:600;padding:11px 4px;border:0;border-radius:18px;background:var(--panel);color:var(--ink);box-shadow:0 5px 0 var(--sh);cursor:pointer}
-.vnav button[aria-selected="true"]{background:var(--red);color:#fff4d6}
-.li{display:flex;justify-content:space-between;gap:10px;padding:10px 4px;border-bottom:2px dashed var(--bg);cursor:pointer}
-.li:last-child{border-bottom:0}
-.dh{font-weight:600;color:var(--muted);margin:12px 0 2px;font-size:15px}
-#sug{margin:0;padding-left:20px}#sug li{margin:6px 0}
-.hd{font-size:18px;font-weight:600;margin:20px 4px 2px}
-.dishes,#dishes{display:grid;gap:14px}
-.dish{display:flex;align-items:center;gap:14px;width:100%;text-align:left;border:0;cursor:pointer;font:inherit;color:#4a2a1c;padding:14px 16px;border-radius:34px;
-background:linear-gradient(#ffd36b,#f5a43a);box-shadow:0 8px 0 #b9701a,0 14px 18px var(--sh),inset 0 4px 0 rgba(255,255,255,.55)}
-.dish.top{background:linear-gradient(#ff8a65,#e4472b);color:#fff4d6;padding:18px 18px;box-shadow:0 8px 0 #9c2a17,0 14px 18px var(--sh),inset 0 4px 0 rgba(255,255,255,.4)}
-.dish:active{transform:translateY(6px);box-shadow:0 2px 0 #b9701a}
-.dish .di{flex:none;width:60px;height:60px;border-radius:50%;background:#fff4d6;display:grid;place-items:center;box-shadow:inset 0 -4px 0 rgba(0,0,0,.12)}
-.dish.top .di{width:72px;height:72px}
-.di svg{width:70%;height:70%}
-.dt b{display:block;font-size:20px;font-weight:600;line-height:1.15}.dt i{font-style:normal;font-size:15px;opacity:.9}
-.dt em{display:inline-block;font-style:normal;font-size:13px;font-weight:600;padding:2px 10px;margin-bottom:4px;border-radius:12px;background:rgba(255,255,255,.28)}
-.empty{background:var(--panel);border-radius:24px;padding:16px;box-shadow:0 6px 0 var(--sh);margin-top:14px}
-.say ol{margin:6px 0 0;padding-left:22px}.say li{margin:4px 0}.say .dh{color:#8a6650}
-@media (prefers-reduced-motion:reduce){.dish:active{transform:none}}
-</style>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600&family=Pixelify+Sans:wght@500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
 </head>
 <body>
 <div class="bg" aria-hidden="true"><div id="ft"></div></div>
-<svg class="top" viewBox="0 0 400 64" preserveAspectRatio="xMidYMin slice" aria-hidden="true"><path d="M-10 10H410" stroke="#4a2a1c" stroke-width="3"/><polygon points="14,10 48,10 31,44" fill="#e4472b" stroke="#4a2a1c" stroke-width="2" stroke-linejoin="round"/><polygon points="62,10 96,10 79,44" fill="#f2a33a" stroke="#4a2a1c" stroke-width="2" stroke-linejoin="round"/><polygon points="110,10 144,10 127,44" fill="#2fb5a8" stroke="#4a2a1c" stroke-width="2" stroke-linejoin="round"/><polygon points="158,10 192,10 175,44" fill="#f7d44a" stroke="#4a2a1c" stroke-width="2" stroke-linejoin="round"/><polygon points="206,10 240,10 223,44" fill="#e4472b" stroke="#4a2a1c" stroke-width="2" stroke-linejoin="round"/><polygon points="254,10 288,10 271,44" fill="#f2a33a" stroke="#4a2a1c" stroke-width="2" stroke-linejoin="round"/><polygon points="302,10 336,10 319,44" fill="#2fb5a8" stroke="#4a2a1c" stroke-width="2" stroke-linejoin="round"/><polygon points="350,10 384,10 367,44" fill="#f7d44a" stroke="#4a2a1c" stroke-width="2" stroke-linejoin="round"/><circle class="bulb" cx="38" cy="16" r="5" fill="#fff3a0"/><circle class="bulb" cx="86" cy="16" r="5" fill="#fff3a0"/><circle class="bulb" cx="134" cy="16" r="5" fill="#fff3a0"/><circle class="bulb" cx="182" cy="16" r="5" fill="#fff3a0"/><circle class="bulb" cx="230" cy="16" r="5" fill="#fff3a0"/><circle class="bulb" cx="278" cy="16" r="5" fill="#fff3a0"/><circle class="bulb" cx="326" cy="16" r="5" fill="#fff3a0"/><circle class="bulb" cx="374" cy="16" r="5" fill="#fff3a0"/></svg>
+<svg class="top" viewBox="0 0 400 58" preserveAspectRatio="xMidYMin slice" aria-hidden="true" shape-rendering="crispEdges"><rect x="-10" y="8" width="420" height="4" fill="#3a2016"/><g id="flags"></g></svg>
+
 <div class="wrap">
-  <header class="sign"><h1>Mi legyen<br>a kaja?</h1><p>Nyitva: mindig, amíg van mit főzni</p></header>
+  <header class="sign">
+    <span class="logo l" id="lg1"></span><span class="logo r" id="lg2"></span>
+    <h1>Mi legyen<br>a kaja?</h1>
+    <p>Nyitva: mindig, amíg van mit főzni</p>
+  </header>
   <div class="check" aria-hidden="true"></div>
 
-  <div class="vnav" role="tablist" aria-label="Oldalak">
-    <button role="tab" aria-selected="true" data-v="stock">Raktár</button>
-    <button role="tab" aria-selected="false" data-v="cost">Költség</button>
-    <button role="tab" aria-selected="false" data-v="stat">Statisztika</button>
-  </div>
-  <div id="v-stock">
-  <section class="card" aria-label="Napi költségkeret">
-    <h2>Mai keret</h2>
-    <div id="bt"></div>
-    <div class="bar"><b id="bb" style="width:0%"></b></div>
-  </section>
+  <button class="hh" id="hh" type="button"><span class="ic" id="hhi"></span><span>Kinek főzünk? <b id="hht"></b></span><span class="badge">Módosít</span></button>
 
-  <div class="tabs" role="tablist" aria-label="Hol van az étel?">
-    <button role="tab" aria-selected="true" data-t="fridge">Hűtő</button>
-    <button role="tab" aria-selected="false" data-t="pantry">Spájz</button>
-    <button role="tab" aria-selected="false" data-t="freezer">Fagyasztó</button>
-  </div>
-  <button class="add" id="add">+ Új termék</button>
-  <section class="card" aria-live="polite"><div class="grid" id="grid"></div></section>
-
-  <button class="start" id="go"><span class="steam" aria-hidden="true"><i></i><i></i><i></i></span><span id="bowl"></span>Mit főzzek ebből?</button>
-  <div id="dishes"></div>
-  <section class="say" id="rcp" hidden></section>
-  </div>
-  <div id="v-cost" hidden>
-    <section class="card"><h2>Költségkeret</h2><div id="bsum"></div><div class="app" style="margin-top:12px"><button id="bset">Keret beállítása</button></div></section>
-    <button class="add" id="xadd">+ Új kiadás</button>
-    <section class="card"><h2>Kiadások</h2><div id="xlist"></div></section>
-  </div>
-  <div id="v-stat" hidden>
-    <section class="card"><h2>Ezen a héten</h2><div id="sw"></div></section>
-    <section class="card"><h2>Javaslatok</h2><ul id="sug"></ul></section>
-    <button class="add" id="madd">+ Mit ettem?</button>
-    <section class="card"><h2>Étkezési napló</h2><div id="mlist"></div></section>
-  </div>
-
-  <section class="card">
-    <h2>Az app</h2>
-    <div class="app">
-      <button id="upd">Frissítés keresése</button>
-      <button id="inst">Letöltés a telefonra</button>
-      <div id="st">Verzió 0.6</div>
+  <!-- RAKTÁR -->
+  <main id="v-stock">
+    <section class="card" aria-label="Napi költségkeret">
+      <h2><span class="ic" id="i-coin"></span>Mai keret</h2>
+      <div id="bt"></div>
+      <div class="bar"><b id="bb" style="width:0%"></b></div>
+    </section>
+    <div class="tabs" role="tablist" aria-label="Hol van az étel?">
+      <button role="tab" aria-selected="true" data-t="fridge">Hűtő</button>
+      <button role="tab" aria-selected="false" data-t="pantry">Spájz</button>
+      <button role="tab" aria-selected="false" data-t="freezer">Fagyasztó</button>
     </div>
-  </section>
-  <p class="note">Minta-adatokkal készült prototípus.</p>
+    <button class="btn g full" id="add" type="button"><span class="ic" id="i-plus"></span>Új termék a raktárba</button>
+    <section class="card" aria-live="polite"><div class="grid" id="grid"></div></section>
+
+    <button class="start" id="go" type="button"><span class="pot" id="pot"></span>Mit főzzek ebből?<small id="gos"></small></button>
+    <div class="chips" id="dfil" role="group" aria-label="Szűrés"></div>
+    <div id="dishes"></div>
+  </main>
+
+  <!-- RECEPTEK -->
+  <main id="v-rec" hidden>
+    <section class="card">
+      <h2><span class="ic" id="i-book"></span>Receptkönyv</h2>
+      <input id="rq" type="search" placeholder="Keresés: étel vagy hozzávaló neve" autocomplete="off">
+      <div class="chips" id="rcat" role="group" aria-label="Kategória" style="margin-top:10px"></div>
+      <div class="chips" id="rmode" role="group" aria-label="Mit mutasson?"></div>
+    </section>
+    <button class="btn g full" id="radd" type="button"><span class="ic" id="i-pen"></span>Saját recept írása</button>
+    <div class="q" id="rcount" style="margin:10px 2px"></div>
+    <div id="rlist" class="dishes"></div>
+  </main>
+
+  <!-- BOLT -->
+  <main id="v-shop" hidden>
+    <section class="card">
+      <h2><span class="ic" id="i-cart"></span>Árösszehasonlítás</h2>
+      <div class="q small">Becsült átlagárak: Penny, Tesco, Lidl. Tájékoztató jellegűek, a saját blokkod alapján bármelyik átírható.</div>
+      <label for="pq">Termék</label>
+      <input id="pq" type="search" placeholder="Kezdd el írni, pl. tej, csirke, sajt" autocomplete="off">
+      <div class="sugg" id="pqs" role="listbox" hidden></div>
+      <div id="pres"></div>
+    </section>
+    <section class="card">
+      <h2><span class="ic" id="i-cart2"></span>Bevásárlólista</h2>
+      <div class="row">
+        <div style="flex:2"><label for="sn">Mit kell venni?</label><input id="sn" autocomplete="off" placeholder="pl. Tejföl"><div class="sugg" id="sns" role="listbox" hidden></div></div>
+        <div><label for="sq">Mennyi?</label><input id="sq" type="number" step="any" min="0" inputmode="decimal"></div>
+        <div><label for="su">Egység</label><select id="su"></select></div>
+      </div>
+      <button class="btn g full" id="sadd" type="button">+ Listára</button>
+      <div id="slist" style="margin-top:8px"></div>
+      <div id="stot"></div>
+      <div class="btns" id="sbtns"></div>
+    </section>
+  </main>
+
+  <!-- KÖLTSÉG -->
+  <main id="v-cost" hidden>
+    <section class="card"><h2><span class="ic" id="i-coin2"></span>Költségkeret</h2><div id="bsum"></div><div class="btns"><button class="btn" id="bset" type="button">Keret beállítása</button></div></section>
+    <button class="btn g full" id="xadd" type="button">+ Új kiadás</button>
+    <section class="card"><h2>Kiadások</h2><div id="xlist"></div></section>
+  </main>
+
+  <!-- NAPLÓ -->
+  <main id="v-stat" hidden>
+    <section class="card"><h2><span class="ic" id="i-chart"></span>Ezen a héten</h2><div id="sw"></div></section>
+    <section class="card"><h2>Javaslatok</h2><ul id="sug" style="margin:0;padding-left:20px"></ul></section>
+    <button class="btn g full" id="madd" type="button">+ Mit ettünk?</button>
+    <section class="card"><h2>Étkezési napló</h2><div id="mlist"></div></section>
+  </main>
+
+  <!-- BEÁLLÍTÁSOK -->
+  <main id="v-set" hidden>
+    <section class="card">
+      <h2><span class="ic" id="i-heart"></span>Háztartás: kinek készül a terv?</h2>
+      <div class="prow"><div><b>Felnőtt</b><div class="q small">1 teljes adag</div></div><div class="step"><button type="button" data-s="ad" data-d="-1" aria-label="Felnőtt mínusz">−</button><output id="o-ad">2</output><button type="button" data-s="ad" data-d="1" aria-label="Felnőtt plusz">+</button></div></div>
+      <div class="prow"><div><b>Kamasz (12+)</b><div class="q small">1 teljes adag</div></div><div class="step"><button type="button" data-s="te" data-d="-1" aria-label="Kamasz mínusz">−</button><output id="o-te">0</output><button type="button" data-s="te" data-d="1" aria-label="Kamasz plusz">+</button></div></div>
+      <div class="prow"><div><b>Gyerek (3–12)</b><div class="q small">kb. fél adag</div></div><div class="step"><button type="button" data-s="ch" data-d="-1" aria-label="Gyerek mínusz">−</button><output id="o-ch">0</output><button type="button" data-s="ch" data-d="1" aria-label="Gyerek plusz">+</button></div></div>
+      <div class="prow"><div><b>Kisgyerek (1–3)</b><div class="q small">kb. negyed adag</div></div><div class="step"><button type="button" data-s="to" data-d="-1" aria-label="Kisgyerek mínusz">−</button><output id="o-to">0</output><button type="button" data-s="to" data-d="1" aria-label="Kisgyerek plusz">+</button></div></div>
+      <div class="q" id="hsum" style="margin-top:8px"></div>
+    </section>
+    <section class="card">
+      <h2>Ami mindig van otthon</h2>
+      <div class="q small">Ezeket nem kell felvenned a raktárba, a receptek úgy veszik, hogy megvannak.</div>
+      <div class="chips" id="basics" style="flex-wrap:wrap;overflow:visible;margin-top:8px"></div>
+    </section>
+    <section class="card">
+      <h2>Mentés és költöztetés</h2>
+      <div class="q">Az app minden adata (raktár, receptek, lista, napló, kiadások) ezen a telefonon, a böngészőben van. Ha törlöd az appot vagy új telefonra váltasz, előbb mentsd le, és az új helyen töltsd vissza.</div>
+      <div id="bkst" class="warnbox"></div>
+      <div class="btns">
+        <button class="btn g" id="bexp" type="button">Mentés fájlba</button>
+        <button class="btn t" id="bshare" type="button">Megosztás / küldés</button>
+      </div>
+      <div class="btns">
+        <button class="btn" id="bimp" type="button">Visszatöltés fájlból</button>
+        <button class="btn p" id="bcode" type="button">Mentés szövegként</button>
+      </div>
+      <input type="file" id="bfile" accept="application/json,.json,.txt" hidden>
+      <div id="bcodebox" hidden>
+        <label for="bta">Mentési kód (másold ki, vagy illessz be ide egy korábbit)</label>
+        <textarea id="bta" spellcheck="false"></textarea>
+        <div class="btns"><button class="btn p sm" id="bcopy" type="button">Másolás</button><button class="btn sm" id="bpaste" type="button">Visszatöltés ebből a kódból</button></div>
+      </div>
+    </section>
+    <section class="card">
+      <h2><span class="ic" id="i-gear"></span>Az app</h2>
+      <label for="theme">Megjelenés</label>
+      <select id="theme"><option value="auto">Telefon beállítása szerint</option><option value="light">Világos</option><option value="dark">Sötét (éjszakai büfé)</option></select>
+      <div class="btns">
+        <button class="btn" id="upd" type="button">Frissítés keresése</button>
+        <button class="btn" id="inst" type="button">Letöltés a telefonra</button>
+      </div>
+      <div id="st" class="q" style="margin-top:8px"></div>
+      <div class="btns"><button class="btn r sm" id="reset" type="button">Minden adat törlése</button></div>
+    </section>
+  </main>
+
+  <p class="note">Az árak becslések, a receptek tájékoztató jellegűek. Allergiánál mindig nézd meg a címkét.</p>
 </div>
-
 <div class="cloth" aria-hidden="true"></div>
-<dialog id="gd"><form id="gf" onsubmit="return false"><h3 id="gt"></h3><div id="gb"></div>
-<div class="btns"><button type="button" class="save" id="gs">Mentés</button><button type="button" class="del" id="gdl" hidden>Törlés</button><button type="button" class="cancel" id="gc">Mégse</button></div></form></dialog>
-<datalist id="shops"><option value="Lidl"><option value="Aldi"><option value="Spar"><option value="Tesco"><option value="Penny"><option value="CBA"><option value="Coop"><option value="Piac"></datalist>
-<datalist id="meals"></datalist>
-<dialog id="dlg"><form id="f" onsubmit="return false">
-<h3 id="dt">Új termék</h3>
-<label for="fn">Név</label><input id="fn" list="cat" required autocomplete="off" placeholder="pl. Csirkemell"><datalist id="cat"></datalist>
-<div class="row"><div><label for="fq">Mennyiség</label><input id="fq" type="number" step="any" min="0.01" required inputmode="decimal"></div>
-<div><label for="fu">Mértékegység</label><select id="fu"><option>g</option><option>kg</option><option>ml</option><option>dl</option><option>l</option><option>db</option></select></div></div>
-<div class="row"><div><label for="fl">Hol van?</label><select id="fl"><option value="fridge">Hűtő</option><option value="pantry">Spájz</option><option value="freezer">Fagyasztó</option></select></div>
-<div><label for="fe">Lejárat</label><input id="fe" type="date" required></div></div>
-<div class="btns"><button type="button" class="save" id="fs">Mentés</button><button type="button" class="del" id="fd" hidden>Törlés</button><button type="button" class="cancel" id="fc">Mégse</button></div>
-</form></dialog>
-<script>
-var VER="0.6";
-function svg(i,v){return '<svg viewBox="'+(v||"0 0 64 64")+'" aria-hidden="true">'+i+"</svg>"}
-var S={
-egg:svg('<path class="o" d="M9 31C7 18 19 10 32 12s24 8 22 21-12 21-24 20S11 43 9 31z" fill="#fff"/><circle class="o" cx="32" cy="32" r="11" fill="#f7b500"/><circle cx="28" cy="28" r="3.5" fill="#fff3b0"/>'),
-milk:svg('<path class="o" d="M18 17l8-9h12l8 9v42H18z" fill="#fff"/><rect x="19.5" y="31" width="25" height="17" fill="#4aa3e8"/><circle cx="32" cy="39.5" r="5" fill="#fff"/><path class="o" d="M18 17h28" fill="none"/><path d="M24 11h6" stroke="#bfe0ff" stroke-width="3" stroke-linecap="round"/>'),
-cheese:svg('<path class="o" d="M6 42L36 22l22 20z" fill="#ffe27a"/><path class="o" d="M6 42h52v14H6z" fill="#ffc928"/><circle cx="16" cy="49" r="3.2" fill="#e69a00"/><circle cx="32" cy="50" r="4" fill="#e69a00"/><circle cx="48" cy="48" r="2.8" fill="#e69a00"/><circle cx="38" cy="33" r="2.5" fill="#f0b800"/>'),
-carrot:svg('<g transform="rotate(35 32 32)"><path class="o" d="M32 14c-6-8-12-6-14-4M32 14c0-8 0-10 2-12M32 14c6-8 12-6 14-4" fill="none" stroke="#3fae5a" stroke-width="5"/><path class="o" d="M22 14h20c0 20-6 40-10 47-4-7-10-27-10-47z" fill="#ff8a1f"/><path d="M25 26h6M34 36h6M27 45h5" stroke="#d96a00" stroke-width="2.6" stroke-linecap="round"/></g>'),
-tomato:svg('<circle class="o" cx="32" cy="36" r="22" fill="#ee3b2b"/><ellipse cx="22" cy="32" rx="4" ry="8" fill="#fff" opacity=".45" transform="rotate(20 22 32)"/><path class="o" d="M32 13l4 8 8-2-5 7 6 5-9 0-4 8-4-8-9 0 6-5-5-7 8 2z" fill="#3fae5a" stroke-width="2.4"/>'),
-rice:svg('<path class="o" d="M16 36c0-13 7-20 16-20s16 7 16 20z" fill="#fff"/><path class="o" d="M7 35h50c0 14-10 24-25 24S7 49 7 35z" fill="#3b78c4"/><path d="M15 45h34" stroke="#fff" opacity=".6" stroke-width="3" stroke-linecap="round"/>'),
-bowl:svg('<path class="o" d="M8 30h80c0 18-16 30-40 30S8 48 8 30z" fill="#fff4d6"/><path d="M14 38h68c-4 12-16 18-34 18S18 50 14 38z" fill="#e4472b"/><ellipse class="o" cx="48" cy="30" rx="40" ry="8" fill="#f2a33a"/><path d="M18 30q6-6 12 0t12 0 12 0 12 0" fill="none" stroke="#fff1d0" stroke-width="4" stroke-linecap="round"/><circle class="o" cx="66" cy="27" r="7" fill="#fff"/><circle cx="66" cy="27" r="3.4" fill="#f7b500"/><rect class="o" x="28" y="15" width="10" height="14" rx="2" fill="#2e5a3a"/>',"0 0 96 64")
-};
-var KEYS={f:"fridge",p:"pantry",z:"freezer"};
-S.meat=svg('<path class="o" d="M38 8c11 0 18 9 15 19-3 9-12 14-20 11-8-3-10-12-7-19 3-7 6-11 12-11z" fill="#d9784a"/><rect class="o" x="12" y="36" width="8" height="18" rx="4" transform="rotate(40 16 45)" fill="#fff4d6"/><ellipse cx="40" cy="20" rx="6" ry="4" fill="#fff" opacity=".35"/>');
-S.veg=svg('<circle class="o" cx="22" cy="26" r="10" fill="#3fae5a"/><circle class="o" cx="42" cy="26" r="10" fill="#4fc46b"/><circle class="o" cx="32" cy="18" r="10" fill="#3fae5a"/><path class="o" d="M26 30h12l-2 24H28z" fill="#9bd06b"/>');
-S.fruit=svg('<path class="o" d="M32 20c-8-6-22-2-20 16 2 14 12 22 20 18 8 4 18-4 20-18 2-18-12-22-20-16z" fill="#e63b3b"/><path class="o" d="M36 14c4-4 10-3 12-1-2 4-8 5-12 1z" fill="#3fae5a"/><ellipse cx="22" cy="36" rx="3" ry="6" fill="#fff" opacity=".4"/>');
-S.bread=svg('<path class="o" d="M10 30c0-12 10-18 22-18s22 6 22 18c0 4-2 6-4 6v18H14V36c-2 0-4-2-4-6z" fill="#e0a050"/><path d="M24 22v8M32 20v8M40 22v8" stroke="#b8793a" stroke-width="3" stroke-linecap="round"/>');
-S.jar=svg('<rect class="o" x="14" y="20" width="36" height="38" rx="10" fill="#cfe9f5"/><rect class="o" x="18" y="10" width="28" height="12" rx="4" fill="#e4472b"/><rect x="20" y="34" width="24" height="14" rx="4" fill="#f2a33a"/>');
-var CAT="Csirkemell|hus|g|f|2;Csirkecomb|hus|g|f|2;Csirkeszárny|hus|g|f|2;Darált sertéshús|hus|g|f|2;Sertéskaraj|hus|g|f|3;Sertéscomb|hus|g|f|3;Marhahús|hus|g|f|3;Darált marhahús|hus|g|f|2;Pulykamell|hus|g|f|2;Füstölt kolbász|hus|g|f|21;Párizsi|hus|g|f|7;Sonka|hus|g|f|7;Szalonna|hus|g|f|30;Halfilé|hus|g|f|2;Csirkemell (fagyasztott)|fagy|g|z|180;Darált hús (fagyasztott)|fagy|g|z|120;Fagyasztott zöldborsó|fagy|g|z|180;Fagyasztott spenót|fagy|g|z|180;Fagyasztott zöldségkeverék|fagy|g|z|180;Tej|tej|l|f|6;Tejföl|tej|dl|f|10;Tejszín|tej|dl|f|7;Vaj|tej|g|f|45;Sajt|tej|g|f|14;Mozzarella|tej|g|f|10;Joghurt|tej|g|f|10;Túró|tej|g|f|7;Tojás|tej|db|f|21;Sárgarépa|zold|g|f|21;Petrezselyemgyökér|zold|g|f|21;Zellergumó|zold|g|f|21;Burgonya|zold|kg|p|30;Édesburgonya|zold|g|p|21;Vöröshagyma|zold|db|p|30;Fokhagyma|zold|db|p|30;Paradicsom|zold|db|f|7;Paprika|zold|db|f|7;Uborka|zold|db|f|7;Káposzta|zold|g|f|14;Karfiol|zold|db|f|7;Brokkoli|zold|g|f|5;Cukkini|zold|db|f|7;Saláta|zold|db|f|4;Gomba|zold|g|f|5;Spenót|zold|g|f|4;Alma|gyum|db|f|21;Banán|gyum|db|p|5;Citrom|gyum|db|f|21;Narancs|gyum|db|f|14;Szőlő|gyum|g|f|7;Kenyér|pek|db|p|4;Zsemle|pek|db|p|2;Tortilla|pek|db|p|30;Rizs|szaraz|kg|p|360;Tészta|szaraz|g|p|360;Liszt|szaraz|kg|p|180;Cukor|szaraz|kg|p|720;Zsemlemorzsa|szaraz|g|p|180;Zabpehely|szaraz|g|p|180;Bab|szaraz|g|p|360;Lencse|szaraz|g|p|360;Konzerv kukorica|szaraz|db|p|720;Konzerv paradicsom|szaraz|db|p|720;Étolaj|fuszer|l|p|360;Olívaolaj|fuszer|dl|p|360;Ecet|fuszer|dl|p|720;Só|fuszer|kg|p|720;Fekete bors|fuszer|g|p|720;Pirospaprika|fuszer|g|p|360;Kömény|fuszer|g|p|720;Babérlevél|fuszer|g|p|720;Mustár|fuszer|g|f|180;Ketchup|fuszer|g|f|120;Lekvár|szaraz|g|p|365;Méz|szaraz|g|p|720".split(";").map(function(x){var a=x.split("|");return{n:a[0],c:a[1],u:a[2],l:KEYS[a[3]],d:+a[4]}});
-var SP={"Tojás":"egg","Tej":"milk","Sajt":"cheese","Sárgarépa":"carrot","Paradicsom":"tomato","Rizs":"rice"},GC={hus:"meat",tej:"milk",zold:"veg",gyum:"fruit",pek:"bread",szaraz:"jar",fuszer:"jar",fagy:"veg"};
-function $(i){return document.getElementById(i)}
-function esc(s){return String(s).replace(/[&<>"]/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]})}
-function find(n){n=(n||"").trim().toLowerCase();return CAT.filter(function(c){return c.n.toLowerCase()===n})[0]}
-function ico(n){var c=find(n);return SP[n]||(c&&GC[c.c])||"jar"}
-function iso(t){return new Date(t.getTime()-t.getTimezoneOffset()*6e4).toISOString().slice(0,10)}
-function plus(n){var t=new Date();t.setDate(t.getDate()+n);return iso(t)}
-function days(e){return Math.round((new Date(e+"T00:00:00")-new Date(new Date().toDateString()))/864e5)}
-var KEY="kaja.raktar.v1",items=[],tab="fridge",cur=null,armed=false;
-function demo(){return [["Tojás",6,"db","fridge",2],["Tej",1,"l","fridge",1],["Sajt",200,"g","fridge",5],["Sárgarépa",4,"db","fridge",8],["Paradicsom",3,"db","fridge",3],["Rizs",1,"kg","pantry",240]].map(function(a,i){return{id:"d"+i,n:a[0],q:a[1],u:a[2],loc:a[3],exp:plus(a[4])}})}
-function load(){try{var r=localStorage.getItem(KEY);if(r)return JSON.parse(r)}catch(e){}return demo()}
-function save(){try{localStorage.setItem(KEY,JSON.stringify(items))}catch(e){}}
-function cls(d){return d<=1?"bad":d<=4?"warn":"ok"}
-function dtxt(d){return d<0?"lejárt":d===0?"ma lejár":d===1?"holnap lejár":d<30?d+" nap":"hosszú"}
-function nf(q){return String(Math.round(q*100)/100).replace(".",",")}
-function draw(){var a=items.filter(function(i){return i.loc===tab}).sort(function(x,y){return days(x.exp)-days(y.exp)});
-$("grid").innerHTML=a.length?a.map(function(i){var d=days(i.exp),p=Math.max(8,Math.min(Math.max(d,0),7)/7*100);
-return '<div class="slot '+cls(d)+'" data-id="'+i.id+'" tabindex="0" role="button" aria-label="'+esc(i.n)+' szerkesztése"><div class="tile">'+S[ico(i.n)]+'</div><div class="n">'+esc(i.n)+'</div><div class="q">'+nf(i.q)+" "+i.u+'</div><div class="hp"><b style="width:'+p+'%"></b></div><div class="d">'+dtxt(d)+'</div><div class="edit">Szerkesztés</div></div>'}).join(""):'<div class="q">Itt még nincs semmi. Koppints az Új termék gombra.</div>';
-document.querySelectorAll(".tabs button").forEach(function(b){b.setAttribute("aria-selected",b.dataset.t===tab)});drawDishes()}
-document.querySelectorAll(".tabs button").forEach(function(b){b.onclick=function(){tab=b.dataset.t;draw()}});
-$("grid").onclick=function(e){var s=e.target.closest(".slot");if(s)openDlg(s.dataset.id)};
-$("grid").onkeydown=function(e){var s=e.target.closest(".slot");if(s&&e.key==="Enter")openDlg(s.dataset.id)};
-$("cat").innerHTML=CAT.map(function(c){return '<option value="'+c.n+'">'}).join("");
-function openDlg(id){var d=$("dlg");cur=id?items.filter(function(x){return x.id===id})[0]:null;armed=false;
-$("dt").textContent=cur?"Termék szerkesztése":"Új termék";
-$("fn").value=cur?cur.n:"";$("fq").value=cur?cur.q:"";$("fu").value=cur?cur.u:"g";$("fl").value=cur?cur.loc:tab;$("fe").value=cur?cur.exp:plus(7);
-$("fd").hidden=!cur;$("fd").textContent="Törlés";d.showModal()}
-$("add").onclick=function(){openDlg(null)};
-$("fn").oninput=function(){var c=find(this.value);if(c&&!cur){$("fu").value=c.u;$("fl").value=c.l;$("fe").value=plus(c.d)}};
-$("fs").onclick=function(){if(!$("f").reportValidity())return;
-var o={n:$("fn").value.trim(),q:parseFloat($("fq").value),u:$("fu").value,loc:$("fl").value,exp:$("fe").value};
-if(cur){Object.assign(cur,o)}else{o.id="i"+Date.now()+Math.floor(Math.random()*1e3);items.push(o)}
-tab=o.loc;save();$("dlg").close();draw()};
-$("fd").onclick=function(){if(!armed){armed=true;this.textContent="Biztosan törlöd?";return}items=items.filter(function(x){return x!==cur});save();$("dlg").close();draw()};
-$("fc").onclick=function(){$("dlg").close()};
-$("bowl").innerHTML=S.bowl;
-var RECIPES=[{"id":"huh-001","nev":"Marhahúsleves cérnametélttel","cat":"leves","adag":4,"ido_perc":170,"hozzavalok":[{"nev":"csontos marhaleveshús","menny":600,"egyseg":"g","k":["Marhahús"]},{"nev":"víz","menny":2.5,"egyseg":"l","k":[],"f":1},{"nev":"sárgarépa","menny":200,"egyseg":"g","k":["Sárgarépa"]},{"nev":"petrezselyemgyökér","menny":100,"egyseg":"g","k":["Petrezselyemgyökér"]},{"nev":"zellergumó","menny":80,"egyseg":"g","k":["Zellergumó"]},{"nev":"vöröshagyma","menny":1,"egyseg":"db","k":["Vöröshagyma"]},{"nev":"egész fekete bors","menny":6,"egyseg":"db","k":["Fekete bors"],"o":1},{"nev":"só","menny":2,"egyseg":"tk","k":["Só"],"o":1},{"nev":"cérnametélt","menny":100,"egyseg":"g","k":["Tészta"]}],"lepesek":["A húst hideg, sózatlan vízbe tesszük, lassan felforraljuk, és a habját folyamatosan leszedjük.","Hozzáadjuk a megtisztított zöldségeket és a borsot, majd takaréklángon 2-2,5 órán át főzzük.","A húst és a zöldségeket kivesszük, a levest sózzuk, és leszűrjük.","A cérnametéltet külön, sós vízben megfőzzük, majd a leves tányérjába tesszük."],"kritikus":["A leves ne forrjon hevesen, különben zavaros lesz.","A tésztát külön főzzük, így a leves tiszta marad."],"allergenek":["glutén","zeller","tojás (a tészta miatt)"],"talalas":"A főtt húst és a répát külön tálon, mártással vagy tormával is lehet adni."},{"id":"huh-002","nev":"Gulyásleves csipetkével","cat":"leves","adag":4,"ido_perc":140,"hozzavalok":[{"nev":"marhahús (lábszár vagy lapocka), kockázva","menny":500,"egyseg":"g","k":["Marhahús"]},{"nev":"étolaj vagy zsír","menny":3,"egyseg":"ek","k":["Étolaj","Szalonna"]},{"nev":"vöröshagyma","menny":250,"egyseg":"g","k":["Vöröshagyma"]},{"nev":"édes pirospaprika","menny":2,"egyseg":"ek","k":["Pirospaprika"]},{"nev":"őrölt kömény","menny":1,"egyseg":"tk","k":["Kömény"],"o":1},{"nev":"fokhagyma","menny":2,"egyseg":"db","k":["Fokhagyma"],"o":1},{"nev":"burgonya","menny":400,"egyseg":"g","k":["Burgonya"]},{"nev":"sárgarépa","menny":150,"egyseg":"g","k":["Sárgarépa"]},{"nev":"zöldpaprika","menny":1,"egyseg":"db","k":["Paprika"]},{"nev":"paradicsom","menny":1,"egyseg":"db","k":["Paradicsom"]},{"nev":"víz","menny":1.5,"egyseg":"l","k":[],"f":1},{"nev":"só","menny":2,"egyseg":"tk","k":["Só"],"o":1},{"nev":"búzaliszt (csipetkéhez)","menny":100,"egyseg":"g","k":["Liszt"]},{"nev":"tojás (csipetkéhez)","menny":1,"egyseg":"db","k":["Tojás"]}],"lepesek":["A felkockázott hagymát az olajon üvegesre pirítjuk.","A tűzről levéve belekeverjük a pirospaprikát, majd azonnal hozzáadjuk a húst, és fehéresre pároljuk.","Hozzáadjuk a köményt, a zúzott fokhagymát és a sót, felöntjük kevés vízzel, és fedő alatt puhítjuk.","Amikor a hús félpuha, jön a felkockázott répa, paprika, paradicsom és a maradék víz.","20 perc múlva hozzáadjuk a burgonyát, és puhára főzzük.","A tojásból, lisztből és csipet sóból tésztát gyúrunk, csipetkét szaggatunk, és a levesben 5 percig főzzük."],"kritikus":["A pirospaprikát csak tűzről levéve keverjük a hagymához, mert megégve keserű lesz.","A húsnak puhának kell lennie, mielőtt a burgonya bekerül."],"allergenek":["glutén","tojás"],"talalas":"Friss kenyérrel, erős paprikával kínáljuk."},{"id":"huh-003","nev":"Paprikás csirke","cat":"hus","adag":4,"ido_perc":55,"hozzavalok":[{"nev":"csirkecomb (alsó- és felsőcomb, bőrös)","menny":800,"egyseg":"g","k":["Csirkecomb"]},{"nev":"vöröshagyma","menny":250,"egyseg":"g","k":["Vöröshagyma"]},{"nev":"étolaj","menny":3,"egyseg":"ek","k":["Étolaj"]},{"nev":"édes pirospaprika","menny":2,"egyseg":"ek","k":["Pirospaprika"]},{"nev":"zöldpaprika","menny":1,"egyseg":"db","k":["Paprika"],"o":1},{"nev":"paradicsom","menny":1,"egyseg":"db","k":["Paradicsom"],"o":1},{"nev":"só","menny":1.5,"egyseg":"tk","k":["Só"],"o":1},{"nev":"víz","menny":300,"egyseg":"ml","k":[],"f":1},{"nev":"tejföl","menny":2,"egyseg":"dl","k":["Tejföl"]},{"nev":"búzaliszt","menny":1,"egyseg":"ek","k":["Liszt"],"o":1}],"lepesek":["A hagymát az olajon üvegesre pároljuk.","Levesszük a tűzről, belekeverjük a pirospaprikát, majd rárakjuk a sózott csirkét.","Hozzáadjuk a felcsíkozott paprikát és paradicsomot, felöntjük a vízzel, és fedő alatt 35-40 percig főzzük.","A tejfölt elkeverjük a liszttel és kevés főzőlével, majd a szaftba keverjük, és még 3-4 percig forraljuk."],"kritikus":["A csirke belső hőmérséklete a legvastagabb résznél legalább 75 °C legyen.","A tejfölös keveréket már ne forraljuk sokáig, hogy ne csapódjon ki."],"allergenek":["tej","glutén"],"talalas":"Nokedlivel és uborkasalátával."},{"id":"huh-004","nev":"Nokedli","cat":"teszta","adag":4,"ido_perc":25,"hozzavalok":[{"nev":"finomliszt","menny":300,"egyseg":"g","k":["Liszt"]},{"nev":"tojás","menny":2,"egyseg":"db","k":["Tojás"]},{"nev":"víz","menny":150,"egyseg":"ml","k":[],"f":1},{"nev":"só (a tésztába)","menny":1,"egyseg":"tk","k":["Só"],"o":1},{"nev":"víz (a főzéshez)","menny":2,"egyseg":"l","k":[],"f":1},{"nev":"só (a főzővízbe)","menny":2,"egyseg":"tk","k":["Só"],"o":1}],"lepesek":["A lisztet a tojással, a vízzel és a sóval sűrű, habosra kevert tésztává verjük.","A tésztát 10 percig pihentetjük.","A forró, sós vízbe nokedliszaggatóval vagy kis adagokban szaggatjuk.","Amikor a nokedli feljön a víz tetejére, még 1-2 percig főzzük, majd leszűrjük."],"kritikus":["A tészta legyen elég laza, ne kemény, különben a nokedli nehéz lesz."],"allergenek":["glutén","tojás"],"talalas":"Paprikás, pörkölt vagy gulyás mellé."},{"id":"huh-005","nev":"Lecsó kolbásszal","cat":"zoldseg","adag":4,"ido_perc":40,"hozzavalok":[{"nev":"friss, húsos paprika (TV vagy kaliforniai)","menny":600,"egyseg":"g","k":["Paprika"]},{"nev":"érett paradicsom","menny":500,"egyseg":"g","k":["Paradicsom"]},{"nev":"vöröshagyma","menny":200,"egyseg":"g","k":["Vöröshagyma"]},{"nev":"étolaj","menny":3,"egyseg":"ek","k":["Étolaj"]},{"nev":"füstölt kolbász","menny":150,"egyseg":"g","k":["Füstölt kolbász"],"o":1},{"nev":"édes pirospaprika","menny":1,"egyseg":"tk","k":["Pirospaprika"],"o":1},{"nev":"só","menny":1,"egyseg":"tk","k":["Só"],"o":1}],"lepesek":["A hagymát az olajon megpároljuk, majd levesszük a tűzről, és belekeverjük a pirospaprikát.","Hozzáadjuk a karikára vágott kolbászt, és 3 percig pirítjuk.","Jön a felszeletelt paprika, 10 perc múlva a felkockázott paradicsom és a só.","Fedő nélkül, kis lángon 15-20 percig főzzük, amíg a leve besűrűsödik."],"kritikus":["A paprika maradjon harapható, ne főzzük péppé."],"allergenek":[],"talalas":"Friss kenyérrel, vagy rizzsel. Ha szeretnéd, 4 tojást is ráüthetsz az utolsó 5 percben."},{"id":"huh-006","nev":"Rántott sertésszelet","cat":"hus","adag":4,"ido_perc":35,"hozzavalok":[{"nev":"sertéskaraj (kb. 1 cm vastag szeletek)","menny":600,"egyseg":"g","k":["Sertéskaraj"]},{"nev":"só","menny":1,"egyseg":"tk","k":["Só"],"o":1},{"nev":"búzaliszt","menny":100,"egyseg":"g","k":["Liszt"]},{"nev":"tojás","menny":2,"egyseg":"db","k":["Tojás"]},{"nev":"zsemlemorzsa","menny":120,"egyseg":"g","k":["Zsemlemorzsa"]},{"nev":"étolaj a sütéshez","menny":5,"egyseg":"dl","k":["Étolaj"]}],"lepesek":["A húst enyhén kiverjük, és mindkét oldalán megsózzuk.","A szeleteket sorban lisztbe, felvert tojásba, majd zsemlemorzsába forgatjuk, a morzsát finoman rányomjuk.","Az olajat 170-180 °C-ra hevítjük, a szeleteket 3-4 perc alatt, megfordítva aranybarnára sütjük.","Papírtörlőn lecsepegtetjük."],"kritikus":["A hús közepe is süljön át, nem maradhat benne rózsaszín rész.","Az olaj ne legyen túl forró, mert a panír megég, mielőtt a hús megsül."],"allergenek":["glutén","tojás"],"talalas":"Citromkarikával, petrezselymes burgonyával vagy rizzsel."},{"id":"huh-007","nev":"Rakott krumpli","cat":"egyeb","adag":4,"ido_perc":90,"hozzavalok":[{"nev":"burgonya","menny":1,"egyseg":"kg","k":["Burgonya"]},{"nev":"tojás","menny":6,"egyseg":"db","k":["Tojás"]},{"nev":"füstölt kolbász","menny":200,"egyseg":"g","k":["Füstölt kolbász"]},{"nev":"tejföl","menny":3,"egyseg":"dl","k":["Tejföl"]},{"nev":"vaj a tepsi kikenéséhez","menny":20,"egyseg":"g","k":["Vaj"],"o":1},{"nev":"só","menny":2,"egyseg":"tk","k":["Só"],"o":1}],"lepesek":["A burgonyát héjában puhára főzzük, majd meghámozzuk és karikára vágjuk.","A tojásokat 10 percig keményre főzzük, és karikázzuk. A kolbászt is felszeleteljük.","A kivajazott tepsibe rétegezünk: burgonya, sós tojás, kolbász, tejföl, és így tovább. A tetejére burgonya és tejföl kerül.","180 °C-ra előmelegített sütőben 30-35 percig sütjük, amíg a teteje aranybarna."],"kritikus":["A burgonya legyen főtt, de ne széteső.","A tojásnak teljesen megfőttnek kell lennie."],"allergenek":["tej","tojás"],"talalas":"Savanyúsággal."},{"id":"huh-008","nev":"Palacsinta","cat":"desszert","adag":4,"ido_perc":50,"hozzavalok":[{"nev":"búzaliszt","menny":250,"egyseg":"g","k":["Liszt"]},{"nev":"tej","menny":4,"egyseg":"dl","k":["Tej"]},{"nev":"szódavíz","menny":1,"egyseg":"dl","k":[],"o":1},{"nev":"tojás","menny":2,"egyseg":"db","k":["Tojás"]},{"nev":"étolaj a tésztába","menny":1,"egyseg":"ek","k":["Étolaj"],"o":1},{"nev":"porcukor vagy kristálycukor","menny":1,"egyseg":"ek","k":["Cukor"],"o":1},{"nev":"só","menny":1,"egyseg":"csipet","k":["Só"],"o":1},{"nev":"étolaj a sütéshez","menny":2,"egyseg":"ek","k":["Étolaj"]},{"nev":"lekvár a töltéshez","menny":200,"egyseg":"g","k":["Lekvár"],"o":1}],"lepesek":["A tojást a tejjel, a szódavízzel, az olajjal, a cukorral és a sóval simára keverjük, majd fokozatosan hozzáadjuk a lisztet.","A tésztát 20-30 percig pihentetjük, a végén szükség esetén kevés tejjel hígítjuk.","Forró, enyhén olajozott serpenyőben vékonyra sütjük mindkét oldalon.","Lekvárral megkenjük, összehajtjuk, és szükség esetén porcukorral meghintjük."],"kritikus":["A serpenyő legyen jól felhevítve, de ne füstöljön."],"allergenek":["glutén","tej","tojás"],"talalas":"Porcukorral, lekvárral vagy darált dióval."},{"id":"mini-01","nev":"Vajas kenyér","cat":"egyeb","adag":2,"ido_perc":3,"mini":1,"hozzavalok":[{"nev":"kenyér","k":["Kenyér"]},{"nev":"vaj","k":["Vaj"]},{"nev":"paradicsom vagy uborka","k":["Paradicsom","Uborka"],"o":1}],"lepesek":["A kenyeret szeletekre vágjuk.","Vékonyan megkenjük vajjal, kedvedre paradicsommal vagy uborkával kínáljuk."],"kritikus":[],"allergenek":[],"talalas":""},{"id":"mini-02","nev":"Sajtos kenyér","cat":"egyeb","adag":2,"ido_perc":3,"mini":1,"hozzavalok":[{"nev":"kenyér","k":["Kenyér"]},{"nev":"sajt","k":["Sajt"]},{"nev":"vaj","k":["Vaj"],"o":1}],"lepesek":["A kenyeret megkenjük (ha van, vajjal), és sajtszeletekkel megrakjuk."],"kritikus":[],"allergenek":[],"talalas":""},{"id":"mini-03","nev":"Sonkás kenyér","cat":"egyeb","adag":2,"ido_perc":3,"mini":1,"hozzavalok":[{"nev":"kenyér","k":["Kenyér"]},{"nev":"sonka","k":["Sonka"]},{"nev":"vaj","k":["Vaj"],"o":1}],"lepesek":["A kenyeret megkenjük (ha van, vajjal), és sonkával megrakjuk."],"kritikus":[],"allergenek":[],"talalas":""},{"id":"mini-04","nev":"Szalonnás kenyér","cat":"egyeb","adag":2,"ido_perc":5,"mini":1,"hozzavalok":[{"nev":"kenyér","k":["Kenyér"]},{"nev":"szalonna","k":["Szalonna"]},{"nev":"vöröshagyma","k":["Vöröshagyma"],"o":1}],"lepesek":["A szalonnát vékonyra szeleteljük.","A kenyérre rakjuk, hagymával kínáljuk."],"kritikus":[],"allergenek":[],"talalas":""},{"id":"mini-05","nev":"Mézes kenyér","cat":"egyeb","adag":2,"ido_perc":3,"mini":1,"hozzavalok":[{"nev":"kenyér","k":["Kenyér"]},{"nev":"méz","k":["Méz"]},{"nev":"vaj","k":["Vaj"],"o":1}],"lepesek":["A kenyeret megkenjük (ha van, vajjal), majd mézzel meglocsoljuk."],"kritikus":[],"allergenek":[],"talalas":""},{"id":"mini-06","nev":"Lekváros kenyér","cat":"egyeb","adag":2,"ido_perc":3,"mini":1,"hozzavalok":[{"nev":"kenyér","k":["Kenyér"]},{"nev":"lekvár","k":["Lekvár"]},{"nev":"vaj","k":["Vaj"],"o":1}],"lepesek":["A kenyeret megkenjük (ha van, vajjal), majd lekvárral megkenjük."],"kritikus":[],"allergenek":[],"talalas":""},{"id":"mini-07","nev":"Pirítós","cat":"egyeb","adag":2,"ido_perc":5,"mini":1,"hozzavalok":[{"nev":"kenyér","k":["Kenyér"]}],"lepesek":["A kenyérszeleteket serpenyőben vagy kenyérpirítóban aranybarnára pirítjuk."],"kritikus":[],"allergenek":[],"talalas":""},{"id":"mini-08","nev":"Főtt tojás","cat":"egyeb","adag":2,"ido_perc":10,"mini":1,"hozzavalok":[{"nev":"tojás","k":["Tojás"]}],"lepesek":["A tojást forró vízbe tesszük.","Lágyra 5-6, keményre 10 percig főzzük, hideg vízzel megöblítjük."],"kritikus":[],"allergenek":[],"talalas":""},{"id":"mini-09","nev":"Rántotta","cat":"egyeb","adag":2,"ido_perc":8,"mini":1,"hozzavalok":[{"nev":"tojás","k":["Tojás"]},{"nev":"olaj vagy vaj","k":["Étolaj","Vaj"]},{"nev":"kenyér","k":["Kenyér"],"o":1},{"nev":"sajt","k":["Sajt"],"o":1}],"lepesek":["A zsiradékot felhevítjük, a tojást sóval felverjük.","Közepes lángon, kevergetve összeállítjuk. Kenyérrel kínáljuk."],"kritikus":[],"allergenek":[],"talalas":""},{"id":"mini-10","nev":"Tükörtojás","cat":"egyeb","adag":2,"ido_perc":6,"mini":1,"hozzavalok":[{"nev":"tojás","k":["Tojás"]},{"nev":"olaj vagy vaj","k":["Étolaj","Vaj"]},{"nev":"kenyér","k":["Kenyér"],"o":1}],"lepesek":["A zsiradékot felhevítjük, a tojásokat óvatosan beleütjük.","Fedő alatt, kis lángon addig sütjük, amíg a fehérje megdermed."],"kritikus":[],"allergenek":[],"talalas":""},{"id":"mini-11","nev":"Bundás kenyér","cat":"egyeb","adag":2,"ido_perc":10,"mini":1,"hozzavalok":[{"nev":"kenyér","k":["Kenyér"]},{"nev":"tojás","k":["Tojás"]},{"nev":"olaj vagy vaj","k":["Étolaj","Vaj"]},{"nev":"tej","k":["Tej"],"o":1}],"lepesek":["A tojást sóval (és kevés tejjel) felverjük.","A kenyérszeleteket beleforgatjuk, majd forró zsiradékban mindkét oldalán aranybarnára sütjük."],"kritikus":[],"allergenek":[],"talalas":""},{"id":"mini-12","nev":"Héjában főtt burgonya","cat":"egyeb","adag":2,"ido_perc":30,"mini":1,"hozzavalok":[{"nev":"burgonya","k":["Burgonya"]},{"nev":"vaj","k":["Vaj"],"o":1}],"lepesek":["A megmosott burgonyát sós vízben puhára főzzük (kb. 25-30 perc).","Meghámozzuk, ha van, vajjal kínáljuk."],"kritikus":[],"allergenek":[],"talalas":""},{"id":"mini-13","nev":"Sült burgonya","cat":"egyeb","adag":2,"ido_perc":35,"mini":1,"hozzavalok":[{"nev":"burgonya","k":["Burgonya"]},{"nev":"olaj vagy vaj","k":["Étolaj","Vaj"]}],"lepesek":["A burgonyát hámozva szeletekre vagy gerezdekre vágjuk, sózzuk.","Zsiradékkal összeforgatjuk, és 200 °C-os sütőben 25-30 percig sütjük, közben egyszer megforgatjuk."],"kritikus":[],"allergenek":[],"talalas":""},{"id":"mini-14","nev":"Burgonyapüré","cat":"egyeb","adag":2,"ido_perc":35,"mini":1,"hozzavalok":[{"nev":"burgonya","k":["Burgonya"]},{"nev":"tej vagy vaj","k":["Tej","Vaj"]}],"lepesek":["A burgonyát hámozva, sós vízben puhára főzzük, leszűrjük.","Összetörjük, és tejjel vagy vajjal simára keverjük."],"kritikus":[],"allergenek":[],"talalas":""},{"id":"mini-15","nev":"Vajas tészta","cat":"teszta","adag":2,"ido_perc":15,"mini":1,"hozzavalok":[{"nev":"tészta","k":["Tészta"]},{"nev":"vaj","k":["Vaj"]},{"nev":"sajt","k":["Sajt"],"o":1}],"lepesek":["A tésztát sós vízben a csomagoláson írt ideig főzzük, leszűrjük.","Vajjal összeforgatjuk, ha van, sajttal megszórjuk."],"kritikus":[],"allergenek":[],"talalas":""},{"id":"mini-16","nev":"Sajtos tészta","cat":"teszta","adag":2,"ido_perc":15,"mini":1,"hozzavalok":[{"nev":"tészta","k":["Tészta"]},{"nev":"sajt","k":["Sajt"]},{"nev":"vaj","k":["Vaj"],"o":1}],"lepesek":["A tésztát sós vízben megfőzzük, leszűrjük.","Forrón sajttal (és ha van, vajjal) összeforgatjuk."],"kritikus":[],"allergenek":[],"talalas":""},{"id":"mini-17","nev":"Főtt tészta","cat":"teszta","adag":2,"ido_perc":12,"mini":1,"hozzavalok":[{"nev":"tészta","k":["Tészta"]}],"lepesek":["A tésztát bő, sós vízben a csomagoláson írt ideig főzzük, majd leszűrjük."],"kritikus":[],"allergenek":[],"talalas":""},{"id":"mini-18","nev":"Túrós tészta","cat":"teszta","adag":2,"ido_perc":15,"mini":1,"hozzavalok":[{"nev":"tészta","k":["Tészta"]},{"nev":"túró","k":["Túró"]},{"nev":"tejföl vagy cukor","k":["Tejföl","Cukor"],"o":1}],"lepesek":["A tésztát sós vízben megfőzzük, leszűrjük.","Összekeverjük a túróval, tejföllel vagy cukorral kínáljuk."],"kritikus":[],"allergenek":[],"talalas":""},{"id":"mini-19","nev":"Párolt rizs","cat":"teszta","adag":2,"ido_perc":20,"mini":1,"hozzavalok":[{"nev":"rizs","k":["Rizs"]},{"nev":"vaj vagy olaj","k":["Vaj","Étolaj"],"o":1}],"lepesek":["A rizst átmossuk, kevés zsiradékon megforgatjuk.","Kétszeres mennyiségű forró vízzel és egy csipet sóval fedő alatt kb. 15 percig főzzük."],"kritikus":[],"allergenek":[],"talalas":""},{"id":"mini-20","nev":"Tejberizs","cat":"desszert","adag":2,"ido_perc":30,"mini":1,"hozzavalok":[{"nev":"rizs","k":["Rizs"]},{"nev":"tej","k":["Tej"]},{"nev":"cukor","k":["Cukor"],"o":1},{"nev":"vaj","k":["Vaj"],"o":1}],"lepesek":["A rizst a tejben lassan, kevergetve, kis lángon puhára főzzük (kb. 25 perc).","Cukorral és vajjal ízesítjük."],"kritikus":[],"allergenek":[],"talalas":""},{"id":"mini-21","nev":"Zabkása","cat":"egyeb","adag":2,"ido_perc":10,"mini":1,"hozzavalok":[{"nev":"zabpehely","k":["Zabpehely"]},{"nev":"tej","k":["Tej"]},{"nev":"méz vagy cukor","k":["Méz","Cukor"],"o":1}],"lepesek":["A zabpelyhet a tejjel kis lángon 5-6 percig főzzük, közben kevergetjük.","Mézzel vagy cukorral ízesítjük."],"kritikus":[],"allergenek":[],"talalas":""},{"id":"mini-22","nev":"Paradicsomsaláta","cat":"zoldseg","adag":2,"ido_perc":8,"mini":1,"hozzavalok":[{"nev":"paradicsom","k":["Paradicsom"]},{"nev":"vöröshagyma","k":["Vöröshagyma"],"o":1},{"nev":"olaj vagy ecet","k":["Étolaj","Ecet"],"o":1}],"lepesek":["A paradicsomot felszeleteljük, megsózzuk.","Ha van, hagymával, olajjal vagy ecettel meglocsoljuk."],"kritikus":[],"allergenek":[],"talalas":""},{"id":"mini-23","nev":"Uborkasaláta","cat":"zoldseg","adag":2,"ido_perc":10,"mini":1,"hozzavalok":[{"nev":"uborka","k":["Uborka"]},{"nev":"ecet","k":["Ecet"],"o":1},{"nev":"fokhagyma","k":["Fokhagyma"],"o":1}],"lepesek":["Az uborkát vékonyra szeleteljük, megsózzuk, 5 percig állni hagyjuk, kinyomkodjuk.","Ha van, ecettel és fokhagymával ízesítjük."],"kritikus":[],"allergenek":[],"talalas":""},{"id":"mini-24","nev":"Nyers zöldség","cat":"zoldseg","adag":2,"ido_perc":5,"mini":1,"hozzavalok":[{"nev":"répa, paprika vagy uborka","k":["Sárgarépa","Paprika","Uborka"]}],"lepesek":["A zöldséget megmossuk, csíkokra vágjuk, és nyersen fogyasztjuk."],"kritikus":[],"allergenek":[],"talalas":""},{"id":"mini-25","nev":"Friss gyümölcs","cat":"desszert","adag":2,"ido_perc":2,"mini":1,"hozzavalok":[{"nev":"alma, banán, narancs vagy szőlő","k":["Alma","Banán","Narancs","Szőlő"]}],"lepesek":["A gyümölcsöt megmossuk (szükség szerint meghámozzuk), és fogyasztjuk."],"kritikus":[],"allergenek":[],"talalas":""},{"id":"mini-26","nev":"Sonkás-sajtos melegszendvics","cat":"egyeb","adag":2,"ido_perc":10,"mini":1,"hozzavalok":[{"nev":"kenyér","k":["Kenyér"]},{"nev":"sonka","k":["Sonka"]},{"nev":"sajt","k":["Sajt"]},{"nev":"vaj","k":["Vaj"],"o":1}],"lepesek":["A kenyérre sonkát és sajtot rakunk, a tetejét lefedjük.","Serpenyőben vagy szendvicssütőben, kis lángon mindkét oldalát megpirítjuk, amíg a sajt megolvad."],"kritikus":[],"allergenek":[],"talalas":""}];
-var BASE={g:["g",1],dkg:["g",10],kg:["g",1000],ml:["ml",1],cl:["ml",10],dl:["ml",100],l:["ml",1000],ek:["ml",15],tk:["ml",5],db:["db",1],csipet:["db",0]};
-function stockOf(n){return items.filter(function(i){return i.n===n&&days(i.exp)>=0})}
-function have(n,bt){var l=stockOf(n);if(!l.length)return 0;var s=0,mis=false;l.forEach(function(i){var b=BASE[i.u];if(bt&&b[0]===bt)s+=i.q*b[1];else mis=true});return s>0?s:(mis?Infinity:0)}
-function check(r){var ratio=Infinity,use=[],miss=[],sc=0,rq=0;
-r.hozzavalok.forEach(function(h){if(h.f)return;var key=null,hv=0,bt=h.menny?BASE[h.egyseg][0]:null;
-for(var j=0;j<h.k.length&&!key;j++){hv=have(h.k[j],bt);if(hv>0)key=h.k[j]}
-if(!key){if(!h.o)miss.push(h.nev);return}
-var need=h.menny?h.menny*BASE[h.egyseg][1]:0;
-if(!h.o){rq++;if(need>0&&isFinite(hv))ratio=Math.min(ratio,hv/need)}
-var dd=Math.min.apply(null,stockOf(key).map(function(i){return days(i.exp)}));
-use.push({key:key,h:h,need:need,bt:bt,dd:dd});sc+=10-Math.min(dd,9)+3});
-var ad=Math.max(1,Math.floor(Math.min(ratio===Infinity?r.adag:ratio*r.adag,r.adag)*2)/2);
-return{r:r,ok:!miss.length&&rq>0&&ratio>=.25,miss:miss,use:use,ratio:ratio,sc:sc,ad:ad}}
-function feas(){return RECIPES.map(check).filter(function(c){return c.ok}).sort(function(x,y){return y.sc-x.sc})}
-function live(){return items.filter(function(i){return days(i.exp)>=0})}
-function emptyMsg(){if(!live().length)return "Üres a raktár (vagy minden lejárt), így most nincs miből főzni. Vegyél fel alapanyagot az Új termék gombbal.";
-var nr=RECIPES.map(check).filter(function(c){return c.use.length&&c.miss.length===1}).sort(function(x,y){return y.sc-x.sc})[0];
-return "Ezekből az alapanyagokból még nem készíthető étel."+(nr?" Már csak ez hiányzik ehhez: "+nr.r.nev+": "+nr.miss[0]+".":" Tegyél még hozzá egy-két alapanyagot.")}
-function drawDishes(){var f=feas(),el=$("dishes");
-if(!f.length){el.innerHTML='<div class="empty">'+esc(emptyMsg())+"</div>";return}
-el.innerHTML='<h2 class="hd">Ezeket főzheted most ('+f.length+")</h2>"+f.map(function(c,i){var u=c.use[0],dd=Math.min.apply(null,c.use.map(function(x){return x.dd}));
-return '<button class="dish'+(i?"":" top")+'" data-id="'+c.r.id+'"><span class="di">'+S[ico(u.key)]+'</span><span class="dt">'+(i?"":"<em>Ma ezt ajánlom</em>")+"<b>"+esc(c.r.nev)+"</b><i>"+c.r.ido_perc+" perc, kb. "+nf(c.ad)+" adag"+(dd<=2?", hamar lejár":"")+"</i></span></button>"}).join("")}
-$("dishes").onclick=function(e){var b=e.target.closest(".dish");if(b)showCard(b.dataset.id)};
-function showCard(id){var r=RECIPES.filter(function(x){return x.id===id})[0],c=check(r),el=$("rcp");
-if(!c.ok){el.innerHTML="<h2>Ehhez már nincs elég alapanyag.</h2>";el.hidden=false;return}
-var f=c.ad/r.adag;
-el.innerHTML="<h2>Egy adag "+esc(r.nev)+" a pultra!</h2><div>"+r.ido_perc+" perc, kb. "+nf(c.ad)+" adag</div><div class=\"dh\">Hozzávalók</div><ul>"+
-r.hozzavalok.map(function(h){var u=c.use.filter(function(x){return x.h===h})[0],q=h.menny?" – "+nf(Math.round(h.menny*f*10)/10)+" "+h.egyseg:"";
-return "<li>"+esc(h.nev)+q+(h.o&&!u?' <span class="tag">(nincs otthon, nélküle is jó)</span>':"")+(u&&u.dd<=2?' <span class="tag">(hamar lejár)</span>':"")+"</li>"}).join("")+"</ul>"+
-'<div class="dh">Elkészítés</div><ol>'+r.lepesek.map(function(s){return "<li>"+esc(s)+"</li>"}).join("")+"</ol>"+
-(r.kritikus.length?'<div class="dh">Figyelj erre</div><ul>'+r.kritikus.map(function(s){return "<li>"+esc(s)+"</li>"}).join("")+"</ul>":"")+
-(r.allergenek.length?'<div class="q" style="margin-top:8px">Allergének: '+esc(r.allergenek.join(", "))+"</div>":"")+
-'<button class="add" id="cooked" style="margin-top:12px">Ezt főztem</button><div id="cmsg" class="q"></div>';
-$("cooked").onclick=function(){cook(r,c)};el.hidden=false;
-if(el.scrollIntoView)el.scrollIntoView({block:"start"})}
-function cook(r,c){var f=c.ad/r.adag,out=[];
-meals.push({id:"m"+Date.now(),n:r.nev,date:plus(0),type:new Date().getHours()<16?"ebed":"vacsora",cat:r.cat});sv(MK,meals);
-if(!r.mini)c.use.forEach(function(u){if(!(u.need>0))return;var left=u.need*f,tot=left;
-stockOf(u.key).filter(function(i){return BASE[i.u][0]===u.bt}).sort(function(x,y){return x.exp<y.exp?-1:1}).forEach(function(i){if(left<=0)return;var hv=i.q*BASE[i.u][1],t=Math.min(hv,left);i.q=Math.round((hv-t)/BASE[i.u][1]*100)/100;left-=t});
-out.push(u.key+": "+nf(Math.round((tot-Math.max(left,0))*10)/10)+" "+u.bt)});
-items=items.filter(function(i){return i.q>0.0001});save();draw();refresh();
-$("rcp").innerHTML="<h2>Jó étvágyat!</h2><div>Beírtam az étkezési naplóba: "+esc(r.nev)+".</div>"+(r.mini?'<div class="q">Kis adag, ezért a raktárt nem módosítottam. Ha valami elfogyott, szerkeszd a termék mennyiségét.</div>':'<div class="q">Levontam a raktárból: '+esc(out.join(", "))+"</div>")}
-$("go").onclick=function(){var el=this,f=feas();el.classList.remove("go");void el.offsetWidth;el.classList.add("go");
-if(f.length)showCard(f[0].r.id);else{$("rcp").innerHTML="<h2>Most nincs mit főznöm.</h2><div>"+esc(emptyMsg())+"</div>";$("rcp").hidden=false;if($("rcp").scrollIntoView)$("rcp").scrollIntoView({block:"start"})}};
-(function(){var k=["egg","tomato","cheese","carrot","meat","bread","fruit","veg","milk","jar","rice"],o="",s=7;
-function r(){s=(s*9301+49297)%233280;return s/233280}
-for(var y=0;y<7;y++)for(var x=0;x<4;x++){var n=k[(x*3+y*5)%k.length],z=52+Math.round(r()*34);
-o+='<div class="ft" style="left:'+Math.round(x*25+(y%2?12:2)+r()*6)+'%;top:'+Math.round(y*15+r()*6)+'%;width:'+z+'px;height:'+z+'px;transform:rotate('+Math.round(r()*50-25)+'deg)">'+S[n]+"</div>"}
-$("ft").innerHTML=o})();
-var BK="kaja.keret.v1",XK="kaja.kiadas.v1",MK="kaja.naplo.v1";
-function ld(k,d){try{var r=localStorage.getItem(k);if(r)return JSON.parse(r)}catch(e){}return d}
-function sv(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}
-var bud=ld(BK,null),exps=ld(XK,[]),meals=ld(MK,[]);
-function ft(n){return Math.round(n).toLocaleString("hu-HU")+" Ft"}
-function wk(){var dw=(new Date().getDay()+6)%7;return[plus(-dw),plus(6-dw)]}
-function sum(a,b){return exps.filter(function(x){return x.date>=a&&x.date<=b}).reduce(function(s,x){return s+x.a},0)}
-function pbar(l,sp,lim){var p=lim>0?Math.min(100,sp/lim*100):0,ov=lim>0&&sp>lim;return '<div style="margin:12px 0 2px">'+l+': <b>'+ft(sp)+'</b>'+(lim>0?" / "+ft(lim):"")+'</div><div class="bar"><b style="width:'+p+'%'+(ov?";background:var(--bad)":"")+'"></b></div>'}
-function gform(title,fields,vals,onSave,onDel){
-var d=$("gd"),armed=false;$("gt").textContent=title;
-$("gb").innerHTML=fields.map(function(f){var v=vals&&vals[f.k]!=null?vals[f.k]:(f.v!=null?f.v:""),inp;
-if(f.t==="note")return '<div class="q" id="g_'+f.k+'" style="margin-top:12px"></div>';
-if(f.t==="select")inp='<select id="g_'+f.k+'">'+f.o.map(function(o){return '<option value="'+o[0]+'"'+(o[0]===v?" selected":"")+">"+o[1]+"</option>"}).join("")+"</select>";
-else inp='<input id="g_'+f.k+'" type="'+f.t+'"'+(f.t==="number"?' step="any" min="0" inputmode="decimal"':"")+(f.list?' list="'+f.list+'"':"")+' value="'+esc(v)+'"'+(f.r?" required":"")+' autocomplete="off">';
-return '<label for="g_'+f.k+'">'+f.l+"</label>"+inp}).join("");
-fields.forEach(function(f){if(f.on)$("g_"+f.k).oninput=function(){f.on(this.value,function(k){return $("g_"+k)})}});
-fields.forEach(function(f){if(f.init)f.init($("g_"+f.k).value,function(k){return $("g_"+k)})});
-$("gdl").hidden=!onDel;$("gdl").textContent="Törlés";
-$("gs").onclick=function(){if(!$("gf").reportValidity())return;var o={};fields.forEach(function(f){if(f.t==="note")return;var v=$("g_"+f.k).value;o[f.k]=f.t==="number"?(parseFloat(v)||0):v});onSave(o);d.close()};
-$("gdl").onclick=function(){if(!armed){armed=true;this.textContent="Biztosan törlöd?";return}onDel();d.close()};
-$("gc").onclick=function(){d.close()};d.showModal()}
-function bcalc(p,a){var d=p==="d"?a:p==="w"?a/7:a*12/365;return{d:Math.round(d),w:Math.round(d*7),m:Math.round(d*365/12)}}
-function bpv(x,g){var r=bcalc(g("p").value,parseFloat(g("a").value)||0);g("pv").textContent="Ez napi "+ft(r.d)+", heti "+ft(r.w)+", havi "+ft(r.m)+"."}
-function bset(){var b=bud||{p:"m",a:""};gform("Költségkeret",[
-{k:"p",l:"Milyen időszakra adod meg?",t:"select",o:[["d","Napi keret"],["w","Heti keret"],["m","Havi keret"]],v:b.p||"m",on:bpv,init:bpv},
-{k:"a",l:"Összeg (Ft)",t:"number",r:1,v:b.a||"",on:bpv},{k:"pv",t:"note"}],
-bud,function(o){var r=bcalc(o.p,o.a);bud={p:o.p,a:o.a,m:r.m,w:r.w,d:r.d};sv(BK,bud);refresh()},
-bud?function(){bud=null;try{localStorage.removeItem(BK)}catch(e){}refresh()}:null)}
-function xform(x){gform(x?"Kiadás szerkesztése":"Új kiadás",[
-{k:"a",l:"Összeg (Ft)",t:"number",r:1,v:x?x.a:""},{k:"n",l:"Mire költöttél?",t:"text",r:1,v:x?x.n:""},
-{k:"shop",l:"Bolt",t:"text",list:"shops",v:x?x.shop:""},{k:"date",l:"Dátum",t:"date",r:1,v:x?x.date:plus(0)}],
-x,function(o){if(x)Object.assign(x,o);else{o.id="x"+Date.now();exps.push(o)}sv(XK,exps);refresh()},
-x?function(){exps=exps.filter(function(y){return y!==x});sv(XK,exps);refresh()}:null)}
-var HUC={"Marhahúsleves":"leves","Gulyásleves":"leves","Paprikás csirke":"hus","Nokedli":"teszta","Lecsó":"zoldseg","Rántott sertésszelet":"hus","Rakott krumpli":"egyeb","Palacsinta":"desszert"};
-RECIPES.forEach(function(r){HUC[r.nev]=r.cat});
-$("meals").innerHTML=Object.keys(HUC).map(function(n){return '<option value="'+n+'">'}).join("");
-var CATS=[["hus","Hús"],["hal","Hal"],["zoldseg","Zöldség, főzelék"],["teszta","Tészta, rizs"],["leves","Leves"],["desszert","Desszert"],["egyeb","Egyéb"]],CN={};CATS.forEach(function(c){CN[c[0]]=c[1]});
-var TY=[["reggeli","Reggeli"],["ebed","Ebéd"],["vacsora","Vacsora"],["snack","Köret, nasi"]],TN={};TY.forEach(function(c){TN[c[0]]=c[1]});
-function mform(m){gform(m?"Étkezés szerkesztése":"Mit ettem?",[
-{k:"n",l:"Étel neve",t:"text",list:"meals",r:1,v:m?m.n:"",on:function(x,g){if(HUC[x])g("cat").value=HUC[x]}},
-{k:"date",l:"Nap",t:"date",r:1,v:m?m.date:plus(0)},{k:"type",l:"Étkezés",t:"select",o:TY,v:m?m.type:"ebed"},{k:"cat",l:"Típus",t:"select",o:CATS,v:m?m.cat:"egyeb"}],
-m,function(o){if(m)Object.assign(m,o);else{o.id="m"+Date.now();meals.push(o)}sv(MK,meals);refresh()},
-m?function(){meals=meals.filter(function(y){return y!==m});sv(MK,meals);refresh()}:null)}
-function drawBudget(){var t=plus(0),sp=sum(t,t);
-if(bud&&bud.d>0){var l=bud.d-sp;$("bt").textContent=l>=0?ft(l)+" maradt "+ft(bud.d)+"-ból":ft(-l)+" a napi kereten túl";$("bb").style.width=Math.max(0,l)/bud.d*100+"%"}
-else{$("bt").textContent="Állítsd be a keretet a Költség oldalon.";$("bb").style.width="0%"}}
-function drawCost(){var t=plus(0),w=wk(),m=t.slice(0,7);
-$("bsum").innerHTML=bud?'<div class="q">Megadott keret: '+({d:"napi",w:"heti",m:"havi"}[bud.p||"m"])+" "+ft(bud.a||bud.m||0)+"</div>"+pbar("Ma",sum(t,t),bud.d)+pbar("Ezen a héten",sum(w[0],w[1]),bud.w)+pbar("Ebben a hónapban",sum(m+"-01",m+"-31"),bud.m):'<div class="q">Még nincs keret beállítva.</div>';
-$("bset").textContent=bud?"Keret szerkesztése":"Keret beállítása";
-var a=exps.slice().sort(function(x,y){return x.date<y.date?1:-1});
-$("xlist").innerHTML=a.length?a.map(function(x){return '<div class="li" data-id="'+x.id+'" tabindex="0" role="button"><span>'+esc(x.date)+" "+esc(x.n)+(x.shop?" ("+esc(x.shop)+")":"")+"</span><b>"+ft(x.a)+"</b></div>"}).join(""):'<div class="q">Még nincs kiadás. Koppints az Új kiadás gombra.</div>'}
-function sugg(wm,cnt,nm,sp){var L=[];
-if(!wm.length)L.push("Még nincs naplózott étkezés ezen a héten. Koppints a Mit ettem? gombra, és pontosabb javaslatokat kapsz.");
-if(cnt.hus>=4)L.push("Sok húsos étel volt a héten ("+cnt.hus+"). Jöhet egy zöldséges vagy főzelékes nap.");
-if(wm.length>=3&&!cnt.zoldseg)L.push("Nem volt zöldséges étel a héten. Egy lecsó vagy főzelék jól kiegészítené.");
-if(wm.length>=5&&!cnt.hal)L.push("Hal még nem szerepelt a héten.");
-Object.keys(nm).forEach(function(k){if(nm[k]>=3)L.push("A(z) "+k+" már "+nm[k]+"-szor szerepelt a héten, érdemes változtatni.")});
-if(bud&&bud.w>0){if(sp>bud.w)L.push("Túlléptétek a heti keretet "+ft(sp-bud.w)+"-tal. Főzzetek a raktárból, olcsó alapanyagokból.");else if(sp>bud.w*.8)L.push("A heti keret 80%-át elköltöttétek, "+ft(bud.w-sp)+" maradt.");else L.push("A heti keretből még "+ft(bud.w-sp)+" maradt.")}
-var ex=[];items.forEach(function(i){if(days(i.exp)<=2&&ex.indexOf(i.n)<0)ex.push(i.n)});
-if(ex.length)L.push("Hamarosan lejár: "+ex.join(", ")+". Főzz ezekből előbb.");
-return L}
-function drawStat(){var w=wk(),wm=meals.filter(function(m){return m.date>=w[0]&&m.date<=w[1]}),cnt={},nm={},mx=1;
-wm.forEach(function(m){cnt[m.cat]=(cnt[m.cat]||0)+1;nm[m.n]=(nm[m.n]||0)+1});
-CATS.forEach(function(c){if((cnt[c[0]]||0)>mx)mx=cnt[c[0]]});
-var sp=sum(w[0],w[1]);
-$("sw").innerHTML='<div>Kiadás: <b>'+ft(sp)+"</b>"+(bud&&bud.w?" / "+ft(bud.w):"")+"</div><div>Naplózott étkezés: <b>"+wm.length+"</b>, különböző étel: <b>"+Object.keys(nm).length+"</b></div>"+
-CATS.filter(function(c){return cnt[c[0]]}).map(function(c){return '<div style="margin:10px 0 2px">'+c[1]+": "+cnt[c[0]]+'</div><div class="bar"><b style="width:'+cnt[c[0]]/mx*100+'%"></b></div>'}).join("");
-$("sug").innerHTML=sugg(wm,cnt,nm,sp).map(function(s){return "<li>"+esc(s)+"</li>"}).join("");
-var a=meals.slice().sort(function(x,y){return x.date<y.date?1:x.date>y.date?-1:0}).slice(0,40),last="",o="";
-a.forEach(function(m){if(m.date!==last){last=m.date;o+='<div class="dh">'+new Date(m.date+"T00:00:00").toLocaleDateString("hu-HU",{weekday:"long",month:"long",day:"numeric"})+"</div>"}
-o+='<div class="li" data-id="'+m.id+'" tabindex="0" role="button"><span>'+TN[m.type]+": "+esc(m.n)+'</span><span class="q">'+CN[m.cat]+"</span></div>"});
-$("mlist").innerHTML=o||'<div class="q">Még nincs bejegyzés. Koppints a Mit ettem? gombra.</div>'}
-function refresh(){drawBudget();drawCost();drawStat()}
-function pick(l,id){return l.filter(function(x){return x.id===id})[0]}
-$("xlist").onclick=function(e){var r=e.target.closest(".li");if(r)xform(pick(exps,r.dataset.id))};
-$("mlist").onclick=function(e){var r=e.target.closest(".li");if(r)mform(pick(meals,r.dataset.id))};
-$("xlist").onkeydown=function(e){var r=e.target.closest(".li");if(r&&e.key==="Enter")xform(pick(exps,r.dataset.id))};
-$("mlist").onkeydown=function(e){var r=e.target.closest(".li");if(r&&e.key==="Enter")mform(pick(meals,r.dataset.id))};
-$("bset").onclick=bset;$("xadd").onclick=function(){xform(null)};$("madd").onclick=function(){mform(null)};
-function showView(v){["stock","cost","stat"].forEach(function(k){$("v-"+k).hidden=k!==v});
-document.querySelectorAll(".vnav button").forEach(function(b){b.setAttribute("aria-selected",b.dataset.v===v)});
-if(v==="cost")drawCost();if(v==="stat")drawStat();window.scrollTo(0,0)}
-document.querySelectorAll(".vnav button").forEach(function(b){b.onclick=function(){showView(b.dataset.v)}});
-items=load();draw();refresh();
 
-var st=document.getElementById("st"),upd=document.getElementById("upd"),inst=document.getElementById("inst"),REG=null,NEW=null,DEF=null;
-function say(t){st.textContent=t}
-if("serviceWorker" in navigator){
-navigator.serviceWorker.register("sw.js").then(function(r){REG=r;
-r.addEventListener("updatefound",function(){var w=r.installing;if(!w)return;w.addEventListener("statechange",function(){if(w.state==="installed"&&navigator.serviceWorker.controller){NEW=w;upd.textContent="Frissítés telepítése";say("Új verzió letöltve, koppints a frissítésre.")}})})}).catch(function(){});
-navigator.serviceWorker.addEventListener("controllerchange",function(){location.reload()})}
-upd.onclick=function(){
-if(NEW){NEW.postMessage("skip");return}
-if(!REG){say("A frissítés a telepített appban működik. Verzió "+VER);return}
-say("Keresem az új verziót...");
-REG.update().then(function(){setTimeout(function(){if(!NEW)say("A legfrissebb verziót használod ("+VER+").")},1200)}).catch(function(){say("Nincs kapcsolat. Az app így is működik offline.")})};
-window.addEventListener("beforeinstallprompt",function(e){e.preventDefault();DEF=e});
-inst.onclick=function(){if(DEF){DEF.prompt();DEF=null}else say("Telepítés: böngésző menü, majd Hozzáadás a kezdőképernyőhöz. A Google Play verzió később érkezik.")};
-window.addEventListener("offline",function(){say("Offline vagy, az app így is működik.")});
-</script>
+<nav class="nav" aria-label="Oldalak"><div class="in" role="tablist">
+  <button role="tab" aria-selected="true" data-v="stock"><span class="ic" data-i="fridge"></span>Raktár</button>
+  <button role="tab" aria-selected="false" data-v="rec"><span class="ic" data-i="book"></span>Receptek</button>
+  <button role="tab" aria-selected="false" data-v="shop"><span class="ic" data-i="cart"></span>Bolt</button>
+  <button role="tab" aria-selected="false" data-v="cost"><span class="ic" data-i="coin"></span>Költség</button>
+  <button role="tab" aria-selected="false" data-v="stat"><span class="ic" data-i="chart"></span>Napló</button>
+  <button role="tab" aria-selected="false" data-v="set"><span class="ic" data-i="gear"></span>Beállít</button>
+</div></nav>
+
+<!-- termék párbeszéd -->
+<dialog id="dlg"><form id="f" onsubmit="return false">
+  <button type="button" class="dclose" data-close aria-label="Bezárás">×</button>
+  <h3 id="dt">Új termék</h3>
+  <label for="fn">Név</label>
+  <input id="fn" required autocomplete="off" placeholder="Kezdd el írni, pl. tej" role="combobox" aria-autocomplete="list" aria-controls="fns">
+  <div class="sugg" id="fns" role="listbox" hidden></div>
+  <div class="q small" id="fph" style="margin-top:6px"></div>
+  <div class="row">
+    <div><label for="fq">Mennyiség</label><input id="fq" type="number" step="any" min="0.01" required inputmode="decimal"></div>
+    <div><label for="fu">Egység</label><select id="fu"><option>g</option><option>dkg</option><option>kg</option><option>ml</option><option>dl</option><option>l</option><option>db</option></select></div>
+  </div>
+  <div class="row">
+    <div><label for="fl">Hol van?</label><select id="fl"><option value="fridge">Hűtő</option><option value="pantry">Spájz</option><option value="freezer">Fagyasztó</option></select></div>
+    <div><label for="fe">Lejárat</label><input id="fe" type="date" required></div>
+  </div>
+  <div class="btns"><button type="button" class="btn g" id="fs">Mentés</button><button type="button" class="btn r" id="fd" hidden>Törlés</button></div>
+</form></dialog>
+
+<!-- recept -->
+<dialog id="rd"><button type="button" class="dclose" data-close aria-label="Bezárás">×</button><div id="rdb"></div></dialog>
+
+<!-- saját recept -->
+<dialog id="rf"><form id="rff" onsubmit="return false">
+  <button type="button" class="dclose" data-close aria-label="Bezárás">×</button>
+  <h3 id="rft">Saját recept</h3>
+  <label for="rn">Étel neve</label><input id="rn" required autocomplete="off" placeholder="pl. Nagyi lecsója">
+  <div class="row">
+    <div><label for="rc">Fajta</label><select id="rc"></select></div>
+    <div><label for="ra">Hány adag?</label><input id="ra" type="number" min="1" step="1" value="4" inputmode="numeric" required></div>
+    <div><label for="ri">Perc</label><input id="ri" type="number" min="1" step="1" value="30" inputmode="numeric" required></div>
+  </div>
+  <label class="toggle"><input type="checkbox" id="rh"> Hideg étel (saláta, szendvics, hidegtál)</label>
+  <div class="sec">Hozzávalók</div>
+  <div class="q small">A név beírásakor felajánlom a termékeket, így a raktárral is össze tudom vetni.</div>
+  <div id="rings"></div>
+  <button type="button" class="btn p sm" id="ringadd" style="margin-top:10px">+ Hozzávaló</button>
+  <label for="rs">Elkészítés (minden lépés új sorba)</label><textarea id="rs" required placeholder="A hagymát megpároljuk...&#10;Hozzáadjuk..."></textarea>
+  <label for="rk">Figyelj erre (nem kötelező)</label><input id="rk" autocomplete="off">
+  <label for="rt">Tálalás (nem kötelező)</label><input id="rt" autocomplete="off">
+  <label for="rl">Allergének, vesszővel (nem kötelező)</label><input id="rl" autocomplete="off" placeholder="glutén, tej, tojás">
+  <div class="btns"><button type="button" class="btn g" id="rsave">Recept mentése</button><button type="button" class="btn r" id="rdel" hidden>Törlés</button></div>
+</form></dialog>
+
+<!-- általános űrlap -->
+<dialog id="gd"><form id="gf" onsubmit="return false">
+  <button type="button" class="dclose" data-close aria-label="Bezárás">×</button>
+  <h3 id="gt"></h3><div id="gb"></div>
+  <div class="btns"><button type="button" class="btn g" id="gs">Mentés</button><button type="button" class="btn r" id="gdl" hidden>Törlés</button></div>
+</form></dialog>
+
+<datalist id="shops"><option value="Lidl"><option value="Aldi"><option value="Spar"><option value="Tesco"><option value="Penny"><option value="CBA"><option value="Coop"><option value="Auchan"><option value="Piac"></datalist>
+<datalist id="meals"></datalist>
+<div class="toast" id="toast" role="status" hidden></div>
+
+<script src="sprites.js"></script>
+<script src="data.js"></script>
+<script src="app.js"></script>
 </body>
 </html>
