@@ -1,4 +1,4 @@
-var VER="1.6";
+var VER="1.7";
 /* ---------- alapok ---------- */
 function $(i){return document.getElementById(i)}
 function esc(s){return String(s==null?"":s).replace(/[&<>"']/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]})}
@@ -139,7 +139,7 @@ function ac(inp,box,onPick){var sel=-1,list=[];
   $("lg1").innerHTML=ic("pot");$("lg2").innerHTML=ic("egg");$("pot").innerHTML=ic("pot");$("hhi").innerHTML=ic("heart");
   [["i-coin","coin"],["i-coin2","coin"],["i-plus","plus"],["i-book","book"],["i-pen","pen"],["i-cart","cart"],["i-cart2","cart"],["i-chart","chart"],["i-heart","heart"],["i-gear","gear"]].forEach(function(a){$(a[0]).innerHTML=ic(a[1])});
   document.querySelectorAll("[data-i]").forEach(function(e){e.innerHTML=ic(e.dataset.i)});
-  document.querySelectorAll(".tabs button").forEach(function(b){b.insertAdjacentHTML("afterbegin",'<span class="ic">'+ic({fridge:"fridge",pantry:"jar",freezer:"ice"}[b.dataset.t])+"</span>")})})();
+  if(window.buildLocs)buildLocs()})();
 document.querySelectorAll("dialog [data-close]").forEach(function(b){b.onclick=function(){b.closest("dialog").close()}});
 document.querySelectorAll("dialog").forEach(function(d){d.addEventListener("click",function(e){if(e.target===d)d.close()})});
 
@@ -152,7 +152,7 @@ function drawStock(){var a=items.filter(function(i){return i.loc===tab}).sort(fu
     return '<div class="slot '+cls(d)+'" data-id="'+i.id+'" tabindex="0" role="button" aria-label="'+esc(i.n)+' szerkesztése"><button type="button" class="x" data-x="'+i.id+'" aria-label="'+esc(i.n)+' törlése">×</button><div class="tile">'+ic(ico(i.n))+'</div><div class="n">'+esc(i.n)+'</div><div class="q">'+nf(i.q)+" "+i.u+'</div><div class="hp"><b style="width:'+p+'%"></b></div><div class="d">'+dtxt(d)+"</div></div>"}).join("")
     :'<div class="q">Itt még nincs semmi. Koppints az Új termék gombra.</div>';
   var cnt={};items.forEach(function(i){cnt[i.loc]=(cnt[i.loc]||0)+1});
-  document.querySelectorAll(".tabs button").forEach(function(b){b.setAttribute("aria-selected",b.dataset.t===tab);var t=LOCN[b.dataset.t]+(cnt[b.dataset.t]?" "+cnt[b.dataset.t]:"");b.lastChild.textContent=t});
+  document.querySelectorAll(".tabs button").forEach(function(b){b.setAttribute("aria-selected",b.dataset.t===tab);var c=b.querySelector(".cnt");if(c)c.textContent=cnt[b.dataset.t]||"";b.setAttribute("aria-label",LOCN[b.dataset.t]+", "+(cnt[b.dataset.t]||0)+" tétel")});
   drawDishes()}
 document.querySelectorAll(".tabs button").forEach(function(b){b.onclick=function(){tab=b.dataset.t;drawStock()}});
 $("grid").onclick=function(e){var x=e.target.closest("[data-x]");if(x){e.stopPropagation();delItem(x.dataset.x);return}var s=e.target.closest(".slot");if(s)openItem(s.dataset.id)};
