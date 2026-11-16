@@ -296,3 +296,15 @@ dialog.big{width:min(100vw,560px);max-width:100vw;height:100dvh;max-height:100dv
 .confetti i:nth-child(1){left:0%;animation-delay:0.00s}.confetti i:nth-child(2){left:37%;animation-delay:0.12s}.confetti i:nth-child(3){left:74%;animation-delay:0.24s}.confetti i:nth-child(4){left:11%;animation-delay:0.36s}.confetti i:nth-child(5){left:48%;animation-delay:0.48s}.confetti i:nth-child(6){left:85%;animation-delay:0.60s}.confetti i:nth-child(7){left:22%;animation-delay:0.00s}.confetti i:nth-child(8){left:59%;animation-delay:0.12s}.confetti i:nth-child(9){left:96%;animation-delay:0.24s}.confetti i:nth-child(10){left:33%;animation-delay:0.36s}.confetti i:nth-child(11){left:70%;animation-delay:0.48s}.confetti i:nth-child(12){left:7%;animation-delay:0.60s}.confetti i:nth-child(13){left:44%;animation-delay:0.00s}.confetti i:nth-child(14){left:81%;animation-delay:0.12s}.confetti i:nth-child(15){left:18%;animation-delay:0.24s}.confetti i:nth-child(16){left:55%;animation-delay:0.36s}.confetti i:nth-child(17){left:92%;animation-delay:0.48s}.confetti i:nth-child(18){left:29%;animation-delay:0.60s}.confetti i:nth-child(19){left:66%;animation-delay:0.00s}.confetti i:nth-child(20){left:3%;animation-delay:0.12s}.confetti i:nth-child(21){left:40%;animation-delay:0.24s}.confetti i:nth-child(22){left:77%;animation-delay:0.36s}.confetti i:nth-child(23){left:14%;animation-delay:0.48s}
 @keyframes fall{to{transform:translateY(105vh) rotate(180deg)}}
 @media (prefers-reduced-motion:reduce){.confetti,.kidwin .ic,.cktimer.done{animation:none!important}}
+/* ---- készlet értéke, telepítési útmutató ---- */
+.svtot{font-size:34px;text-align:center;color:var(--red);text-shadow:2px 2px 0 var(--chip);margin:2px 0 4px}
+#stockval .sv b{font-size:18px}
+.igsteps{display:grid;gap:14px;margin-top:8px}
+.igstep{border:3px solid var(--line);background:var(--panel2);padding:10px;position:relative}
+.ignum{position:absolute;top:-12px;left:-10px;width:30px;height:30px;display:grid;place-items:center;background:var(--red);color:#fff;border:3px solid var(--line);font-size:17px}
+.igpic{display:block;width:100%;height:auto;aspect-ratio:3/2;border:3px solid var(--line);background:#fff;image-rendering:pixelated}
+.igstep p{margin:8px 2px 0;font-size:16px}
+.igblink{animation:tw 1s steps(2) infinite}
+.igbounce{animation:igb .8s steps(2) infinite}@keyframes igb{50%{transform:translateY(2px)}}
+.igpop{animation:igp 1.2s steps(2) infinite;transform-origin:24px 24px}@keyframes igp{50%{transform:scale(1.08)}}
+@media (prefers-reduced-motion:reduce){.igblink,.igbounce,.igpop{animation:none}}

@@ -34,6 +34,7 @@
       <div id="bt"></div>
       <div class="bar"><b id="bb" style="width:0%"></b></div>
     </section>
+    <section class="card" id="stockval" aria-live="polite"></section>
     <div class="tabs" role="tablist" aria-label="Hol van az étel?">
       <button role="tab" aria-selected="true" data-t="fridge">Hűtő</button>
       <button role="tab" aria-selected="false" data-t="pantry">Spájz</button>
@@ -159,6 +160,7 @@
       <div class="btns">
         <button class="btn" id="upd" type="button">Frissítés keresése</button>
         <button class="btn" id="inst" type="button">Letöltés a telefonra</button>
+        <button class="btn p" id="igbtn" type="button">Telepítési útmutató</button>
       </div>
       <div class="btns"><a class="btn t" id="apk" href="https://github.com/strattila90-hue/mi-legyen-a-kaja-/releases/download/apk-latest/mi-legyen-a-kaja.apk" rel="noopener">Android app letöltése (APK)</a></div>
       <div class="q small" style="margin-top:6px">Az app magától frissül: minden indításkor és óránként megnézi, van-e új verzió.</div>
@@ -239,6 +241,7 @@
   <video id="bcv" playsinline muted></video><p class="q" id="bcst"></p>
   <label for="bcman">Vagy írd be a számokat</label><div class="row"><div style="flex:3"><input id="bcman" inputmode="numeric" autocomplete="off"></div><div><button type="button" class="btn sm" id="bcgo" style="width:100%">Keres</button></div></div></dialog>
 <dialog id="kid" class="big kidd"><div class="dbody"></div></dialog>
+<dialog id="ig"><button type="button" class="dclose" data-close aria-label="Bezárás">×</button><h3>Telepítés a telefonra</h3><div class="dbody"></div></dialog>
 <datalist id="shops"><option value="Lidl"><option value="Aldi"><option value="Spar"><option value="Tesco"><option value="Penny"><option value="CBA"><option value="Coop"><option value="Auchan"><option value="Piac"></datalist>
 <datalist id="meals"></datalist>
 <div class="toast" id="toast" role="status" hidden></div>
@@ -250,5 +253,6 @@
 <script src="app.js"></script>
 <script src="sync.js"></script>
 <script src="features.js"></script>
+<script src="extras.js"></script>
 </body>
 </html>
