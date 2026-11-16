@@ -66,14 +66,16 @@ jobs:
 
       - name: APK fordítása
         working-directory: android
-        env:
-          BUBBLEWRAP_KEYSTORE_PASSWORD: ${{ env.KS_PASS }}
-          BUBBLEWRAP_KEY_PASSWORD: ${{ env.KS_PASS }}
         run: |
-          bubblewrap build --skipPwaValidation --manifest=./twa-manifest.json
-          ls -la *.apk
-          cp app-release-signed.apk ../mi-legyen-a-kaja.apk
-          keytool -list -v -keystore android.keystore -alias kaja -storepass "$KS_PASS" | grep -i "SHA256:" | head -1 | tee ../fingerprint.txt
+          chmod +x gradlew
+          ./gradlew --no-daemon assembleRelease
+          BT=$(ls -d "$ANDROID_HOME"/build-tools/* | sort -V | tail -1)
+          echo "Build-tools: $BT"
+          UNSIGNED=$(ls app/build/outputs/apk/release/*.apk | head -1)
+          "$BT/zipalign" -f -p 4 "$UNSIGNED" aligned.apk
+          "$BT/apksigner" sign --ks android.keystore --ks-key-alias kaja --ks-pass "pass:$KS_PASS" --key-pass "pass:$KS_PASS" --out ../mi-legyen-a-kaja.apk aligned.apk
+          "$BT/apksigner" verify --print-certs ../mi-legyen-a-kaja.apk | tee ../fingerprint.txt
+          ls -la ../mi-legyen-a-kaja.apk
 
       - name: Feltöltés a kiadásba (apk-latest)
         env:
