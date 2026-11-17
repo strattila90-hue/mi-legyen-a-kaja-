@@ -14,23 +14,26 @@ document.querySelectorAll("dialog [data-close]").forEach(function(b){if(!b.oncli
 /* ================= DIÉTA, KEDVENCEK, SZEZON ================= */
 var ALLERG=["glutén","tej","tojás","hal","mogyoró","földimogyoró","diófélék","mustár","zeller"];
 var MEATC={hus:1,hal:1,felv:1};
-var MEATRX=/(hus|csirke|sonka|kolbasz|szalonna|bacon|virsli|parizsi|szalami|majkrem|hal|lazac|tonhal|szardinia|makrela|pulyka|marha|sertes|kacsa|darált|darált)/;
+var MEATRX=/(hus|csirke|sonka|kolbasz|szalonna|bacon|virsli|parizsi|szalami|majkrem|csirkemaj|csulok|hal|lazac|tonhal|szardinia|makrela|pulyka|marha|sertes|kacsa|daralt)/;
 function isMeat(k){var c=find(k);return !!((c&&MEATC[c.c])||MEATRX.test(norm(k))&&!/halloumi/.test(norm(k)))}
 function ingKeysReq(r){return r.hozzavalok.filter(function(h){return !h.o&&!h.f})}
+/* egy termék beleférhet-e az étrendbe (a helyettesítő és a változat-választás is ezt nézi) */
+FX.okKey=function(k){if(diet.veg&&isMeat(k))return false;if(diet.ex.length&&diet.ex.map(norm).indexOf(norm(k))>=0)return false;return true};
+FX.isVeg=function(r){return !ingKeysReq(r).some(function(h){return h.k.length&&h.k.every(isMeat)})};
 FX.blocked=function(r){
   if(diet.veg&&ingKeysReq(r).some(function(h){return h.k.length&&h.k.every(isMeat)}))return "húsos";
   if(diet.al.length){var al=norm((r.allergenek||[]).join(","));for(var i=0;i<diet.al.length;i++)if(al.indexOf(norm(diet.al[i]))>=0)return diet.al[i]}
   if(diet.ex.length){var ex=diet.ex.map(norm);var bad=ingKeysReq(r).filter(function(h){return h.k.length&&h.k.every(function(k){return ex.indexOf(norm(k))>=0})})[0];if(bad)return bad.nev}
   return ""};
 var SEASON={0:["Káposzta","Savanyú káposzta","Sárgarépa","Cékla","Bab","Lencse","Narancs"],1:["Káposzta","Savanyú káposzta","Cékla","Bab","Lencse","Narancs"],2:["Spenót","Újhagyma","Retek","Sárgarépa"],3:["Spenót","Újhagyma","Retek","Saláta","Sonka"],
-  4:["Spenót","Retek","Eper","Saláta","Újhagyma"],5:["Eper","Cukkini","Zöldbab","Uborka","Saláta"],6:["Paradicsom","Paprika","Uborka","Cukkini","Görögdinnye","Őszibarack","Padlizsán"],7:["Paradicsom","Paprika","Uborka","Cukkini","Görögdinnye","Őszibarack","Zöldbab"],
+  4:["Spenót","Retek","Eper","Saláta","Újhagyma","Karalábé"],5:["Eper","Cukkini","Zöldbab","Uborka","Saláta","Karalábé"],6:["Paradicsom","Paprika","Uborka","Cukkini","Görögdinnye","Őszibarack","Padlizsán"],7:["Paradicsom","Paprika","Uborka","Cukkini","Görögdinnye","Őszibarack","Zöldbab"],
   8:["Paprika","Paradicsom","Szilva","Szőlő","Alma","Sütőtök"],9:["Sütőtök","Alma","Körte","Gomba","Káposzta","Szőlő"],10:["Sütőtök","Káposzta","Kelkáposzta","Alma","Cékla","Gomba"],11:["Káposzta","Savanyú káposzta","Mandarin","Narancs","Alma","Sütőtök"]};
 function easter(y){var a=y%19,b=Math.floor(y/100),c=y%100,d=Math.floor(b/4),e=b%4,f=Math.floor((b+8)/25),g=Math.floor((b-f+1)/3),h=(19*a+b-d-g+15)%30,i=Math.floor(c/4),k=c%4,l=(32+2*e+2*i-h-k)%7,m=Math.floor((a+11*h+22*l)/451),mo=Math.floor((h+l-7*m+114)/31),da=((h+l-7*m+114)%31)+1;return new Date(y,mo-1,da)}
 FX.holiday=function(){var n=new Date(),y=n.getFullYear(),md=(n.getMonth()+1)*100+n.getDate(),e=easter(y),de=Math.round((e-new Date(n.toDateString()))/864e5);
-  if(md>=1210&&md<=1226)return{n:"Karácsony",ids:["unn-01","unn-02","hal-01","unn-03","huh-001","sal-04"],t:"Közeleg a karácsony: ünnepi ötletek"};
-  if(md>=1227||md<=101)return{n:"Szilveszter",ids:["foz-04","lev-07","mini-27","hid-01","hid-03","sze-02"],t:"Szilveszter és újév: lencse a szerencséért, virsli éjfélkor"};
-  if(de>=-10&&de<=1)return{n:"Húsvét",ids:["unn-06","hid-03","sal-04","huh-001","des-03"],t:"Közeleg a húsvét: sonka, tojás, kalács"};
-  if(md>=1020&&md<=1105)return{n:"Ősz",ids:["unn-04","unn-05","lev-04","foz-06"],t:"Sütőtök- és gombaszezon"};
+  if(md>=1210&&md<=1226)return{n:"Karácsony",ids:["unn-01","unn-02","hal-01","unn-03","huh-001","sal-04","des-13","hus-30","tes-15","hal-05","lev-12"],t:"Közeleg a karácsony: ünnepi ötletek"};
+  if(md>=1227||md<=101)return{n:"Szilveszter",ids:["foz-04","lev-07","mini-27","hid-01","hid-03","sze-02","lev-19","sze-14","egy-03"],t:"Szilveszter és újév: lencse a szerencséért, virsli éjfélkor"};
+  if(de>=-10&&de<=1)return{n:"Húsvét",ids:["unn-06","hid-03","sal-04","huh-001","des-03","lev-14","sze-17"],t:"Közeleg a húsvét: sonka, tojás, kalács"};
+  if(md>=1020&&md<=1105)return{n:"Ősz",ids:["unn-04","unn-05","lev-04","foz-06","zol-09","des-07","lev-23"],t:"Sütőtök- és gombaszezon"};
   return null};
 FX.bonus=function(r){var b=0;if(kedv[r.id]===1)b+=12;if(kedv[r.id]===-1)b-=25;
   var se=SEASON[new Date().getMonth()];if(r.hozzavalok.some(function(h){return h.k.some(function(k){return se.indexOf(k)>=0})}))b+=4;

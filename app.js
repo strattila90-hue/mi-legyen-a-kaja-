@@ -1,4 +1,4 @@
-var VER="1.10";
+var VER="1.11";
 /* ---------- alapok ---------- */
 function $(i){return document.getElementById(i)}
 function esc(s){return String(s==null?"":s).replace(/[&<>"']/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]})}
@@ -34,7 +34,17 @@ var BASE={g:["g",1],dkg:["g",10],kg:["g",1000],ml:["ml",1],cl:["ml",10],dl:["ml"
 var SZ={"Kenyér":20,"Teljes kiőrlésű kenyér":20,"Toast kenyér":20,"Kalács":16,"Bagett":10,"Zsemle":2,"Kifli":2,"Hamburger zsemle":2,"Pita":1,"Tortilla":1,"Croissant":1,"Keksz":0.1};
 function toBase(q,u,key){if(u==="szelet"){var s=SZ[key];if(s===0.1)return["g",q*8];return["db",q/(s||20)]}var b=BASE[u]||["db",1];return[b[0],q*b[1]]}
 function same(a,b){return a===b||(a!=="db"&&b!=="db")}
-function costOf(n,bt,amt){var c=find(n),p=priceOf(n);if(!c||!p||!(amt>0))return null;var pb=BASE[c.u][0];if(!same(pb,bt))return null;
+/* darabsúly: 1 db hány gramm (ml) – így a grammban kért alma vagy a darabban tárolt paprika is átváltható */
+var PCS={"Alma":180,"Körte":180,"Banán":120,"Narancs":200,"Mandarin":80,"Citrom":60,"Kivi":80,"Őszibarack":150,"Ananász":1200,"Avokádó":170,
+  "Paprika":120,"Kaliforniai paprika":200,"Csípős paprika":30,"Paradicsom":120,"Koktélparadicsom":15,"Uborka":300,"Cukkini":300,"Padlizsán":350,"Karfiol":900,"Karalábé":250,"Retek":15,"Saláta":300,"Jégsaláta":500,"Gomba":25,
+  "Vöröshagyma":100,"Lilahagyma":100,"Fokhagyma":50,"Újhagyma":20,"Póréhagyma":200,"Petrezselyem zöld":30,"Kapor":30,"Bazsalikom":20,"Tojás":55,
+  "Zsemle":60,"Kifli":45,"Kenyér":1000,"Teljes kiőrlésű kenyér":750,"Toast kenyér":500,"Bagett":250,"Kalács":500,"Croissant":60,"Tortilla":60,"Pita":80,"Hamburger zsemle":70,
+  "Bab konzerv":240,"Csicseriborsó konzerv":240,"Kukorica konzerv":285,"Zöldborsó konzerv":280,"Konzerv paradicsom":400,"Passata":500,"Paradicsompüré":140,"Kókusztej":400,"Csemegeuborka":350,
+  "Tonhalkonzerv":120,"Szardíniakonzerv":90,"Fagyasztott pizza":350,"Leveskocka":10,"Sütőpor":12,"Vaníliás cukor":8,"Élesztő":42,"Pudingpor":40,"Tea":40,"Jégkrém":70};
+function pcsOf(n){var w=PCS[n];if(w)return w;var c=find(n);if(c&&PCS[c.n])return PCS[c.n];var e=EQN&&EQN[norm(n)];if(e)for(var i=0;i<e.length;i++){var c2=find(e[i]);if(c2&&PCS[c2.n])return PCS[c2.n]}return 0}
+/* mennyiség átváltása alapegységek között (g/ml egyenértékű, db a darabsúllyal); null, ha nem váltható */
+function cvt(amt,from,to,n){if(same(from,to))return amt;var w=pcsOf(n);if(!w)return null;return from==="db"?amt*w:amt/w}
+function costOf(n,bt,amt){var c=find(n),p=priceOf(n);if(!c||!p||!(amt>0))return null;var pb=BASE[c.u][0];if(!same(pb,bt)){amt=cvt(amt,bt,pb,c.n);if(amt==null)return null}
   var m=pb==="db"?amt:amt/1000;return p.map(function(x){return x*m})}
 function fmtQ(amt,bt){if(bt==="g")return amt>=1000?nf(amt/1000)+" kg":nf(amt)+" g";if(bt==="ml")return amt>=1000?nf(amt/1000)+" l":amt>=100?nf(amt/100)+" dl":nf(amt)+" ml";return nf(amt)+" db"}
 function fmtR(h,f){if(!h.menny)return"";var q=h.menny*f;if(h.egyseg==="csipet")return"1 csipet";
@@ -58,7 +68,7 @@ var RCATS=[["leves","Leves"],["hus","Húsos étel"],["hal","Hal"],["foz","Főzel
 RCATS.forEach(function(c){RCN[c[0]]=c[1]});
 var RICO={leves:"pot",hus:"meat",hal:"fish",foz:"pot",teszta:"pasta",zoldseg:"veg",salata:"salad",szendvics:"sandwich",hidegtal:"platter",hideg:"salad",reggeli:"egg",desszert:"cake",egyeb:"rice"};
 var COLD={salata:1,szendvics:1,hidegtal:1,hideg:1};
-function isCold(r){return !!(r.hideg||COLD[r.cat])}
+function isCold(r){return !r.meleg&&!!(r.hideg||COLD[r.cat])}
 function allRec(){return BASE_RECIPES.concat(ownRec)}
 function recById(id){return allRec().filter(function(r){return r.id===id})[0]}
 function isBasic(k){return set.basics.indexOf(k)>=0}
@@ -73,33 +83,68 @@ var THAWC={hus:1,hal:1,felv:1};
 function needThaw(i){var c=find(i.n);return i.loc==="freezer"&&(/fagyasztott\)/.test(i.n)||(c&&THAWC[c.c]))}
 var LOCS={fridge:"hűtő",pantry:"spájz",freezer:"fagyasztó"};
 function have(key,bt){if(isBasic(key))return Infinity;var l=liveOf(key);if(!l.length)return 0;if(!bt)return Infinity;var s=0,mis=false;
-  l.forEach(function(i){var b=BASE[i.u]||["db",1];if(same(b[0],bt))s+=i.q*b[1];else mis=true});return s>0?s:(mis?Infinity:0)}
-function check(r){var ratio=Infinity,use=[],miss=[],omiss=[],sc=0,rq=0;
-  r.hozzavalok.forEach(function(h){if(h.f)return;var key=null,hv=0,need=0,bt=null;
-    for(var j=0;j<h.k.length;j++){var k=h.k[j],tb=h.menny?toBase(h.menny,h.egyseg,k):null,v=have(k,tb&&tb[0]);if(v>0){key=k;hv=v;if(tb){bt=tb[0];need=tb[1]}break}}
-    if(!key){(h.o?omiss:miss).push(h);return}
-    var basic=isBasic(key);
-    if(!h.o&&!basic){rq++;if(need>0&&isFinite(hv))ratio=Math.min(ratio,hv/need)}
-    var dd=basic?99:Math.min.apply(null,liveOf(key).map(function(i){return days(i.exp)}));
-    var lv=basic?[]:liveOf(key),locs=[];lv.forEach(function(i){if(locs.indexOf(i.loc)<0)locs.push(i.loc)});var thaw=lv.length&&lv.every(needThaw);
-    use.push({key:key,h:h,need:need,bt:bt,dd:dd,basic:basic,locs:locs,thaw:thaw,src:lv[0]&&lv[0].n});if(!basic)sc+=10-Math.min(dd,9)+3});
+  l.forEach(function(i){var b=BASE[i.u]||["db",1],a=cvt(i.q*b[1],b[0],bt,i.n);if(a!=null)s+=a;else mis=true});return s>0?s:(mis?Infinity:0)}
+/* helyettesítők: ha a receptben kért (és a felsorolt változatok) egyike sincs itthon, ezek is jók. [név, mennyiségszorzó] */
+var SUBS={"Tejföl":["Görög joghurt","Joghurt","Krémtúró"],"Joghurt":["Görög joghurt","Kefir","Tejföl"],"Görög joghurt":["Joghurt","Tejföl"],"Kefir":["Joghurt"],
+  "Tejszín":["Habtejszín","Tej"],"Habtejszín":["Tejszín"],"Vaj":["Margarin","Étolaj"],"Margarin":["Vaj"],"Étolaj":["Olívaolaj","Zsír"],"Zsír":["Étolaj"],"Olívaolaj":["Étolaj"],
+  "Zsemlemorzsa":["Kukoricapehely","Zabpehely"],"Citrom":[["Ecet",0.5]],"Ecet":["Citrom"],"Balzsamecet":["Ecet"],"Cukor":["Porcukor","Méz"],"Porcukor":["Cukor"],"Méz":["Cukor"],
+  "Majonéz":["Tejföl","Görög joghurt"],"Mozzarella":["Sajt","Gouda"],"Parmezán":["Sajt","Gouda"],"Sajt":["Gouda","Ömlesztett sajt","Mozzarella"],"Gouda":["Sajt"],"Feta":["Mozzarella","Túró"],
+  "Krémsajt":["Krémtúró","Túró","Mascarpone"],"Krémtúró":["Krémsajt","Túró"],"Túró":["Krémtúró","Cottage cheese"],"Mascarpone":["Krémsajt"],
+  "Bacon":["Szalonna","Sonka"],"Szalonna":["Bacon"],"Sonka":["Pulykasonka","Párizsi"],"Füstölt kolbász":["Grillkolbász","Virsli"],"Virsli":["Füstölt kolbász"],"Füstölt csülök":["Füstölt kolbász","Szalonna"],
+  "Csirkemell":["Pulykamell","Csirke felsőcomb filé"],"Pulykamell":["Csirkemell"],"Darált marhahús":["Darált sertéshús","Darált pulykahús"],"Darált sertéshús":["Darált marhahús","Darált pulykahús"],
+  "Passata":["Konzerv paradicsom","Paradicsompüré"],"Konzerv paradicsom":["Passata",["Paradicsom",4]],"Paradicsompüré":["Passata"],
+  "Vöröshagyma":["Lilahagyma","Póréhagyma",["Újhagyma",4]],"Lilahagyma":["Vöröshagyma"],"Újhagyma":["Vöröshagyma","Póréhagyma"],
+  "Spagetti":["Tészta"],"Tészta":["Spagetti","Cérnametélt"],"Cérnametélt":["Tészta","Spagetti"],"Brokkoli":["Fagyasztott brokkoli","Karfiol"],"Karfiol":["Brokkoli"],"Spenót":["Fagyasztott spenót"],
+  "Kenyér":["Teljes kiőrlésű kenyér","Toast kenyér","Bagett"],"Zsemle":["Kifli"],"Kifli":["Zsemle"],"Tortilla":["Pita"],"Pita":["Tortilla"],
+  "Kukoricapehely":["Müzli"],"Müzli":["Zabpehely","Kukoricapehely"],"Petrezselyemgyökér":["Sárgarépa"],"Zellergumó":["Petrezselyemgyökér"],"Halfilé":["Lazac"],
+  "Bab konzerv":[["Bab",0.4]],"Bab":[["Bab konzerv",2.4]],"Fagyasztott zöldborsó":["Zöldborsó konzerv"],"Cukkini":["Padlizsán"],"Kókusztej":["Tejszín"]};
+function keyOk(k){return !window.FX||!FX.okKey||FX.okKey(k)}
+function subFor(h){if(!h.k.length)return null;for(var j=0;j<h.k.length;j++){var L=SUBS[h.k[j]];if(!L)continue;
+  for(var i=0;i<L.length;i++){var s=typeof L[i]==="string"?[L[i],1]:L[i],sk=s[0];if(h.k.indexOf(sk)>=0||!keyOk(sk))continue;
+    var tb=h.menny?toBase(h.menny*s[1]*((h.kf&&h.kf[h.k[j]])||1),h.egyseg,sk):null,v=have(sk,tb&&tb[0]);if(v>0)return{k:sk,v:v,need:tb?tb[1]:0,bt:tb&&tb[0],sub:h.k[j]}}}return null}
+function altNeed(h,k){return h.menny?toBase(h.menny*((h.kf&&h.kf[k])||1),h.egyseg,k):null}
+function ddOf(k){if(isBasic(k))return 99;var l=liveOf(k);return l.length?Math.min.apply(null,l.map(function(i){return days(i.exp)})):99}
+function check(r){var use=[],miss=[],omiss=[],sc=0,rq=0,subs=[],tot={};
+  r.hozzavalok.forEach(function(h){if(h.f)return;var best=null;
+    /* a változatok közül az nyer, amelyikből a legtöbb van (arányosan); egyenlőnél a hamarabb lejáró, különben a lista sorrendje */
+    for(var j=0;j<h.k.length;j++){var k=h.k[j];if(!keyOk(k))continue;var tb=altNeed(h,k),v=have(k,tb&&tb[0]);if(!(v>0))continue;
+      var need=tb?tb[1]:0,cov=need>0&&isFinite(v)?Math.min(1,v/need):1,dd=ddOf(k);
+      if(!best||cov>best.cov+1e-6||(Math.abs(cov-best.cov)<1e-6&&dd<=3&&best.dd>3))best={k:k,v:v,need:need,bt:tb&&tb[0],cov:cov,dd:dd}}
+    if(!best&&!h.o&&subs.length<2){var s=subFor(h);if(s){best=s;subs.push(s)}}
+    if(!best){(h.o?omiss:miss).push(h);return}
+    var key=best.k,basic=isBasic(key);
+    if(!h.o&&!basic){rq++;if(best.need>0&&isFinite(best.v)){var tk=key+"|"+best.bt;tot[tk]=tot[tk]||{v:best.v,need:0};tot[tk].need+=best.need}}
+    var lv=basic?[]:liveOf(key),dd=basic?99:Math.min.apply(null,lv.map(function(i){return days(i.exp)})),locs=[];lv.forEach(function(i){if(locs.indexOf(i.loc)<0)locs.push(i.loc)});var thaw=lv.length&&lv.every(needThaw);
+    use.push({key:key,h:h,need:best.need,bt:best.bt,dd:dd,basic:basic,locs:locs,thaw:thaw,src:lv[0]&&lv[0].n,sub:best.sub||""});if(!basic)sc+=10-Math.min(dd,9)+3});
+  /* ugyanabból a termékből több sor (pl. olaj a tésztába és a sütéshez): az igényeket összeadjuk */
+  var ratio=Infinity;Object.keys(tot).forEach(function(k){ratio=Math.min(ratio,tot[k].v/tot[k].need)});
   var can=ratio===Infinity?Infinity:ratio*r.adag,P=portions(),bl=window.FX?FX.blocked(r):"";
-  return{r:r,bl:bl,ok:!miss.length&&rq>0&&can>=0.5&&!bl,miss:miss,omiss:omiss,use:use,can:can,enough:can>=P-0.01,sc:sc-(r.mini?8:0)+(can>=P?4:0)+fit(r,use)+(window.FX?FX.bonus(r):0),
+  return{r:r,bl:bl,ok:!miss.length&&rq>0&&can>=0.5&&!bl,miss:miss,omiss:omiss,use:use,subs:subs,can:can,enough:can>=P-0.01,sc:sc-(r.mini?8:0)-subs.length*5+(can>=P?4:0)+fit(r,use)+(window.FX?FX.bonus(r):0),
     soon:use.some(function(u){return !u.basic&&u.dd<=2}),thaw:use.filter(function(u){return u.thaw}).map(function(u){return u.src})}}
+/* tipp a hiányzó hozzávalóhoz: mi helyettesítheti (akkor is, ha az sincs itthon) */
+function subTip(h){var o=[];h.k.forEach(function(k){(SUBS[k]||[]).forEach(function(s){var n=typeof s==="string"?s:s[0];if(h.k.indexOf(n)<0&&o.indexOf(n)<0)o.push(n)})});return o.slice(0,3)}
 /* napszak és laktatósság szerinti súlyozás: a főételek és a több alapanyagot (főleg húst) felhasználó receptek előrébb kerülnek */
 var MAINC={hus:1,hal:1,leves:1,foz:1,teszta:1,zoldseg:1,egyeb:1};
 function fit(r,use){var h=new Date().getHours(),morning=h<10,b=0,n=0,meat=0;
   use.forEach(function(u){if(u.basic)return;n++;var c=find(u.src||u.key);if(c&&(c.c==="hus"||c.c==="hal"||/fagyasztott\)/.test(u.src||"")))meat++});
   b+=Math.min(n,7)*3+meat*6;
   if(morning){if(r.cat==="reggeli")b+=8}else{if(MAINC[r.cat])b+=10;if(r.cat==="reggeli")b-=8;if(h>=17&&COLD[r.cat])b+=2}
+  /* hétköznap este a gyors, hétvégén ebédre a kiadósabb, hosszabb főzés is jöhet */
+  var wd=new Date().getDay(),we=wd===0||wd===6;if(!we&&h>=17&&r.ido_perc>60)b-=6;if(!we&&h>=17&&r.ido_perc<=30&&MAINC[r.cat])b+=3;if(we&&h>=9&&h<14&&r.ido_perc>=60&&MAINC[r.cat])b+=3;
+  /* változatosság: amit nemrég ettünk, az hátrébb kerül */
+  var ld=lastAte(r.nev);if(ld<=1)b-=14;else if(ld<=3)b-=7;else if(ld<=6)b-=3;
   return b}
+var LATE={k:"",m:{}};
+function lastAte(n){var key=meals.length+"|"+plus(0)+"|"+(meals.length?meals[meals.length-1].id:"");if(LATE.k!==key){LATE.k=key;LATE.m={};var t=plus(0);
+  meals.forEach(function(m){var d=days(m.date);if(d>0)return;d=-d;var nn=norm(m.n);if(LATE.m[nn]==null||d<LATE.m[nn])LATE.m[nn]=d})}
+  var v=LATE.m[norm(n)];return v==null?99:v}
 function solos(){var seen={},out=[];items.forEach(function(i){if(days(i.exp)<0||!(i.q>0))return;var c=find(i.n);if(!c||!c.solo||seen[c.n])return;seen[c.n]=1;
   out.push({solo:1,n:c.solo,key:c.n,dd:days(i.exp)})});return out.sort(function(a,b){return a.dd-b.dd})}
 function feas(){return allRec().map(check).filter(function(c){return c.ok}).sort(function(x,y){return y.sc-x.sc})}
 function recCost(r,c,f){var full=[0,0,0],mis=[0,0,0],unk=0,any=false;
   r.hozzavalok.forEach(function(h){if(h.f)return;var u=c.use.filter(function(x){return x.h===h})[0],isMiss=c.miss.indexOf(h)>=0;
     if(!u&&h.o)return;var key=u?u.key:h.k[0];if(!h.menny){unk++;return}
-    var tb=toBase(h.menny*f,h.egyseg,key),p=costOf(key,tb[0],tb[1]);if(!p){unk++;return}any=true;
+    var tb=u&&u.need>0?[u.bt,u.need*f]:toBase(h.menny*f*((h.kf&&h.kf[key])||1),h.egyseg,key),p=costOf(key,tb[0],tb[1]);if(!p){unk++;return}any=true;
     for(var i=0;i<3;i++){full[i]+=p[i];if(isMiss)mis[i]+=p[i]}});
   return{full:full,mis:mis,unk:unk,any:any}}
 function minI(a){var m=0;for(var i=1;i<a.length;i++)if(a[i]<a[m])m=i;return m}
@@ -186,7 +231,7 @@ function fil(c){var r=c.r;return dfil==="all"||(dfil==="hot"&&!isCold(r))||(dfil
 function dishBtn(c,top){var r=c.r,P=portions(),cost=recCost(r,c,Math.min(P,c.can)/r.adag),b=[];
   if(isCold(r))b.push('<span class="badge cold">hideg</span>');
   if(!c.enough)b.push('<span class="badge warn">csak kb. '+nf(Math.floor(c.can*2)/2)+" adagra elég</span>");else b.push('<span class="badge ok">elég '+nf(P)+" adag</span>");
-  if(c.soon)b.push('<span class="badge bad">hamar lejár</span>');if(c.thaw.length)b.push('<span class="badge cold">ki kell olvasztani</span>');if(r.own)b.push('<span class="badge">saját</span>');
+  if(c.soon)b.push('<span class="badge bad">hamar lejár</span>');if(c.thaw.length)b.push('<span class="badge cold">ki kell olvasztani</span>');if(c.subs&&c.subs.length)b.push('<span class="badge">helyettesítéssel</span>');if(r.own)b.push('<span class="badge">saját</span>');
   return '<button type="button" class="dish'+(top?" best1":"")+'" data-id="'+r.id+'"><span class="di">'+ic(RICO[r.cat]||"rice")+'</span><span class="dt">'+(top?"<em>Ma ezt ajánlom</em>":"")+"<b>"+esc(r.nev)+"</b><i>"+r.ido_perc+" perc · "+esc(RCN[r.cat]||"")+(cost.any?" · kb. "+ft(Math.min.apply(null,cost.full)):"")+'</i>'+fromLine(c)+'<span class="bdg">'+b.join("")+"</span></span></button>"}
 function fromLine(c){var g={};c.use.forEach(function(u){if(u.basic||!u.locs.length)return;var l=u.locs[0];var nm=(u.src||u.key).toLowerCase();g[l]=g[l]||[];if(g[l].indexOf(nm)<0)g[l].push(nm)});
   var o=["fridge","pantry","freezer"].filter(function(l){return g[l]}).map(function(l){return '<b class="loc">'+LOCN[l]+':</b> '+esc(g[l].join(", "))});return o.length?'<i class="from">'+o.join(" · ")+"</i>":""}
@@ -211,7 +256,7 @@ function drawDishes(){var f=feas(),sl=solos(),el=$("dishes"),live=items.filter(f
 function carCard(c,top,nr){var r=c.r,P=portions(),cost=recCost(r,c,Math.min(P,nr?P:c.can)/r.adag),b=[];
   if(nr)b.push('<span class="badge bad">hiányzik: '+esc(c.miss.map(function(h){return h.nev}).join(", "))+"</span>");
   else{b.push(c.enough?'<span class="badge ok">elég '+nf(P)+" adag</span>":'<span class="badge warn">kb. '+nf(Math.floor(c.can*2)/2)+" adagra elég</span>");
-    if(c.soon)b.push('<span class="badge bad">hamar lejár</span>');if(c.thaw.length)b.push('<span class="badge cold">ki kell olvasztani</span>')}
+    if(c.soon)b.push('<span class="badge bad">hamar lejár</span>');if(c.thaw.length)b.push('<span class="badge cold">ki kell olvasztani</span>');if(c.subs&&c.subs.length)b.push('<span class="badge">helyettesítéssel</span>')}
   if(isCold(r))b.push('<span class="badge cold">hideg</span>');if(r.own)b.push('<span class="badge">saját</span>');
   return '<button type="button" class="cc'+(top?" best1":"")+(nr?" near":"")+'" data-id="'+r.id+'"><span class="cc-top"><span class="cc-i">'+ic(RICO[r.cat]||"rice")+"</span>"+(top?'<em>Ma ezt ajánlom</em>':nr?'<em class="ne">Majdnem megvan</em>':"")+'</span><span class="cc-b"><b>'+esc(r.nev)+"</b><i>"+r.ido_perc+" perc · "+esc(RCN[r.cat]||"")+(cost.any?" · kb. "+ft(Math.min.apply(null,cost.full)):"")+"</i>"+(nr?"":fromLine(c))+'<span class="bdg">'+b.join("")+'</span><span class="cc-go">Recept megnyitása ▸</span></span></button>'}
 function carIdx(){var cr=$("car");if(!cr||!cr.firstChild)return 0;var w=cr.firstChild.getBoundingClientRect().width+12;return Math.round(cr.scrollLeft/w)}
@@ -233,10 +278,11 @@ function openRecipe(id,keepP){var r=recById(id);if(!r)return;if(!keepP)rdP=porti
   if(c.ok&&c.can>=rdP-0.01)o+='<div class="warnbox" style="background:#d9f5df">Minden megvan hozzá otthon, '+nf(rdP)+" adagra is elég.</div>";
   else if(c.ok)o+='<div class="warnbox">Minden hozzávaló megvan, de csak kb. '+nf(Math.floor(c.can*2)/2)+" adagra elég.</div>";
   else o+='<div class="warnbox" style="background:#ffd9d2">Hiányzik: '+esc(c.miss.map(function(h){return h.nev}).join(", "))+"</div>";
+  if(c.subs&&c.subs.length)o+='<div class="warnbox" style="background:#fff2c4"><b>Helyettesítéssel:</b> '+esc(c.subs.map(function(s){return s.k.toLowerCase()+" a(z) "+s.sub.toLowerCase()+" helyett"}).join(", "))+". Az íze kicsit más lehet, de működik.</div>";
   if(c.thaw.length)o+='<div class="warnbox" style="background:#d6efff"><b>Előtte olvaszd ki:</b> '+esc(c.thaw.join(", "))+' (a fagyasztóban van). Legjobb a hűtőben, egy éjszaka alatt.</div>';
   o+='<div class="sec">Hozzávalók ('+nf(rdP)+' adag)</div><ul class="ing">'+r.hozzavalok.map(function(h){var u=c.use.filter(function(x){return x.h===h})[0],m,t;
-    if(h.f){m='<span class="m o">~</span>';t=""}else if(u){m='<span class="m y">✓</span>';t=u.basic?" <span class=\"q small\">(mindig van)</span>":' <span class="q small">('+LOCS[u.locs[0]]+(u.src&&norm(u.src)!==norm(u.key)?": "+esc(u.src.toLowerCase()):"")+")</span>"+(u.dd<=2?' <span class="badge bad">hamar lejár</span>':"")}
-    else if(h.o){m='<span class="m o">○</span>';t=' <span class="q small">(nincs otthon, nélküle is jó)</span>'}else{m='<span class="m n">✗</span>';t=' <span class="badge bad">hiányzik</span>'}
+    if(h.f){m='<span class="m o">~</span>';t=""}else if(u){m='<span class="m y">✓</span>';t=u.basic?" <span class=\"q small\">(mindig van)</span>":(u.sub?' <span class="badge cold">helyette: '+esc((u.src||u.key).toLowerCase())+"</span>":"")+' <span class="q small">('+LOCS[u.locs[0]]+(!u.sub&&u.src&&norm(u.src)!==norm(u.key)?": "+esc(u.src.toLowerCase()):"")+")</span>"+(u.dd<=2?' <span class="badge bad">hamar lejár</span>':"")}
+    else{var tip=subTip(h);if(h.o){m='<span class="m o">○</span>';t=' <span class="q small">(nincs otthon, nélküle is jó)</span>'}else{m='<span class="m n">✗</span>';t=' <span class="badge bad">hiányzik</span>'+(tip.length?' <span class="q small">(helyette jó: '+esc(tip.join(", ").toLowerCase())+")</span>":"")}}
     return "<li>"+m+"<span>"+esc(h.nev)+t+'</span><span class="iq">'+fmtR(h,f)+"</span></li>"}).join("")+"</ul>";
   if(cost.any){var bi=minI(cost.full),bm=minI(cost.mis);
     o+='<div class="sec">Mennyibe kerül? (becslés)</div><table class="ptab"><tr><th></th>'+SHOPS.map(function(s){return "<th>"+s[1]+"</th>"}).join("")+"</tr>"+
@@ -262,9 +308,11 @@ function openRecipe(id,keepP){var r=recById(id);if(!r)return;if(!keepP)rdP=porti
     toast("Recept törölve.","Visszavonás",function(){ownRec.splice(pos,0,r);sv(K.rec,ownRec);drawAll()})}}
 function cook(r,c){var f=Math.min(rdP,c.can)/r.adag,out=[],hr=new Date().getHours();
   meals.push({id:uid("m"),n:r.nev,date:plus(0),type:hr<10?"reggeli":hr<16?"ebed":"vacsora",cat:mcat(r.cat)});sv(K.meals,meals);
-  var gone=[];c.use.forEach(function(u){if(u.basic||!(u.need>0))return;var left=u.need*f,tot=left,l0=liveOf(u.key)[0],sbt=l0&&BASE[l0.u]?BASE[l0.u][0]:u.bt;
-    liveOf(u.key).filter(function(i){return same((BASE[i.u]||["db"])[0],u.bt)}).sort(function(x,y){return x.exp<y.exp?-1:1}).forEach(function(i){if(left<=0)return;var b=BASE[i.u][1],hv=i.q*b,t=Math.min(hv,left);i.q=Math.round((hv-t)/b*100)/100;left-=t});
-    if(tot-Math.max(left,0)>0)out.push(u.key+" "+fmtQ(tot-Math.max(left,0),sbt))});
+  var gone=[];c.use.forEach(function(u){if(u.basic||!(u.need>0))return;var left=u.need*f,tot=left,l0=liveOf(u.key)[0],sb=l0&&BASE[l0.u]?BASE[l0.u][0]:u.bt;
+    /* a legkorábban lejáró tételből vonunk le először; darabos tételnél (pl. 3 alma) grammos igény esetén a darabsúllyal számolunk */
+    liveOf(u.key).sort(function(x,y){return x.exp<y.exp?-1:1}).forEach(function(i){if(left<=0)return;var b=BASE[i.u]||["db",1],hv=cvt(i.q*b[1],b[0],u.bt,i.n);if(hv==null)return;
+      var t=Math.min(hv,left),rest=cvt(hv-t,u.bt,b[0],i.n)/b[1];if(b[0]==="db"&&!same(b[0],u.bt))rest=Math.floor(rest*2+0.2)/2;i.q=Math.round(rest*100)/100;left-=t});
+    var used=tot-Math.max(left,0);if(used>0){var su=l0?cvt(used,u.bt,sb,l0.n):null;out.push(u.key+" "+(su!=null?fmtQ(su,sb):fmtQ(used,u.bt)))}});
   items.forEach(function(i){if(!(i.q>0.0001)&&gone.indexOf(i.n)<0)gone.push(i.n)});
   items=items.filter(function(i){return i.q>0.0001});
   /* ami elfogyott (és nincs belőle más a raktárban), az a bevásárlólistára kerül */
@@ -281,9 +329,20 @@ $("rmode").innerHTML=[["all","Összes recept"],["can","Most elkészíthető"],["
 $("rcat").onclick=function(e){var b=e.target.closest("[data-c]");if(!b)return;rcat=b.dataset.c;this.querySelectorAll(".chip").forEach(function(x){x.setAttribute("aria-pressed",x===b)});drawRec()};
 $("rmode").onclick=function(e){var b=e.target.closest("[data-m]");if(!b)return;rmode=b.dataset.m;this.querySelectorAll(".chip").forEach(function(x){x.setAttribute("aria-pressed",x===b)});drawRec()};
 $("rq").oninput=function(){drawRec()};
+/* okos keresés: több szó (mind illeszkedjen), rokon szavak (krumpli = burgonya), és kulcsszavak: vega, gyors, hideg, meleg, olcsó */
+var QSYN={krumpli:["burgonya"],burgonya:["krumpli"],pityoka:["burgonya"],hus:["hus","csirke","sertes","marha","pulyka","daralt","karaj","tarja","oldalas","kacsa","sonka","kolbasz"],
+  hal:["hal","lazac","tonhal","makrela","szardinia"],sajt:["sajt","gouda","mozzarella","parmezan","feta"],teszta:["teszta","spagetti","cernametelt","lasagne","nokedli","makaroni","tarhonya"],
+  edes:["desszert","cukor","mez","suti"],suti:["desszert","suti","pite","muffin","kalacs","piskota"],kolbasz:["kolbasz","virsli"],paradicsom:["paradicsom","passata"],tok:["sutotok","cukkini","tok"],
+  csirke:["csirke"],gomba:["gomba"],tojas:["tojas","omlett","rantotta"],rizs:["rizs","rizotto"],bab:["bab"],kaposzta:["kaposzta"]};
+function qMatch(r,q){var hay=norm(r.nev+" "+(RCN[r.cat]||"")+" "+r.hozzavalok.map(function(h){return h.nev+" "+h.k.join(" ")}).join(" "));
+  return q.split(/\s+/).filter(Boolean).every(function(t){
+    if(/^(vega|vegetarianus|husmentes|hus nelkul)$/.test(t))return window.FX&&FX.isVeg?FX.isVeg(r):true;
+    if(t==="gyors")return r.ido_perc<=20;if(t==="hideg")return isCold(r);if(t==="meleg")return !isCold(r);
+    if(t==="olcso"){var c=recCost(r,check(r),1/r.adag);return c.any&&Math.min.apply(null,c.full)<=250}
+    if(hay.indexOf(t)>=0)return true;var s=QSYN[t];if(!s&&t.length>4)s=QSYN[t.replace(/(os|es|as|ok|ek|ak)$/,"")];return !!(s&&s.some(function(x){return hay.indexOf(x)>=0}))})}
 function drawRec(){var q=norm($("rq").value),P=portions();
   var a=allRec().filter(function(r){if(rcat==="own"&&!r.own)return false;if(rcat==="fav"&&!(window.kedv&&kedv[r.id]===1))return false;if(rcat==="coldall"&&!isCold(r))return false;if(rcat!=="all"&&rcat!=="own"&&rcat!=="fav"&&rcat!=="coldall"&&r.cat!==rcat)return false;
-    if(q&&norm(r.nev).indexOf(q)<0&&!r.hozzavalok.some(function(h){return norm(h.nev).indexOf(q)>=0||h.k.some(function(k){return norm(k).indexOf(q)>=0})}))return false;return true}).map(check);
+    if(q&&!qMatch(r,q))return false;return true}).map(check);
   var hid=a.filter(function(c){return c.bl}).length;a=a.filter(function(c){return !c.bl||rcat==="own"});
   if(rmode==="can")a=a.filter(function(c){return c.ok});if(rmode==="near")a=a.filter(function(c){return !c.ok&&c.miss.length&&c.miss.length<=2});
   a.sort(function(x,y){return (y.ok-x.ok)||(x.miss.length-y.miss.length)||x.r.nev.localeCompare(y.r.nev,"hu")});
@@ -297,7 +356,7 @@ $("rlist").onclick=function(e){var b=e.target.closest("[data-id]");if(b)openReci
 var editing=null;
 $("rc").innerHTML=RCATS.map(function(c){return '<option value="'+c[0]+'">'+c[1]+"</option>"}).join("");
 var UNITS=["g","dkg","kg","ml","dl","l","db","ek","tk","gerezd","szelet","csipet"];
-function ingRow(h){var d=document.createElement("div");d.className="irow";var n=h&&h.k&&h.k[0]?h.k[0]:(h?h.nev:"");
+function ingRow(h){var d=document.createElement("div");d.className="irow";var n=h&&h.k&&h.k[0]?h.k[0]:(h?h.nev:"");d._h=h&&h.k&&h.k.length>1?h:null;
   d.innerHTML='<div><input class="in" placeholder="Hozzávaló" autocomplete="off" value="'+esc(n)+'" aria-label="Hozzávaló neve"><div class="sugg" role="listbox" hidden></div></div><input class="iq2" type="number" step="any" min="0" inputmode="decimal" placeholder="Menny." aria-label="Mennyiség" value="'+(h&&h.menny!=null?h.menny:"")+'"><select class="iu" aria-label="Egység">'+UNITS.map(function(u){return"<option"+(h&&h.egyseg===u?" selected":"")+">"+u+"</option>"}).join("")+'</select><button type="button" class="x" aria-label="Hozzávaló törlése">×</button><label class="opt"><input type="checkbox" class="io"'+(h&&h.o?" checked":"")+"> nem kötelező</label>";
   ac(d.querySelector(".in"),d.querySelector(".sugg"),function(c){var s=d.querySelector(".iu");if(!d.querySelector(".iq2").value)s.value=c.u==="kg"?"g":c.u==="l"?"dl":c.u});
   d.querySelector(".x").onclick=function(){d.remove()};$("rings").appendChild(d)}
@@ -310,7 +369,10 @@ function editRecipe(r,copy){editing=r&&!copy?r:null;$("rft").textContent=editing
 $("radd").onclick=function(){editRecipe(null)};
 $("rsave").onclick=function(){if(!$("rff").reportValidity())return;var ing=[];
   $("rings").querySelectorAll(".irow").forEach(function(d){var n=d.querySelector(".in").value.trim();if(!n)return;var c=find(n),q=parseFloat(d.querySelector(".iq2").value);
-    var h={nev:n.toLowerCase(),k:[c?c.n:n]};if(q>0){h.menny=q;h.egyseg=d.querySelector(".iu").value}if(d.querySelector(".io").checked)h.o=1;ing.push(h)});
+    var h={nev:n.toLowerCase(),k:[c?c.n:n]};
+    /* másolt receptnél, ha a hozzávalót nem írták át, a változatok (pl. csirkecomb vagy egész csirke) megmaradnak */
+    var o0=d._h;if(o0&&norm(o0.k[0])===norm(h.k[0])){h.k=o0.k.slice();h.nev=o0.nev;if(o0.kf)h.kf=Object.assign({},o0.kf)}
+    if(q>0){h.menny=q;h.egyseg=d.querySelector(".iu").value}if(d.querySelector(".io").checked)h.o=1;ing.push(h)});
   if(!ing.length){toast("Adj meg legalább egy hozzávalót.");return}
   var o={id:editing?editing.id:uid("own-"),own:1,nev:$("rn").value.trim(),cat:$("rc").value,adag:Math.max(1,parseInt($("ra").value)||4),ido_perc:Math.max(1,parseInt($("ri").value)||30),
     hozzavalok:ing,lepesek:$("rs").value.split("\n").map(function(s){return s.trim()}).filter(Boolean),kritikus:$("rk").value.trim()?[$("rk").value.trim()]:[],
@@ -341,7 +403,7 @@ $("sadd").onclick=function(){var n=$("sn").value.trim();if(!n){$("sn").focus();r
 function addShop(n,q,u){var ex=shop.filter(function(s){return norm(s.n)===norm(n)&&!s.done})[0];
   if(ex&&same(BASE[ex.u][0],BASE[u][0])){ex.q=Math.round((ex.q+q*BASE[u][1]/BASE[ex.u][1])*100)/100}else shop.push({id:uid("s"),n:n,q:q,u:u,done:false});sv(K.shop,shop);drawShop()}
 function toList(r,c,f){var k=0;c.miss.forEach(function(h){var key=h.k[0],cc=find(key);if(!cc)return;var q=defQ(cc.u),u=cc.u;
-    if(h.menny){var tb=toBase(h.menny*f,h.egyseg,key),cb=BASE[cc.u];if(same(tb[0],cb[0])){q=tb[1]/cb[1];q=cb[0]==="db"?Math.ceil(q):cb[1]>=100?Math.ceil(q*10)/10:Math.ceil(q/10)*10;if(cb[0]!=="db"&&q<defQ(u)/2)q=defQ(u)}}
+    if(h.menny){var tb=toBase(h.menny*f*((h.kf&&h.kf[key])||1),h.egyseg,key),cb=BASE[cc.u],cv=cvt(tb[1],tb[0],cb[0],cc.n);if(cv!=null){q=cv/cb[1];q=cb[0]==="db"?Math.ceil(q):cb[1]>=100?Math.ceil(q*10)/10:Math.ceil(q/10)*10;if(cb[0]!=="db"&&q<defQ(u)/2)q=defQ(u)}}
     addShop(cc.n,q,u);k++});toast(k+" tétel felírva a bevásárlólistára.")}
 function lineCost(s){var b=BASE[s.u]||["db",1];return costOf(s.n,b[0],s.q*b[1])}
 function drawShop(){var t=[0,0,0],unk=0,open=shop.filter(function(s){return !s.done});
