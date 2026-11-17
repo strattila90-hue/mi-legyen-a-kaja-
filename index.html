@@ -8,6 +8,23 @@
 <meta name="theme-color" content="#e4472b">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icon.svg">
+<link rel="apple-touch-icon" href="ios/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Mi a kaja?">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="format-detection" content="telephone=no">
+<link rel="apple-touch-startup-image" media="(device-width: 440px) and (device-height: 956px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)" href="ios/splash-1320x2868.png">
+<link rel="apple-touch-startup-image" media="(device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)" href="ios/splash-1290x2796.png">
+<link rel="apple-touch-startup-image" media="(device-width: 402px) and (device-height: 874px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)" href="ios/splash-1206x2622.png">
+<link rel="apple-touch-startup-image" media="(device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)" href="ios/splash-1179x2556.png">
+<link rel="apple-touch-startup-image" media="(device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)" href="ios/splash-1170x2532.png">
+<link rel="apple-touch-startup-image" media="(device-width: 428px) and (device-height: 926px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)" href="ios/splash-1284x2778.png">
+<link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)" href="ios/splash-1125x2436.png">
+<link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)" href="ios/splash-1242x2688.png">
+<link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait)" href="ios/splash-828x1792.png">
+<link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait)" href="ios/splash-750x1334.png">
+<link rel="apple-touch-startup-image" media="(device-width: 360px) and (device-height: 780px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)" href="ios/splash-1080x2340.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Pixelify+Sans:wght@500;600;700&display=swap" rel="stylesheet">
@@ -175,6 +192,7 @@
         <button class="btn" id="inst" type="button">Letöltés a telefonra</button>
         <button class="btn p" id="igbtn" type="button">Telepítési útmutató</button>
       </div>
+      <div class="btns"><button class="btn t" id="igshare" type="button">Telepítési útmutató küldése a családnak</button></div>
       <div class="btns"><a class="btn t" id="apk" href="https://github.com/strattila90-hue/mi-legyen-a-kaja-/releases/download/apk-latest/mi-legyen-a-kaja.apk" rel="noopener">Android app letöltése (APK)</a></div>
       <div class="q small" style="margin-top:6px">Az app magától frissül: minden indításkor és óránként megnézi, van-e új verzió.</div>
       <div id="st" class="q" style="margin-top:8px"></div>
@@ -259,7 +277,7 @@
   <label for="bcman">Vagy írd be a számokat</label><div class="row"><div style="flex:3"><input id="bcman" inputmode="numeric" autocomplete="off"></div><div><button type="button" class="btn sm" id="bcgo" style="width:100%">Keres</button></div></div></dialog>
 <dialog id="kid" class="big kidd"><div class="dbody"></div></dialog>
 <dialog id="mx" class="big"><button type="button" class="dclose" data-close aria-label="Bezárás">×</button><h3 id="mxt"></h3><div class="dbody"></div></dialog>
-<dialog id="ig"><button type="button" class="dclose" data-close aria-label="Bezárás">×</button><h3>Telepítés a telefonra</h3><div class="dbody"></div></dialog>
+<dialog id="ig" class="big"><button type="button" class="dclose" data-close aria-label="Bezárás">×</button><h3>Telepítés a telefonra</h3><div class="dbody"></div></dialog>
 <datalist id="shops"><option value="Lidl"><option value="Aldi"><option value="Spar"><option value="Tesco"><option value="Penny"><option value="CBA"><option value="Coop"><option value="Auchan"><option value="Piac"></datalist>
 <datalist id="meals"></datalist>
 <div class="toast" id="toast" role="status" hidden></div>
