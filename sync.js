@@ -4,7 +4,7 @@
 (function(){
 var CFG_KEY="kajasync.cfg",HAZ_KEY="kaja.haz.v1",LAST_KEY="kajasync.last";
 var ARR={"kaja.raktar.v1":["items","items"],"kaja.lista.v1":["shop","shop"],"kaja.naplo.v1":["meals","meals"],"kaja.kiadas.v1":["exps","exps"],"kaja.recept.v1":["recipes","ownRec"]};
-var OBJ={"kaja.menu.v1":["menu","menu"],"kaja.kedv.v1":["kedv","kedv"],"kaja.diet.v1":["diet","diet"],"kaja.waste.v1":["waste","waste"],"kaja.kid.v1":["kid","kid"],"kaja.bar.v1":["bar","barmap"],"kaja.keret.v1":["bud","bud"],"kaja.ar.v1":["prices","prices"],"kaja.termek.v1":["prods","prods"],"kaja.beall.v1":["set","set"]};
+var OBJ={"kaja.menu.v1":["menu","menu"],"kaja.kedv.v1":["kedv","kedv"],"kaja.diet.v1":["diet","diet"],"kaja.waste.v1":["waste","waste"],"kaja.kid.v1":["kid","kid"],"kaja.bar.v1":["bar","barmap"],"kaja.keret.v1":["bud","bud"],"kaja.ar.v1":["prices","prices"],"kaja.termek.v1":["prods","prods"],"kaja.beall.v1":["set","set"],"kaja.arhist.v1":["arhist","arhist"],"kaja.fogyas.v1":["fogyas","fogyas"],"kaja.vendeg.v1":["vendeg","vendeg"]};
 var SETF=["ad","te","ch","to","basics"];
 var db=null,on=false,applying=false,last=null,unsub=[],status="off",err="",lastSync=null,loading=null;
 
