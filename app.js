@@ -1,4 +1,9 @@
-var VER="1.13";
+var VER="1.14";
+/* indításkori URL-paraméterek (a sync.js törli őket a címsorból) és platform */
+var BOOTQ=new URLSearchParams(location.search),UA=navigator.userAgent||"";
+var IS_IOS=/iPad|iPhone|iPod/.test(UA)||(navigator.platform==="MacIntel"&&navigator.maxTouchPoints>1),IS_IPAD=/iPad/.test(UA)||(navigator.platform==="MacIntel"&&navigator.maxTouchPoints>1);
+var IS_STANDALONE=!!(navigator.standalone||(window.matchMedia&&matchMedia("(display-mode: standalone)").matches)||/^android-app:/.test(document.referrer));
+if(IS_IOS)document.documentElement.classList.add("ios");if(IS_STANDALONE)document.documentElement.classList.add("standalone");
 /* ---------- alapok ---------- */
 function $(i){return document.getElementById(i)}
 function esc(s){return String(s==null?"":s).replace(/[&<>"']/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]})}

@@ -422,3 +422,41 @@ dialog.sheet.up{margin:0 auto auto;border-width:0 4px 4px;height:auto;min-height
 .slot .hp{margin:4px 0 2px;height:8px}
 .slot .d{font-size:14px}
 .slot .x{width:26px;height:26px;font-size:16px}
+/* ---------- v1.14: iOS és telepítő varázsló ---------- */
+html{-webkit-tap-highlight-color:transparent}
+button,a,summary,.slot{touch-action:manipulation}
+.ios input,.ios select,.ios textarea{font-size:max(16px,1em)}
+dialog.big{padding-top:calc(14px + env(safe-area-inset-top,0px))}
+.standalone body::before{content:"";position:fixed;left:0;right:0;top:0;height:env(safe-area-inset-top,0px);background:var(--red);z-index:25}
+.ios.standalone body{overscroll-behavior-y:none}
+.igplat{margin:4px 0 10px}
+.igdots{display:flex;align-items:center;gap:6px;margin:4px 0 14px}
+.igdots i{width:14px;height:14px;border:3px solid var(--line);background:var(--panel)}
+.igdots i.done{background:var(--ok)}
+.igdots i.on{background:var(--red);transform:scale(1.15)}
+.igdots .small{margin-left:6px}
+.igstep.big{padding:14px 12px 12px}
+.igstep.big .igpic{max-height:42dvh;margin:0 auto}
+.igh{font-size:22px;font-weight:700;margin:12px 0 4px}
+.igstep.big p{margin:4px 0 10px;font-size:18px}
+.igpics{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.igpics figure{margin:0}
+.igpics figcaption{font-size:14px;font-weight:700;text-align:center;margin-top:4px;line-height:1.2}
+.igben{margin:4px 0 0;padding-left:20px;font-size:17px}
+.igben li{margin:4px 0}
+.igbtns .btn{min-height:52px;font-size:19px}
+.igsh{margin-top:14px}
+.fxban.inst{background:#d9f5df;color:#3a2016;align-items:center}
+.fxban.inst>span:nth-child(2){flex:1}
+.fxban.inst .small{font-size:15px}
+.fxban.inst .btn{flex:none;min-width:0}
+.shhint{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(10px + env(safe-area-inset-bottom,0px));z-index:60;width:min(92vw,380px);display:flex;flex-direction:column;align-items:center}
+.shhint.ipad{bottom:auto;top:calc(10px + env(safe-area-inset-top,0px));left:auto;right:10px;transform:none;flex-direction:column-reverse;align-items:flex-end}
+.shbub{background:#fffaf0;color:#3a2016;border:4px solid var(--line);box-shadow:5px 5px 0 rgba(0,0,0,.35);padding:12px;font-size:18px;text-align:center;width:100%}
+.shbub .small{font-size:15px}
+.shic{width:16px;height:20px;vertical-align:-4px}
+.sharr{width:0;height:0;border-left:22px solid transparent;border-right:22px solid transparent;border-top:28px solid var(--red);margin-top:6px;animation:shb .8s steps(2) infinite;filter:drop-shadow(3px 3px 0 rgba(0,0,0,.35))}
+.shhint.ipad .sharr{border-top:0;border-bottom:28px solid var(--red);margin:0 18px 6px 0}
+@keyframes shb{50%{transform:translateY(8px)}}
+@media (prefers-reduced-motion:reduce){.sharr{animation:none}}
+.fxban.inst>span:nth-child(2){min-width:0}

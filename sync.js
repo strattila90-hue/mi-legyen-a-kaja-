@@ -84,7 +84,7 @@ function newCode(){var a="ABCDEFGHJKLMNPQRSTUVWXYZ23456789",s="",r=new Uint32Arr
 function normCode(s){return String(s||"").toUpperCase().replace(/[^A-Z0-9]/g,"")}
 function join(c){c=normCode(c);if(c.length!==10){toast("A kód 10 karakter (pl. ABCDE-23456).");return}lset(HAZ_KEY,JSON.stringify(c));lset(LAST_KEY,null);last=null;connect()}
 function leave(){unsub.forEach(function(u){u()});unsub=[];on=false;lset(HAZ_KEY,null);lset(LAST_KEY,null);last=null;setStatus("off");toast("Kiléptél a közös raktárból. Az adatok ezen a telefonon megmaradnak.")}
-function link(){return location.origin+location.pathname+"?haz="+fmtCode(code())}
+function link(){return location.origin+location.pathname+"?haz="+fmtCode(code())+"&telepites=1"}
 
 window.SYNC={push:pushKey,connect:connect,join:join,leave:leave,code:code,status:function(){return status}};
 
@@ -101,7 +101,7 @@ window.drawSync=function(){var st=$("syst"),bt=$("sybtns");if(!st)return;var c=c
   st.innerHTML=s+' Háztartás kód: <b class="pf" style="font-size:20px">'+fmtCode(c)+"</b>"+(lastSync?'<div class="q small">Utolsó szinkron: '+new Date(lastSync).toLocaleTimeString("hu-HU")+"</div>":"")+(err?'<div style="margin-top:6px"><b>'+esc(err)+"</b></div>":"")+
     '<div class="q small" style="margin-top:6px">Aki ezt a kódot beírja, ugyanazt a raktárat, listát, recepteket, naplót és kiadásokat látja.</div>';
   bt.innerHTML='<button type="button" class="btn t" id="syshare">Kód küldése a családnak</button><button type="button" class="btn p" id="syleave">Kilépés</button>';
-  $("syshare").onclick=function(){var t="Csatlakozz a közös konyhai raktárunkhoz a Mi legyen a kaja? appban! Kód: "+fmtCode(c)+" — vagy nyisd meg: "+link();
+  $("syshare").onclick=function(){var t="Csatlakozz a közös konyhai raktárunkhoz a Mi legyen a kaja? appban! Kód: "+fmtCode(c)+" — vagy nyisd meg: "+link()+" (iPhone-on Safariban: lépésről lépésre megmutatja, hogyan teheted a főképernyőre.)";
     if(navigator.share)navigator.share({title:"Mi legyen a kaja? – közös raktár",text:t}).catch(function(){});else if(navigator.clipboard)navigator.clipboard.writeText(t).then(function(){toast("Kimásolva, küldd el üzenetben.")});else toast(t)};
   $("syleave").onclick=function(){gform("Kilépés a közös raktárból",[{k:"nt",t:"note"}],null,leave,null);$("gs").textContent="Kilépés";$("g_nt").textContent="Ezen a telefonon megmaradnak az adatok, de már nem frissülnek a többiek változásaival. Biztos?"}};
 function askJoin(pre){gform("Csatlakozás közös raktárhoz",[{k:"c",l:"Háztartás kód",t:"text",r:1,v:pre},{k:"nt",t:"note"}],null,function(o){join(o.c)},null);
