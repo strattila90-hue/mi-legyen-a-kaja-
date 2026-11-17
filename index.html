@@ -53,6 +53,7 @@
   <main id="v-rec" hidden>
     <section class="card" id="fxholi" hidden></section>
     <section class="card" id="fxweek"></section>
+    <section class="card" id="mxplan"></section>
     <section class="card">
       <h2><span class="ic" id="i-book"></span>Receptkönyv</h2>
       <input id="rq" type="search" placeholder="Keresés: étel, hozzávaló, vagy pl. vega gyors" autocomplete="off">
@@ -74,6 +75,7 @@
       <div class="sugg" id="pqs" role="listbox" hidden></div>
       <div id="pres"></div>
     </section>
+    <section class="card" id="mxup" hidden></section>
     <section class="card">
       <h2><span class="ic" id="i-cart2"></span>Bevásárlólista</h2>
       <div class="row">
@@ -85,7 +87,7 @@
       <div class="btns"><button class="btn t" id="fxshopmode" type="button">Bolti mód</button><button class="btn" id="fxrc" type="button">Blokk beolvasása</button></div>
       <input type="file" id="rcfile" accept="image/*" capture="environment" hidden>
       <div id="slist" style="margin-top:8px"></div>
-      <div id="stot"></div>
+      <div id="stot"></div><div id="mxshop"></div>
       <div class="btns" id="sbtns"></div>
     </section>
   </main>
@@ -93,12 +95,15 @@
   <!-- KÖLTSÉG -->
   <main id="v-cost" hidden>
     <section class="card"><h2><span class="ic" id="i-coin2"></span>Költségkeret</h2><div id="bsum"></div><div class="btns"><button class="btn" id="bset" type="button">Keret beállítása</button></div></section>
+    <section class="card" id="mxcost"></section>
     <button class="btn g full" id="xadd" type="button">+ Új kiadás</button>
     <section class="card"><h2>Kiadások</h2><div id="xlist"></div></section>
   </main>
 
   <!-- NAPLÓ -->
   <main id="v-stat" hidden>
+    <section class="card" id="mxcal"></section>
+    <section class="card" id="mxstat"></section>
     <section class="card" id="fxlevel"></section>
     <section class="card" id="fxwaste"></section>
     <section class="card"><h2><span class="ic" id="i-chart"></span>Ezen a héten</h2><div id="sw"></div></section>
@@ -146,6 +151,7 @@
         <button class="btn" id="bimp" type="button">Visszatöltés fájlból</button>
         <button class="btn p" id="bcode" type="button">Mentés szövegként</button>
       </div>
+      <div id="mxsnap"></div>
       <input type="file" id="bfile" accept="application/json,.json,.txt" hidden>
       <div id="bcodebox" hidden>
         <label for="bta">Mentési kód (másold ki, vagy illessz be ide egy korábbit)</label>
@@ -156,7 +162,7 @@
     <section class="card">
       <h2><span class="ic" id="i-gear"></span>Az app</h2>
       <label for="theme">Megjelenés</label>
-      <select id="theme"><option value="auto">Telefon beállítása szerint</option><option value="light">Világos</option><option value="dark">Sötét (éjszakai büfé)</option></select>
+      <select id="theme"><option value="auto">Telefon beállítása szerint</option><option value="light">Világos</option><option value="dark">Sötét (éjszakai büfé)</option><option value="night">Este magától sötét (19–7 óra)</option></select>
       <div class="btns">
         <button class="btn" id="upd" type="button">Frissítés keresése</button>
         <button class="btn" id="inst" type="button">Letöltés a telefonra</button>
@@ -208,6 +214,11 @@
 <dialog id="rf"><form id="rff" onsubmit="return false">
   <button type="button" class="dclose" data-close aria-label="Bezárás">×</button>
   <h3 id="rft">Saját recept</h3>
+  <details class="paste" id="rpaste"><summary>Recept beillesztése szövegből</summary>
+    <div class="q small">Másold be egy weboldalról vagy üzenetből: a hozzávalókat és a lépéseket kitöltöm helyetted.</div>
+    <textarea id="rpt" spellcheck="false" placeholder="Rakott krumpli (4 adag, 60 perc)&#10;Hozzávalók:&#10;1 kg burgonya&#10;5 tojás&#10;...&#10;Elkészítés:&#10;A krumplit héjában megfőzzük..."></textarea>
+    <button type="button" class="btn t sm" id="rpgo">Kitöltés a szövegből</button>
+  </details>
   <label for="rn">Étel neve</label><input id="rn" required autocomplete="off" placeholder="pl. Nagyi lecsója">
   <div class="row">
     <div><label for="rc">Fajta</label><select id="rc"></select></div>
@@ -241,6 +252,7 @@
   <video id="bcv" playsinline muted></video><p class="q" id="bcst"></p>
   <label for="bcman">Vagy írd be a számokat</label><div class="row"><div style="flex:3"><input id="bcman" inputmode="numeric" autocomplete="off"></div><div><button type="button" class="btn sm" id="bcgo" style="width:100%">Keres</button></div></div></dialog>
 <dialog id="kid" class="big kidd"><div class="dbody"></div></dialog>
+<dialog id="mx" class="big"><button type="button" class="dclose" data-close aria-label="Bezárás">×</button><h3 id="mxt"></h3><div class="dbody"></div></dialog>
 <dialog id="ig"><button type="button" class="dclose" data-close aria-label="Bezárás">×</button><h3>Telepítés a telefonra</h3><div class="dbody"></div></dialog>
 <datalist id="shops"><option value="Lidl"><option value="Aldi"><option value="Spar"><option value="Tesco"><option value="Penny"><option value="CBA"><option value="Coop"><option value="Auchan"><option value="Piac"></datalist>
 <datalist id="meals"></datalist>
@@ -254,5 +266,6 @@
 <script src="sync.js"></script>
 <script src="features.js"></script>
 <script src="extras.js"></script>
+<script src="more.js"></script>
 </body>
 </html>

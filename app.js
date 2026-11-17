@@ -1,4 +1,4 @@
-var VER="1.11";
+var VER="1.12";
 /* ---------- alapok ---------- */
 function $(i){return document.getElementById(i)}
 function esc(s){return String(s==null?"":s).replace(/[&<>"']/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]})}
@@ -60,7 +60,10 @@ function saveItems(){sv(K.items,items)}
 function saveSet(){sv(K.set,set)}
 function portions(){return Math.max(0.25,set.ad+set.te+set.ch*0.5+set.to*0.25)}
 function people(){var a=[];if(set.ad)a.push(set.ad+" felnőtt");if(set.te)a.push(set.te+" kamasz");if(set.ch)a.push(set.ch+" gyerek");if(set.to)a.push(set.to+" kisgyerek");return a.join(", ")||"senki"}
-function applyTheme(){var r=document.documentElement;if(set.theme==="auto")r.removeAttribute("data-theme");else r.setAttribute("data-theme",set.theme)}
+function nightNow(){var h=new Date().getHours();return h>=19||h<7}
+function applyTheme(){var r=document.documentElement,t=set.theme==="night"?(nightNow()?"dark":"light"):set.theme;if(t==="auto")r.removeAttribute("data-theme");else r.setAttribute("data-theme",t);
+  var m=document.querySelector('meta[name="theme-color"]');if(m)m.setAttribute("content",t==="dark"||(t==="auto"&&matchMedia&&matchMedia("(prefers-color-scheme: dark)").matches)?"#1d1533":"#e4472b")}
+setInterval(function(){if(set.theme==="night")applyTheme()},6e5);
 applyTheme();
 
 /* ---------- receptek ---------- */
@@ -274,7 +277,9 @@ $("go").onclick=function(){var cr=$("car");
 var rdP=null;
 function openRecipe(id,keepP){var r=recById(id);if(!r)return;if(!keepP)rdP=portions();var c=check(r),f=rdP/r.adag,cost=recCost(r,c,f),o="";
   o+='<div class="rhead"><span class="di">'+ic(RICO[r.cat]||"rice")+"</span><div><h3>"+esc(r.nev)+'</h3><div class="q">'+esc(RCN[r.cat]||"")+" · "+r.ido_perc+" perc"+(isCold(r)?" · hideg":"")+(r.own?" · saját recept":"")+"</div></div></div>";
-  o+='<div class="prow" style="margin-top:10px"><div><b>Adag</b><div class="q small">'+esc(people())+'</div></div><div class="step"><button type="button" data-p="-0.5" aria-label="Kevesebb adag">−</button><output>'+nf(rdP)+'</output><button type="button" data-p="0.5" aria-label="Több adag">+</button></div></div>';
+  o+='<div class="prow" style="margin-top:10px"><div><b>Adag</b><div class="q small">'+esc(people())+'</div></div><div class="step"><button type="button" data-p="-0.5" aria-label="Kevesebb adag">−</button><output>'+nf(rdP)+'</output><button type="button" data-p="0.5" aria-label="Több adag">+</button></div></div>'+
+    '<div class="chips pchips" role="group" aria-label="Hány főre?">'+[1,2,4,6,8,10].map(function(n){return '<button type="button" class="chip" data-pp="'+n+'" aria-pressed="'+(rdP===n)+'">'+n+' fő</button>'}).join("")+'<button type="button" class="chip" data-pp="'+portions()+'" aria-pressed="'+(rdP===portions())+'">Család ('+nf(portions())+')</button></div>'+
+    '<div class="q small">1 adag: '+esc(r.hozzavalok.filter(function(h){return h.menny&&!h.f}).slice(0,4).map(function(h){return h.nev+" "+fmtR(h,1/r.adag)}).join(", "))+(r.hozzavalok.filter(function(h){return h.menny&&!h.f}).length>4?"…":"")+'</div>';
   if(c.ok&&c.can>=rdP-0.01)o+='<div class="warnbox" style="background:#d9f5df">Minden megvan hozzá otthon, '+nf(rdP)+" adagra is elég.</div>";
   else if(c.ok)o+='<div class="warnbox">Minden hozzávaló megvan, de csak kb. '+nf(Math.floor(c.can*2)/2)+" adagra elég.</div>";
   else o+='<div class="warnbox" style="background:#ffd9d2">Hiányzik: '+esc(c.miss.map(function(h){return h.nev}).join(", "))+"</div>";
@@ -294,11 +299,13 @@ function openRecipe(id,keepP){var r=recById(id);if(!r)return;if(!keepP)rdP=porti
   if(r.kritikus.length)o+='<div class="warnbox"><b>Figyelj erre:</b><ul style="margin:4px 0 0;padding-left:18px">'+r.kritikus.map(function(s){return"<li>"+esc(s)+"</li>"}).join("")+"</ul></div>";
   if(r.talalas)o+='<div class="sec">Tálalás</div><div>'+esc(r.talalas)+"</div>";
   if(r.allergenek.length)o+='<div class="q" style="margin-top:10px">Allergének: '+esc(r.allergenek.join(", "))+"</div>";
-  if(window.FX)o+=FX.recipeExtra(r,c);
+  if(window.FX)o+=FX.recipeExtra(r,c);if(window.MORE)o+=MORE.recipeExtra(r,c);
   o+='<div class="btns">'+(c.ok?'<button type="button" class="btn g" id="rcook">Ezt főztem</button>':"")+(c.miss.length?'<button type="button" class="btn t" id="rshop">Hiányzók a listára</button>':"")+"</div>";
   o+='<div class="btns">'+(r.own?'<button type="button" class="btn p sm" id="redit">Szerkesztés</button><button type="button" class="btn r sm" id="rdel2">Törlés</button>':'<button type="button" class="btn p sm" id="rcopy">Lemásolom és átírom</button>')+'</div><div id="cmsg" class="q"></div>';
   $("rdb").innerHTML=o;var d=$("rd");if(!d.open)d.showModal();
   $("rdb").querySelectorAll("[data-p]").forEach(function(b){b.onclick=function(){rdP=Math.max(0.5,rdP+parseFloat(b.dataset.p));openRecipe(id,true)}});
+  $("rdb").querySelectorAll("[data-pp]").forEach(function(b){b.onclick=function(){rdP=parseFloat(b.dataset.pp);openRecipe(id,true)}});
+  if(window.MORE)MORE.recipeBind(r,c);
   if(window.FX)FX.recipeBind(r,c);
   if($("rcook"))$("rcook").onclick=function(){cook(r,c)};
   if($("rshop"))$("rshop").onclick=function(){toList(r,c,f);this.disabled=true;this.textContent="Felírva a listára"};
@@ -306,20 +313,23 @@ function openRecipe(id,keepP){var r=recById(id);if(!r)return;if(!keepP)rdP=porti
   if($("redit"))$("redit").onclick=function(){d.close();editRecipe(r,false)};
   if($("rdel2"))$("rdel2").onclick=function(){d.close();var pos=ownRec.indexOf(r);ownRec.splice(pos,1);sv(K.rec,ownRec);drawAll();
     toast("Recept törölve.","Visszavonás",function(){ownRec.splice(pos,0,r);sv(K.rec,ownRec);drawAll()})}}
-function cook(r,c){var f=Math.min(rdP,c.can)/r.adag,out=[],hr=new Date().getHours();
+function cook(r,c){var f=Math.min(rdP,c.can)/r.adag,hr=new Date().getHours();
   meals.push({id:uid("m"),n:r.nev,date:plus(0),type:hr<10?"reggeli":hr<16?"ebed":"vacsora",cat:mcat(r.cat)});sv(K.meals,meals);
-  var gone=[];c.use.forEach(function(u){if(u.basic||!(u.need>0))return;var left=u.need*f,tot=left,l0=liveOf(u.key)[0],sb=l0&&BASE[l0.u]?BASE[l0.u][0]:u.bt;
+  var res=consume(r,c,f),out=res.out,listed=res.listed;
+  saveItems();drawAll();
+  $("cmsg").innerHTML="<b>Jó étvágyat!</b> Beírtam a naplóba. "+(out.length?"Levontam a raktárból: "+esc(out.join(", "))+".":"Ehhez nincs mennyiség megadva, a raktárt nem módosítottam.")+(listed.length?" <b>Elfogyott:</b> "+esc(listed.join(", "))+", felírtam a bevásárlólistára.":"");
+  if($("rcook"))$("rcook").disabled=true;if(window.FX)FX.afterCook(r,c,f)}
+/* a recept hozzávalóinak levonása a raktárból (f = a recept hányszorosa); visszaadja, mit vont le, és mi fogyott el */
+function consume(r,c,f){var out=[],gone=[];c.use.forEach(function(u){if(u.basic||!(u.need>0))return;var left=u.need*f,tot=left,l0=liveOf(u.key)[0],sb=l0&&BASE[l0.u]?BASE[l0.u][0]:u.bt;
     /* a legkorábban lejáró tételből vonunk le először; darabos tételnél (pl. 3 alma) grammos igény esetén a darabsúllyal számolunk */
     liveOf(u.key).sort(function(x,y){return x.exp<y.exp?-1:1}).forEach(function(i){if(left<=0)return;var b=BASE[i.u]||["db",1],hv=cvt(i.q*b[1],b[0],u.bt,i.n);if(hv==null)return;
       var t=Math.min(hv,left),rest=cvt(hv-t,u.bt,b[0],i.n)/b[1];if(b[0]==="db"&&!same(b[0],u.bt))rest=Math.floor(rest*2+0.2)/2;i.q=Math.round(rest*100)/100;left-=t});
-    var used=tot-Math.max(left,0);if(used>0){var su=l0?cvt(used,u.bt,sb,l0.n):null;out.push(u.key+" "+(su!=null?fmtQ(su,sb):fmtQ(used,u.bt)))}});
+    var used=tot-Math.max(left,0);if(used>0){var su=l0?cvt(used,u.bt,sb,l0.n):null;out.push(u.key+" "+(su!=null?fmtQ(su,sb):fmtQ(used,u.bt)));if(window.MORE)MORE.onConsume(u.key,used,u.bt)}});
   items.forEach(function(i){if(!(i.q>0.0001)&&gone.indexOf(i.n)<0)gone.push(i.n)});
   items=items.filter(function(i){return i.q>0.0001});
   /* ami elfogyott (és nincs belőle más a raktárban), az a bevásárlólistára kerül */
   var listed=[];gone.forEach(function(n){if(liveOf(n).length||shop.some(function(s){return !s.done&&norm(s.n)===norm(n)}))return;var cc=find(n);addShop(n,cc?defQ(cc.u,cc.n):1,cc?cc.u:"db");listed.push(n)});
-  saveItems();drawAll();
-  $("cmsg").innerHTML="<b>Jó étvágyat!</b> Beírtam a naplóba. "+(out.length?"Levontam a raktárból: "+esc(out.join(", "))+".":"Ehhez nincs mennyiség megadva, a raktárt nem módosítottam.")+(listed.length?" <b>Elfogyott:</b> "+esc(listed.join(", "))+", felírtam a bevásárlólistára.":"");
-  if($("rcook"))$("rcook").disabled=true;if(window.FX)FX.afterCook(r,c,f)}
+  return{out:out,listed:listed}}
 function mcat(c){return{hal:"hal",leves:"leves",hus:"hus",teszta:"teszta",foz:"zoldseg",zoldseg:"zoldseg",salata:"hideg",szendvics:"hideg",hidegtal:"hideg",hideg:"hideg",desszert:"desszert",reggeli:"egyeb"}[c]||"egyeb"}
 
 /* ---------- RECEPTKÖNYV ---------- */
@@ -389,6 +399,7 @@ function showPrice(c){var p=priceOf(c.n),u=punit(c),o='<div class="rhead" style=
     '<div class="q small" style="margin-top:6px">Különbség a legdrágább és a legolcsóbb között: '+ft(Math.max.apply(null,p)-p[b])+" / "+u+(prices[c.n]?" · saját árat adtál meg":"")+"</div>"}
   else o+='<div class="q" style="margin-top:8px">Ehhez még nincs ár. Add meg a blokkod alapján!</div>';
   o+='<div class="btns"><button type="button" class="btn sm" id="pedit">Ár átírása</button><button type="button" class="btn g sm" id="plist">+ Listára</button></div>';
+  if(window.MORE)o+=MORE.priceExtra(c);
   $("pres").innerHTML=o;$("pedit").onclick=function(){editPrice(c)};$("plist").onclick=function(){addShop(c.n,defQ(c.u),c.u);toast(c.n+" felírva a listára.")}}
 function editPrice(c){var p=priceOf(c.n)||[0,0,0],u=punit(c);
   gform("Ár: "+c.n,SHOPS.map(function(s,i){return{k:s[0],l:s[1]+" (Ft / "+u+")",t:"number",v:p[i]||""}}).concat([{k:"nt",t:"note"}]),null,
@@ -408,10 +419,11 @@ function toList(r,c,f){var k=0;c.miss.forEach(function(h){var key=h.k[0],cc=find
 function lineCost(s){var b=BASE[s.u]||["db",1];return costOf(s.n,b[0],s.q*b[1])}
 function drawShop(){var t=[0,0,0],unk=0,open=shop.filter(function(s){return !s.done});
   $("slist").innerHTML=shop.length?shop.map(function(s){var p=lineCost(s);if(!s.done){if(p)for(var i=0;i<3;i++)t[i]+=p[i];else unk++}
-    return '<div class="li'+(s.done?" done":"")+'" data-id="'+s.id+'"><button type="button" class="ck" role="checkbox" aria-checked="'+s.done+'" aria-label="'+esc(s.n)+' megvan">'+(s.done?"✓":"")+'</button><span class="ic">'+ic(ico(s.n))+'</span><span class="lt"><b>'+esc(s.n)+"</b> "+nf(s.q)+" "+s.u+(p?'<br><span class="q small">'+SHOPS.map(function(x,i){return x[1]+" "+ft(p[i])}).join(" · ")+"</span>":"")+'</span><button type="button" class="x" data-x="'+s.id+'" aria-label="'+esc(s.n)+' törlése">×</button></div>'}).join("")
+    return '<div class="li'+(s.done?" done":"")+'" data-id="'+s.id+'"><button type="button" class="ck" role="checkbox" aria-checked="'+s.done+'" aria-label="'+esc(s.n)+' megvan">'+(s.done?"✓":"")+'</button><span class="ic">'+ic(ico(s.n))+'</span><span class="lt"><b>'+esc(s.n)+"</b> "+nf(s.q)+" "+s.u+(window.MORE?MORE.upBadge(s.n):"")+(p?'<br><span class="q small">'+SHOPS.map(function(x,i){return x[1]+" "+ft(p[i])}).join(" · ")+"</span>":"")+'</span><button type="button" class="x" data-x="'+s.id+'" aria-label="'+esc(s.n)+' törlése">×</button></div>'}).join("")
     :'<div class="q">Üres a lista. Írj be valamit, vagy egy receptnél koppints a "Hiányzók a listára" gombra.</div>';
   if(open.length&&t.some(function(x){return x>0})){var b=minI(t);$("stot").innerHTML='<div class="sec">Hol a legolcsóbb a lista?</div><div class="shops">'+SHOPS.map(function(s,i){return '<div class="shop '+s[2]+(i===b?" best":"")+'"><span class="sn">'+s[1]+'</span><span class="sp">'+ft(t[i])+"</span></div>"}).join("")+"</div>"+
     '<div class="q small" style="margin-top:6px">Megtakarítás a legdrágábbhoz képest: '+ft(Math.max.apply(null,t)-t[b])+"."+(unk?" "+unk+" tételnek nincs ára.":"")+"</div>"}else $("stot").innerHTML="";
+  if(window.MORE)MORE.shopExtra(t,open.length);
   var dn=shop.filter(function(s){return s.done}).length;
   $("sbtns").innerHTML=dn?'<button type="button" class="btn g" id="sbuy">Kipipáltak a raktárba ('+dn+')</button><button type="button" class="btn p" id="sclr">Kipipáltak törlése</button>':"";
   if(dn){$("sbuy").onclick=function(){var k=0;shop.filter(function(s){return s.done}).forEach(function(s){var c=find(s.n);items.push({id:uid("i"),n:s.n,q:s.q,u:s.u,loc:c?c.l:"pantry",exp:plus(c?c.d:7)});k++});
@@ -548,7 +560,7 @@ function showView(v){view=v;["stock","rec","shop","cost","stat","set"].forEach(f
   document.querySelectorAll(".nav button").forEach(function(b){b.setAttribute("aria-selected",b.dataset.v===v)});
   $("hh").hidden=v==="set";drawView();window.scrollTo(0,0)}
 document.querySelectorAll(".nav button").forEach(function(b){b.onclick=function(){showView(b.dataset.v)}});
-function drawView(){if(view==="stock"){drawBudget();drawStock()}else if(view==="rec")drawRec();else if(view==="shop")drawShop();else if(view==="cost")drawCost();else if(view==="stat")drawStat();else drawSet();if(window.FX)FX.draw(view)}
+function drawView(){if(view==="stock"){drawBudget();drawStock()}else if(view==="rec")drawRec();else if(view==="shop")drawShop();else if(view==="cost")drawCost();else if(view==="stat")drawStat();else drawSet();if(window.FX)FX.draw(view);if(window.MORE)MORE.draw(view)}
 function drawAll(){drawSet();fillMeals();drawView()}
 drawAll();
 

@@ -11,9 +11,79 @@
   "background_color": "#fff1d0",
   "theme_color": "#e4472b",
   "icons": [
-    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
-    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
-    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" },
-    { "src": "icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" }
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Mit főzzek?",
+      "short_name": "Mit főzzek?",
+      "url": "./?v=stock&a=go",
+      "icons": [
+        {
+          "src": "sc-go.png",
+          "sizes": "192x192",
+          "type": "image/png"
+        }
+      ]
+    },
+    {
+      "name": "Bevásárlólista",
+      "short_name": "Lista",
+      "url": "./?v=shop",
+      "icons": [
+        {
+          "src": "sc-shop.png",
+          "sizes": "192x192",
+          "type": "image/png"
+        }
+      ]
+    },
+    {
+      "name": "Új termék a raktárba",
+      "short_name": "Új termék",
+      "url": "./?v=stock&a=add",
+      "icons": [
+        {
+          "src": "sc-add.png",
+          "sizes": "192x192",
+          "type": "image/png"
+        }
+      ]
+    },
+    {
+      "name": "Heti menü",
+      "short_name": "Heti menü",
+      "url": "./?v=rec&a=menu",
+      "icons": [
+        {
+          "src": "sc-menu.png",
+          "sizes": "192x192",
+          "type": "image/png"
+        }
+      ]
+    }
   ]
 }

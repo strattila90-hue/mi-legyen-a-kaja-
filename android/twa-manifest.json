@@ -17,15 +17,45 @@
   "iconUrl": "http://localhost:8080/icon-512.png",
   "maskableIconUrl": "http://localhost:8080/icon-512.png",
   "splashScreenFadeOutDuration": 300,
-  "signingKey": { "path": "./android.keystore", "alias": "kaja" },
-  "appVersionName": "1.1",
+  "signingKey": {
+    "path": "./android.keystore",
+    "alias": "kaja"
+  },
+  "appVersionName": "1.2",
   "appVersionCode": 1,
-  "shortcuts": [],
+  "shortcuts": [
+    {
+      "name": "Mit főzzek?",
+      "shortName": "Mit főzzek?",
+      "url": "/mi-legyen-a-kaja-/?v=stock&a=go",
+      "chosenIconUrl": "http://localhost:8080/sc-go.png"
+    },
+    {
+      "name": "Bevásárlólista",
+      "shortName": "Lista",
+      "url": "/mi-legyen-a-kaja-/?v=shop",
+      "chosenIconUrl": "http://localhost:8080/sc-shop.png"
+    },
+    {
+      "name": "Új termék a raktárba",
+      "shortName": "Új termék",
+      "url": "/mi-legyen-a-kaja-/?v=stock&a=add",
+      "chosenIconUrl": "http://localhost:8080/sc-add.png"
+    },
+    {
+      "name": "Heti menü",
+      "shortName": "Heti menü",
+      "url": "/mi-legyen-a-kaja-/?v=rec&a=menu",
+      "chosenIconUrl": "http://localhost:8080/sc-menu.png"
+    }
+  ],
   "generatorApp": "bubblewrap-cli",
   "webManifestUrl": "https://strattila90-hue.github.io/mi-legyen-a-kaja-/manifest.webmanifest",
   "fallbackType": "customtabs",
   "features": {},
-  "alphaDependencies": { "enabled": false },
+  "alphaDependencies": {
+    "enabled": false
+  },
   "enableSiteSettingsShortcut": true,
   "isChromeOSOnly": false,
   "isMetaQuest": false,
@@ -34,5 +64,5 @@
   "fingerprints": [],
   "additionalTrustedOrigins": [],
   "retainedBundles": [],
-  "appVersion": "1.1"
+  "appVersion": "1.2"
 }
