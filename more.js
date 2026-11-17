@@ -235,6 +235,7 @@ function fillFromText(){var p=parseRecipe($("rpt").value);if(!p.ings.length&&!p.
   $("rpaste").open=false;var un=p.ings.filter(function(h){return !h._c}).length;
   toast("Kitöltve: "+p.ings.length+" hozzávaló, "+p.steps.length+" lépés."+(un?" "+un+" hozzávalót nem ismertem fel, nézd át.":""))}
 M.parseRecipe=parseRecipe;
+M.prep=function(){renderPrep()};M.guest=function(){renderGuest()};
 
 /* ================= NAPI PILLANATKÉP ÉS MENTÉS-EMLÉKEZTETŐ ================= */
 var SNAP="kaja-backup";

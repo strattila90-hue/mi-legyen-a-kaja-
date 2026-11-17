@@ -1,6 +1,6 @@
 /* Service worker: hálózat először (mindig a legfrissebb verzió), offline a tárolt másolat. */
-var CACHE="kaja-v1.12";
-var FILES=["./","index.html","style.css","sprites.js","scenes.js","data.js","app.js","firebase-config.js","sync.js","features.js","extras.js","more.js","vendor/firebase-app-compat.js","vendor/firebase-auth-compat.js","vendor/firebase-firestore-compat.js","manifest.webmanifest","icon.svg","icon-192.png","icon-512.png","sc-go.png","sc-shop.png","sc-add.png","sc-menu.png"];
+var CACHE="kaja-v1.13";
+var FILES=["./","index.html","style.css","sprites.js","scenes.js","data.js","app.js","firebase-config.js","sync.js","features.js","extras.js","more.js","ui.js","vendor/firebase-app-compat.js","vendor/firebase-auth-compat.js","vendor/firebase-firestore-compat.js","manifest.webmanifest","icon.svg","icon-192.png","icon-512.png","sc-go.png","sc-shop.png","sc-add.png","sc-menu.png"];
 self.addEventListener("install",function(e){self.skipWaiting();e.waitUntil(caches.open(CACHE).then(function(c){return c.addAll(FILES)}).catch(function(){}))});
 self.addEventListener("activate",function(e){e.waitUntil(caches.keys().then(function(k){return Promise.all(k.filter(function(x){return x!==CACHE&&/^kaja-v/.test(x)}).map(function(x){return caches.delete(x)}))}).then(function(){return self.clients.claim()}))});
 self.addEventListener("message",function(e){if(e.data==="skip")self.skipWaiting()});

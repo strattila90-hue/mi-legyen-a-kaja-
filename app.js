@@ -1,4 +1,4 @@
-var VER="1.12";
+var VER="1.13";
 /* ---------- alapok ---------- */
 function $(i){return document.getElementById(i)}
 function esc(s){return String(s==null?"":s).replace(/[&<>"']/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]})}

@@ -20,27 +20,28 @@
 <div class="wrap">
   <header class="sign">
     <span class="logo l" id="lg1"></span><span class="logo r" id="lg2"></span>
-    <h1>Mi legyen<br>a kaja?</h1>
-    <p>Nyitva: mindig, amíg van mit főzni</p>
+    <h1>Mi legyen a kaja?</h1>
   </header>
-  <div class="check" aria-hidden="true"></div>
-
-  <button class="hh" id="hh" type="button"><span class="ic" id="hhi"></span><span>Kinek főzünk? <b id="hht"></b></span><span class="badge">Módosít</span></button>
+  <div class="tbar">
+    <button class="sbar" id="qs" type="button"><span class="ic" data-i="search"></span><span>Keresés: termék, recept…</span></button>
+    <button class="hh" id="hh" type="button" aria-label="Kinek főzünk? Módosítás"><span class="ic" id="hhi"></span><b id="hht"></b></button>
+  </div>
 
   <!-- RAKTÁR -->
   <main id="v-stock">
-    <section class="card" aria-label="Napi költségkeret">
-      <h2><span class="ic" id="i-coin"></span>Mai keret</h2>
+    <details class="card fold sumfold" id="sumfold">
+      <summary><span class="ic" id="i-coin"></span><span id="sumline" class="sumline">Keret és készlet</span></summary>
+      <div class="dh">Mai keret</div>
       <div id="bt"></div>
       <div class="bar"><b id="bb" style="width:0%"></b></div>
-    </section>
-    <section class="card" id="stockval" aria-live="polite"></section>
+      <div id="stockval" aria-live="polite"></div>
+    </details>
     <div class="tabs" role="tablist" aria-label="Hol van az étel?">
       <button role="tab" aria-selected="true" data-t="fridge">Hűtő</button>
       <button role="tab" aria-selected="false" data-t="pantry">Spájz</button>
       <button role="tab" aria-selected="false" data-t="freezer">Fagyasztó</button>
     </div>
-    <button class="btn g full" id="add" type="button"><span class="ic" id="i-plus"></span>Új termék a raktárba</button>
+    <div class="btns tight"><button class="btn g" id="add" type="button"><span class="ic" id="i-plus"></span>Új termék</button><button class="btn p" id="addbc" type="button">▦ Vonalkód</button></div>
     <section class="card" aria-live="polite"><div class="grid" id="grid"></div></section>
 
     <div id="fxtoday"></div>
@@ -51,31 +52,26 @@
 
   <!-- RECEPTEK -->
   <main id="v-rec" hidden>
-    <section class="card" id="fxholi" hidden></section>
-    <section class="card" id="fxweek"></section>
-    <section class="card" id="mxplan"></section>
-    <section class="card">
-      <h2><span class="ic" id="i-book"></span>Receptkönyv</h2>
-      <input id="rq" type="search" placeholder="Keresés: étel, hozzávaló, vagy pl. vega gyors" autocomplete="off">
-      <div class="chips" id="rcat" role="group" aria-label="Kategória" style="margin-top:10px"></div>
+    <section class="card rsearch">
+      <div class="rsrow"><span class="ic" id="i-book"></span><input id="rq" type="search" placeholder="Étel vagy hozzávaló, pl. vega gyors" autocomplete="off" aria-label="Receptek keresése"></div>
       <div class="chips" id="rmode" role="group" aria-label="Mit mutasson?"></div>
+      <div class="chips" id="rcat" role="group" aria-label="Kategória"></div>
     </section>
-    <button class="btn g full" id="radd" type="button"><span class="ic" id="i-pen"></span>Saját recept írása</button>
-    <div class="q" id="rcount" style="margin:10px 2px"></div>
+    <div class="tgrid" role="group" aria-label="Eszközök">
+      <button type="button" class="tool" id="tmenu"><span class="ic" data-i="book"></span>Heti menü</button>
+      <button type="button" class="tool" id="tprep"><span class="ic" data-i="pot"></span>Előfőzés</button>
+      <button type="button" class="tool" id="tguest"><span class="ic" data-i="cake"></span>Vendégek</button>
+      <button type="button" class="tool" id="radd"><span class="ic" id="i-pen"></span>Saját recept</button>
+      <button type="button" class="tool" id="tfav"><span class="ic" data-i="heart"></span>Kedvencek</button>
+      <button type="button" class="tool" id="tkid"><span class="ic" data-i="egg"></span>Gyerek mód</button>
+    </div>
+    <section class="card" id="fxholi" hidden></section>
+    <div class="q" id="rcount" style="margin:12px 2px 8px"></div>
     <div id="rlist" class="dishes"></div>
   </main>
 
   <!-- BOLT -->
-  <main id="v-shop" hidden>
-    <section class="card">
-      <h2><span class="ic" id="i-cart"></span>Árösszehasonlítás</h2>
-      <div class="q small">Becsült átlagárak: Penny, Tesco, Lidl. Tájékoztató jellegűek, a saját blokkod alapján bármelyik átírható.</div>
-      <label for="pq">Termék</label>
-      <input id="pq" type="search" placeholder="Kezdd el írni, pl. tej, csirke, sajt" autocomplete="off">
-      <div class="sugg" id="pqs" role="listbox" hidden></div>
-      <div id="pres"></div>
-    </section>
-    <section class="card" id="mxup" hidden></section>
+<main id="v-shop" hidden>
     <section class="card">
       <h2><span class="ic" id="i-cart2"></span>Bevásárlólista</h2>
       <div class="row">
@@ -90,10 +86,20 @@
       <div id="stot"></div><div id="mxshop"></div>
       <div class="btns" id="sbtns"></div>
     </section>
+    <section class="card">
+      <h2><span class="ic" id="i-cart"></span>Árösszehasonlítás</h2>
+      <div class="q small">Becsült átlagárak: Penny, Tesco, Lidl. Tájékoztató jellegűek, a saját blokkod alapján bármelyik átírható.</div>
+      <label for="pq">Termék</label>
+      <input id="pq" type="search" placeholder="Kezdd el írni, pl. tej, csirke, sajt" autocomplete="off">
+      <div class="sugg" id="pqs" role="listbox" hidden></div>
+      <div id="pres"></div>
+    </section>
+    <section class="card" id="mxup" hidden></section>
   </main>
 
   <!-- KÖLTSÉG -->
-  <main id="v-cost" hidden>
+<main id="v-cost" hidden>
+    <div class="seg" data-segs></div>
     <section class="card"><h2><span class="ic" id="i-coin2"></span>Költségkeret</h2><div id="bsum"></div><div class="btns"><button class="btn" id="bset" type="button">Keret beállítása</button></div></section>
     <section class="card" id="mxcost"></section>
     <button class="btn g full" id="xadd" type="button">+ Új kiadás</button>
@@ -102,30 +108,31 @@
 
   <!-- NAPLÓ -->
   <main id="v-stat" hidden>
-    <section class="card" id="mxcal"></section>
-    <section class="card" id="mxstat"></section>
-    <section class="card" id="fxlevel"></section>
-    <section class="card" id="fxwaste"></section>
-    <section class="card"><h2><span class="ic" id="i-chart"></span>Ezen a héten</h2><div id="sw"></div></section>
-    <section class="card"><h2>Javaslatok</h2><ul id="sug" style="margin:0;padding-left:20px"></ul></section>
-    <button class="btn g full" id="madd" type="button">+ Mit ettünk?</button>
-    <section class="card"><h2>Étkezési napló</h2><div id="mlist"></div></section>
+    <div class="seg" data-segs></div>
+    <button class="btn g full" id="madd" type="button" data-part="log">+ Mit ettünk?</button>
+    <section class="card" data-part="log"><h2><span class="ic" id="i-chart"></span>Ezen a héten</h2><div id="sw"></div></section>
+    <section class="card" data-part="log"><h2>Javaslatok</h2><ul id="sug" style="margin:0;padding-left:20px"></ul></section>
+    <section class="card" data-part="log"><h2>Étkezési napló</h2><div id="mlist"></div></section>
+    <section class="card" id="mxcal" data-part="cal"></section>
+    <section class="card" id="mxstat" data-part="stats"></section>
+    <section class="card" id="fxwaste" data-part="stats"></section>
+    <section class="card" id="fxlevel" data-part="stats"></section>
   </main>
 
   <!-- BEÁLLÍTÁSOK -->
-  <main id="v-set" hidden>
-    <section class="card">
-      <h2><span class="ic" id="i-heart"></span>Háztartás: kinek készül a terv?</h2>
+<main id="v-set" hidden>
+    <details class="card fold" open>
+      <summary><h2><span class="ic" id="i-heart"></span>Háztartás: kinek főzünk?</h2></summary>
       <div class="prow"><div><b>Felnőtt</b><div class="q small">1 teljes adag</div></div><div class="step"><button type="button" data-s="ad" data-d="-1" aria-label="Felnőtt mínusz">−</button><output id="o-ad">2</output><button type="button" data-s="ad" data-d="1" aria-label="Felnőtt plusz">+</button></div></div>
       <div class="prow"><div><b>Kamasz (12+)</b><div class="q small">1 teljes adag</div></div><div class="step"><button type="button" data-s="te" data-d="-1" aria-label="Kamasz mínusz">−</button><output id="o-te">0</output><button type="button" data-s="te" data-d="1" aria-label="Kamasz plusz">+</button></div></div>
       <div class="prow"><div><b>Gyerek (3–12)</b><div class="q small">kb. fél adag</div></div><div class="step"><button type="button" data-s="ch" data-d="-1" aria-label="Gyerek mínusz">−</button><output id="o-ch">0</output><button type="button" data-s="ch" data-d="1" aria-label="Gyerek plusz">+</button></div></div>
       <div class="prow"><div><b>Kisgyerek (1–3)</b><div class="q small">kb. negyed adag</div></div><div class="step"><button type="button" data-s="to" data-d="-1" aria-label="Kisgyerek mínusz">−</button><output id="o-to">0</output><button type="button" data-s="to" data-d="1" aria-label="Kisgyerek plusz">+</button></div></div>
       <div class="q" id="hsum" style="margin-top:8px"></div>
-    </section>
-    <section class="card" id="fxdiet"></section>
-    <section class="card" id="fxnotif"></section>
-    <section class="card" id="synccard">
-      <h2><span class="ic" data-i="heart"></span>Közös raktár (család)</h2>
+    </details>
+    <details class="card fold"><summary><h2><span class="ic" data-i="salad"></span>Ki mit nem eszik?</h2></summary><div id="fxdiet"></div></details>
+    <details class="card fold"><summary><h2><span class="ic" data-i="egg"></span>Lejárati értesítés</h2></summary><div id="fxnotif"></div></details>
+    <details class="card fold" id="synccard">
+      <summary><h2><span class="ic" data-i="fridge"></span>Közös raktár (család)</h2></summary>
       <div id="syst" class="warnbox"></div>
       <div id="sycfg" hidden>
         <label for="sycfgta">Firebase beállítás (firebaseConfig)</label>
@@ -133,14 +140,14 @@
         <button type="button" class="btn g full" id="sycfgsave">Beállítás mentése</button>
       </div>
       <div class="btns" id="sybtns"></div>
-    </section>
-    <section class="card">
-      <h2>Ami mindig van otthon</h2>
+    </details>
+    <details class="card fold">
+      <summary><h2><span class="ic" data-i="jar"></span>Ami mindig van otthon</h2></summary>
       <div class="q small">Ezeket nem kell felvenned a raktárba, a receptek úgy veszik, hogy megvannak.</div>
       <div class="chips" id="basics" style="flex-wrap:wrap;overflow:visible;margin-top:8px"></div>
-    </section>
-    <section class="card">
-      <h2>Mentés és költöztetés</h2>
+    </details>
+    <details class="card fold" id="bkfold">
+      <summary><h2><span class="ic" data-i="book"></span>Mentés és költöztetés</h2></summary>
       <div class="q">Az app minden adata (raktár, receptek, lista, napló, kiadások) ezen a telefonon, a böngészőben van. Ha törlöd az appot vagy új telefonra váltasz, előbb mentsd le, és az új helyen töltsd vissza.</div>
       <div id="bkst" class="warnbox"></div>
       <div class="btns">
@@ -158,9 +165,9 @@
         <textarea id="bta" spellcheck="false"></textarea>
         <div class="btns"><button class="btn p sm" id="bcopy" type="button">Másolás</button><button class="btn sm" id="bpaste" type="button">Visszatöltés ebből a kódból</button></div>
       </div>
-    </section>
-    <section class="card">
-      <h2><span class="ic" id="i-gear"></span>Az app</h2>
+    </details>
+    <details class="card fold">
+      <summary><h2><span class="ic" id="i-gear"></span>Az app: megjelenés, frissítés</h2></summary>
       <label for="theme">Megjelenés</label>
       <select id="theme"><option value="auto">Telefon beállítása szerint</option><option value="light">Világos</option><option value="dark">Sötét (éjszakai büfé)</option><option value="night">Este magától sötét (19–7 óra)</option></select>
       <div class="btns">
@@ -172,7 +179,7 @@
       <div class="q small" style="margin-top:6px">Az app magától frissül: minden indításkor és óránként megnézi, van-e új verzió.</div>
       <div id="st" class="q" style="margin-top:8px"></div>
       <div class="btns"><button class="btn r sm" id="reset" type="button">Minden adat törlése</button></div>
-    </section>
+    </details>
   </main>
 
   <p class="note">Az árak becslések, a receptek tájékoztató jellegűek. Allergiánál mindig nézd meg a címkét.</p>
@@ -183,7 +190,6 @@
   <button role="tab" aria-selected="true" data-v="stock"><span class="ic" data-i="fridge"></span>Raktár</button>
   <button role="tab" aria-selected="false" data-v="rec"><span class="ic" data-i="book"></span>Receptek</button>
   <button role="tab" aria-selected="false" data-v="shop"><span class="ic" data-i="cart"></span>Bolt</button>
-  <button role="tab" aria-selected="false" data-v="cost"><span class="ic" data-i="coin"></span>Költség</button>
   <button role="tab" aria-selected="false" data-v="stat"><span class="ic" data-i="chart"></span>Napló</button>
   <button role="tab" aria-selected="false" data-v="set"><span class="ic" data-i="gear"></span>Beállít</button>
 </div></nav>
@@ -257,6 +263,23 @@
 <datalist id="shops"><option value="Lidl"><option value="Aldi"><option value="Spar"><option value="Tesco"><option value="Penny"><option value="CBA"><option value="Coop"><option value="Auchan"><option value="Piac"></datalist>
 <datalist id="meals"></datalist>
 <div class="toast" id="toast" role="status" hidden></div>
+<button class="fab" id="fab" type="button" aria-label="Új hozzáadása"><span class="ic" data-i="plus"></span></button>
+<dialog id="addsh" class="sheet"><button type="button" class="dclose" data-close aria-label="Bezárás">×</button><h3>Mit adsz hozzá?</h3>
+  <div class="sgrid">
+    <button type="button" class="tool" data-add="item"><span class="ic" data-i="fridge"></span>Termék a raktárba</button>
+    <button type="button" class="tool" data-add="barcode"><span class="ic" data-i="milk"></span>Vonalkóddal</button>
+    <button type="button" class="tool" data-add="receipt"><span class="ic" data-i="coin"></span>Blokk fotóból</button>
+    <button type="button" class="tool" data-add="shop"><span class="ic" data-i="cart"></span>Bevásárlólistára</button>
+    <button type="button" class="tool" data-add="meal"><span class="ic" data-i="pot"></span>Mit ettünk?</button>
+    <button type="button" class="tool" data-add="expense"><span class="ic" data-i="chart"></span>Kiadás</button>
+    <button type="button" class="tool" data-add="recipe"><span class="ic" data-i="pen"></span>Saját recept</button>
+    <button type="button" class="tool" data-add="paste"><span class="ic" data-i="book"></span>Recept szövegből</button>
+  </div>
+</dialog>
+<dialog id="srch" class="sheet up"><button type="button" class="dclose" data-close aria-label="Bezárás">×</button><h3>Keresés</h3>
+  <input id="gq" type="search" placeholder="Mit keresel? pl. tej, gulyás, csirke" autocomplete="off" aria-label="Keresés mindenben">
+  <div id="srres" aria-live="polite"></div>
+</dialog>
 
 <script src="sprites.js"></script>
 <script src="data.js"></script>
@@ -267,5 +290,6 @@
 <script src="features.js"></script>
 <script src="extras.js"></script>
 <script src="more.js"></script>
+<script src="ui.js"></script>
 </body>
 </html>
