@@ -479,3 +479,29 @@ dialog.big{padding-top:calc(14px + env(safe-area-inset-top,0px))}
 .phok{background:#d8f5dc;color:#173d21;border:3px solid var(--line);padding:8px 10px;margin-top:8px;font-size:18px;font-weight:bold}
 .flash{animation:flash 1.2s 2}
 @keyframes flash{50%{outline:4px solid var(--amber);outline-offset:2px}}
+
+/* ===== Apróséf ===== */
+#chefw{position:fixed;left:8px;bottom:calc(92px + env(safe-area-inset-bottom,0px));z-index:60;pointer-events:none}
+#chefw.indlg{bottom:calc(10px + env(safe-area-inset-bottom,0px))}
+#chefw>*{pointer-events:auto}
+#chef{display:block;background:none;border:0;padding:0;margin:0;cursor:pointer;filter:drop-shadow(3px 3px 0 rgba(0,0,0,.35));animation:chefbob 1.6s steps(2) infinite;touch-action:manipulation}
+#chef:focus-visible{outline:3px solid var(--teal);outline-offset:2px}
+@keyframes chefbob{50%{transform:translateY(-3px)}}
+.chef-svg .ce{animation:chefblink 4.2s steps(1) infinite;transform-box:fill-box;transform-origin:center}
+@keyframes chefblink{0%,92%{transform:scaleY(1)}93%,97%{transform:scaleY(.15)}}
+.chef-svg .cmo{opacity:0}
+#chefw.talk .chef-svg .cmo{animation:chefmouth .28s steps(1) infinite}
+#chefw.talk #chef{animation-duration:.5s}
+@keyframes chefmouth{50%{opacity:1}}
+#chefw.mini #chef{transform:translateX(-26px) scale(.7);opacity:.75;animation:none}
+#chefb{position:absolute;left:0;bottom:calc(100% + 8px);width:min(330px,calc(100vw - 24px));background:var(--panel);color:var(--ink);border:3px solid var(--line);box-shadow:4px 4px 0 var(--sh);padding:8px 10px 10px;font-size:17px;line-height:1.35}
+#chefb::after{content:"";position:absolute;left:18px;bottom:-11px;width:14px;height:8px;background:var(--line);clip-path:polygon(0 0,100% 0,0 100%)}
+#chefb .cbh{display:flex;align-items:center;justify-content:space-between;font-family:"KNum","Pixelify Sans",monospace;font-size:15px;color:var(--red);margin-bottom:2px}
+#chefb .cbx{background:none;border:0;color:var(--ink);font-size:22px;line-height:1;cursor:pointer;padding:0 2px}
+#chefb .cbt{min-height:1.3em;white-space:pre-line}
+#chefb .cba{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+#chefb .cba .btn{margin:0;padding:6px 9px;font-size:15px}
+body.chefon{padding-bottom:calc(150px + env(safe-area-inset-bottom,0px))}
+dialog.big.chefin{padding-bottom:calc(96px + env(safe-area-inset-bottom,0px))}
+.chef-mini svg{width:20px;height:30px;vertical-align:middle}
+@media (prefers-reduced-motion:reduce){#chef,.chef-svg .ce{animation:none}}
