@@ -7,7 +7,16 @@
 if(window.CHEF)return;
 var KEY="kajax.chef";
 function ldc(){try{return JSON.parse(localStorage.getItem(KEY))||null}catch(e){return null}}
-var S=Object.assign({on:1,voice:1,talk:1,seen:{},mini:0},ldc()||{});
+var S=Object.assign({on:1,voice:1,talk:1,seen:{},mini:0,vp:"sef",vpitch:1.45,vrate:1.05,vname:""},ldc()||{});
+/* hang-karakterek: hangmagasság (pitch 0–2) és tempó (rate) */
+var VP={mano:{n:"Kicsi cuki manó",p:2,r:1.2,s:"Hihi! Én vagyok a pici manószakács. Segítek kevergetni, csak tegyél fel egy kisszékre!"},
+  sef:{n:"Vidám séf (alap)",p:1.45,r:1.05,s:"Szia! Én vagyok az Apróséf. Főzzünk valami finomat!"},
+  mely:{n:"Erőteljes mély férfi",p:.45,r:.88,s:"Jó estét. Ma valami igazán laktatót főzünk. Fel a kötényt!"},
+  nagyi:{n:"Kedves nagymama",p:1.15,r:.82,s:"Gyere csak, kicsikém, főzünk valami jót, úgy, ahogy régen."},
+  robot:{n:"Robot konyhafőnök",p:0,r:.95,s:"Bip-bup. Főzési program indul. Hagyma felismerve. Könnyezés valószínűsége: magas."},
+  turbo:{n:"Turbó kommentátor",p:1.3,r:1.65,s:"És indul a főzés, gyorsan, gyorsan, mert a víz már forr, a hagyma pirul, micsoda meccs ez, hölgyeim és uraim!"},
+  egyeni:{n:"Egyéni (csúszkákkal)"}};
+function vpar(){var v=VP[S.vp];return v&&v.p!=null?{p:v.p,r:v.r}:{p:+S.vpitch,r:+S.vrate}}
 function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
 function $(id){return document.getElementById(id)}
 function nrm(s){return String(s||"").toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g,"")}
@@ -138,13 +147,15 @@ function hide(){clearTimeout(hideT);if(B)B.hidden=true}
 
 /* ================= HANG ================= */
 var speaking=false,huVoice=null;
-function voices(){try{var v=speechSynthesis.getVoices();huVoice=v.filter(function(x){return /^hu/i.test(x.lang)})[0]||null}catch(e){}}
+var allVoices=[];
+function voices(){try{allVoices=speechSynthesis.getVoices()||[];var hu=allVoices.filter(function(x){return /^hu/i.test(x.lang)});
+  huVoice=(S.vname&&allVoices.filter(function(x){return x.name===S.vname})[0])||hu[0]||null;var ae=document.activeElement;if($("chefset")&&!(ae&&ae.closest&&ae.closest("#chefset")))drawSet()}catch(e){}}
 if(window.speechSynthesis){voices();try{speechSynthesis.onvoiceschanged=voices}catch(e){}}
 function clean(t){return String(t).replace(/[\u{1F300}-\u{1FAFF}☀-➿⬀-⯿️×▦⏱◀▶✓~•]/gu," ").replace(/\s+/g," ").trim()}
 function speak(text,end){if(!window.speechSynthesis||!window.SpeechSynthesisUtterance){if(end)end();return}
   try{speechSynthesis.cancel();var parts=clean(text).split(/(?<=[^0-9][.!?])\s+/).filter(function(x){return x.trim()});if(!parts.length){if(end)end();return}
     /* rövid mondatokra bontva: a hosszú szöveget egyes telefonok félbehagyják */
-    parts.forEach(function(p,i){var u=new SpeechSynthesisUtterance(p.trim());u.lang="hu-HU";if(huVoice)u.voice=huVoice;u.rate=1.05;u.pitch=1.45;
+    parts.forEach(function(p,i){var u=new SpeechSynthesisUtterance(p.trim());u.lang="hu-HU";var vp=vpar();if(huVoice){u.voice=huVoice;u.lang=huVoice.lang}u.rate=vp.r;u.pitch=vp.p;
       u.onstart=function(){speaking=true;W.classList.add("talk")};
       if(i===parts.length-1)u.onend=u.onerror=function(){speaking=false;W.classList.remove("talk");if(end)end()};speechSynthesis.speak(u)})}catch(e){if(end)end()}}
 function stopSpeak(){try{speechSynthesis.cancel()}catch(e){}speaking=false;if(W)W.classList.remove("talk")}
@@ -250,10 +261,24 @@ function drawSet(){var v=$("v-set");if(!v)return;var c=$("chefset");
   var open=c.open;c.innerHTML='<summary><h2><span class="chef-mini" aria-hidden="true">'+sprite()+'</span>Apróséf, a kis segéd</h2></summary>'+
     '<label class="toggle"><input type="checkbox" id="chon"'+(S.on?" checked":"")+'> Bekapcsolva</label>'+
     '<label class="toggle"><input type="checkbox" id="chvo"'+(S.voice?" checked":"")+'> Hangosan beszél és felolvas</label>'+
+    '<label for="chvp">Milyen hangja legyen?</label><select id="chvp">'+Object.keys(VP).map(function(k){return '<option value="'+k+'">'+esc(VP[k].n)+"</option>"}).join("")+"</select>"+
+    '<div class="chsl"><label for="chpi">Hangmagasság</label><input type="range" id="chpi" min="0" max="2" step="0.05"><span id="chpiv"></span></div>'+
+    '<div class="chsl"><label for="chra">Tempó</label><input type="range" id="chra" min="0.5" max="2" step="0.05"><span id="chrav"></span></div>'+
+    (function(){var hu=allVoices.filter(function(x){return /^hu/i.test(x.lang)}),list=hu.length?hu:allVoices;if(list.length<2&&!(list.length&&!hu.length))return"";
+      return '<label for="chvs">Hang a telefonon'+(hu.length?"":" (nincs magyar, ezek idegen nyelvűek)")+'</label><select id="chvs"><option value="">Automatikus'+(hu.length?" (magyar)":"")+"</option>"+list.map(function(v){return '<option value="'+esc(v.name)+'"'+(v.name===S.vname?" selected":"")+">"+esc(v.name+" · "+v.lang)+"</option>"}).join("")+"</select>"})()+
+    '<div class="btns"><button type="button" class="btn sm g" id="chtry">▶ Meghallgatom</button></div>'+
     '<label for="chta">Mennyit beszéljen?</label><select id="chta"><option value="0">Csak ha kérdezem</option><option value="1">Néha beszól</option><option value="2">Sokat dumál</option></select>'+
     '<div class="btns"><button type="button" class="btn sm" id="chtest">Próba hang</button><button type="button" class="btn sm" id="chreset">Újra mutassa a tippeket</button></div>'+
     '<div class="q small">'+(window.speechSynthesis?(huVoice?"Magyar hang: "+esc(huVoice.name)+".":"Nem találtam magyar hangot a telefonon. Telepítsd a Google beszédszolgáltatás magyar hangját.")+"":"Ez a böngésző nem tud felolvasni.")+" Főzés módban hangvezérlés is van: koppints rám, és válaszd a 🎤 gombot.</div>";
-  c.open=open;$("chta").value=String(S.talk);
+  c.open=open;$("chta").value=String(S.talk);$("chvp").value=VP[S.vp]?S.vp:"sef";
+  function sl(){var v=vpar();$("chpi").value=v.p;$("chra").value=v.r;$("chpiv").textContent=v.p<.6?"mély":v.p>1.6?"vékony":"közép";$("chrav").textContent=v.r<.9?"lassú":v.r>1.3?"gyors":"normál"}sl();
+  function sample(){S.voice=1;save();var v=VP[S.vp];say(v&&v.s?v.s:"Így szólok most. Tetszik?",{speak:true})}
+  $("chvp").onchange=function(){S.vp=this.value;var v=VP[S.vp];if(v.p!=null){S.vpitch=v.p;S.vrate=v.r}save();sl();sample()};
+  var slT=null;function slide(){S.vp="egyeni";S.vpitch=+$("chpi").value;S.vrate=+$("chra").value;save();$("chvp").value="egyeni";sl();try{navigator.vibrate&&navigator.vibrate(6)}catch(e){}
+    clearTimeout(slT);slT=setTimeout(function(){say("Így szólok most. Tetszik?",{speak:true})},450)}
+  $("chpi").oninput=slide;$("chra").oninput=slide;
+  if($("chvs"))$("chvs").onchange=function(){S.vname=this.value;save();voices();sample()};
+  $("chtry").onclick=sample;
   $("chon").onchange=function(){S.on=this.checked?1:0;S.mini=0;save();apply();if(S.on)say("Hurrá, újra itt vagyok!");else stopSpeak()};
   $("chvo").onchange=function(){S.voice=this.checked?1:0;save();if(!S.voice)stopSpeak()};
   $("chta").onchange=function(){S.talk=+this.value;save()};
