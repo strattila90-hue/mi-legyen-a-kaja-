@@ -17,6 +17,7 @@ var VP={mano:{n:"Kicsi cuki manó",p:2,r:1.2,s:"Hihi! Én vagyok a pici manósza
   turbo:{n:"Turbó kommentátor",p:1.3,r:1.65,s:"És indul a főzés, gyorsan, gyorsan, mert a víz már forr, a hagyma pirul, micsoda meccs ez, hölgyeim és uraim!"},
   egyeni:{n:"Egyéni (csúszkákkal)"}};
 function vpar(){var v=VP[S.vp];return v&&v.p!=null?{p:v.p,r:v.r}:{p:+S.vpitch,r:+S.vrate}}
+if(!S.mig3){S.mig3=1;S.talk=3}
 function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
 function $(id){return document.getElementById(id)}
 function nrm(s){return String(s||"").toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g,"")}
@@ -109,6 +110,14 @@ night:[[],["Éjfélkor főzöl? Bátor vagy."],["Éjjel kettőkor rántotta? Ezt
 function sl(kind){var a=SASS[kind],kd=$("kid"),st=kd&&kd.open?0:Math.max(0,Math.min(2,S.style|0));for(var k=st;k>=0;k--)if(a[k]&&a[k].length)return pick(kind+st,a[k]);return""}
 function nick(){return (S.nick||"").trim()||"séf"}
 function T(t){return String(t).replace(/\{n\}/g,nick())}
+var L=window.CHEF_LINES||{stories:[],facts:[],offers:[],sounds:[],jokes:[],gen:null};JOKES=JOKES.concat(L.jokes||[]);
+var SND={laugh:["Hahaha!","Hihihi!","Hehehe!","Hahahaha!","Höhöhö!"],sigh:["Hjajj.","Áhh.","Hűű, hjaj."],cough:["Khm, khm!","Köhh, köhh!","Khö-khö!"],yawn:["Ááááh-hamm.","Hoáááá."],sniff:["Szipp, szipp."]};
+var EMO={laugh:"*nevet*",sigh:"*sóhajt*",cough:"*köhög*",yawn:"*ásít*",sniff:"*szipog*"};
+function shown(t){return String(t).replace(/\{(laugh|sigh|cough|yawn|sniff)\}/g,function(_,k){return EMO[k]}).replace(/\s+/g," ").trim()}
+var genUsed={};function genStory(){var g=L.gen;if(!g)return pick("st",L.stories);for(var k=0;k<20;k++){var ix=[g.a,g.b,g.c,g.d].map(function(x){return Math.floor(Math.random()*x.length)}),key=ix.join(".");if(genUsed[key])continue;genUsed[key]=1;
+  return g.a[ix[0]]+" "+g.b[ix[1]]+" "+g.c[ix[2]]+" "+g.d[ix[3]]+g.e[Math.floor(Math.random()*g.e.length)]}return pick("st",L.stories)}
+function story(){say(Math.random()<.45&&L.stories.length?pick("st",L.stories):genStory())}
+function offer(){say(pick("of",L.offers),{acts:[["Mesélj!",story],["Viccet!",joke],["Most ne",function(){hide();lastAct=Date.now()+20000}]]})}
 var TIPS=[
 [/hagym/,"Ha a hagymát vágás előtt tíz percre a hűtőbe teszed, kevésbé csípi a szemed."],
 [/hagym/,"A hagymát lassan, közepes lángon párold üvegesre. Ha siettetik, megég és kesernyés lesz."],
@@ -181,9 +190,9 @@ function apply(){if(!W)return;W.hidden=!S.on;W.classList.toggle("mini",!!S.mini)
 var acts={};
 function say(text,o){o=o||{};if(!S.on||!W)return;text=T(text);if(o.read)o.read=T(o.read);ck.last=Date.now();clearTimeout(hideT);clearInterval(typeT);place();
   B.hidden=false;B.dataset.menu=o.menu?"1":"";acts={};var h="";(o.acts||[]).forEach(function(a,i){acts[i]=a[1];h+='<button type="button" class="btn sm" data-a="'+i+'">'+esc(a[0])+"</button>"});BA.innerHTML=h;BA.hidden=!h;
-  var n=0;BT.textContent="";typeT=setInterval(function(){n+=2;BT.textContent=text.slice(0,n);if(n>=text.length)clearInterval(typeT)},22);
+  var spk=o.read||text;text=shown(text);var n=0;BT.textContent="";typeT=setInterval(function(){n+=2;BT.textContent=text.slice(0,n);if(n>=text.length)clearInterval(typeT)},22);
   W.classList.add("talk");setTimeout(function(){if(!speaking)W.classList.remove("talk")},Math.min(4000,text.length*45));
-  if(o.speak!==false&&S.voice)speak(o.read||text,null,o.mood);
+  chatEnd=Date.now();if(o.speak!==false&&S.voice)speak(spk,null,o.mood);
   if(!o.stay&&!h)hideT=setTimeout(hide,Math.max(5000,text.length*75))}
 function hide(){clearTimeout(hideT);if(B)B.hidden=true}
 
@@ -195,13 +204,15 @@ function voices(){try{allVoices=speechSynthesis.getVoices()||[];var hu=allVoices
 if(window.speechSynthesis){voices();try{speechSynthesis.onvoiceschanged=voices}catch(e){}}
 function clean(t){return String(t).replace(/[\u{1F300}-\u{1FAFF}☀-➿⬀-⯿️×▦⏱◀▶✓~•]/gu," ").replace(/\s+/g," ").trim()}
 function speak(text,end,mood){if(!window.speechSynthesis||!window.SpeechSynthesisUtterance){if(end)end();return}
-  try{speechSynthesis.cancel();var parts=clean(text).split(/(?<=[^0-9][.!?])\s+/).filter(function(x){return x.trim()});if(!parts.length){if(end)end();return}
+  try{speechSynthesis.cancel();var parts=[];String(text).split(/(\{(?:laugh|sigh|cough|yawn|sniff)\})/).forEach(function(seg){var m=/^\{(\w+)\}$/.exec(seg);
+      if(m){var v=SND[m[1]];parts.push({t:v[Math.floor(Math.random()*v.length)],fx:m[1]});return}clean(seg).split(/(?<=[^0-9][.!?])\s+/).forEach(function(x){if(x.trim())parts.push({t:x})})});if(!parts.length){if(end)end();return}
     /* rövid mondatokra bontva: a hosszú szöveget egyes telefonok félbehagyják */
-    parts.forEach(function(p,i){var u=new SpeechSynthesisUtterance(p.trim());u.lang="hu-HU";var vp=vpar();if(huVoice){u.voice=huVoice;u.lang=huVoice.lang}var pm=1+(Math.random()-.5)*.08,rm=1+(Math.random()-.5)*.06,q=p.trim().slice(-1);
+    parts.forEach(function(pp,i){var p=pp.t,u=new SpeechSynthesisUtterance(p.trim());u.lang="hu-HU";var vp=vpar();if(huVoice){u.voice=huVoice;u.lang=huVoice.lang}var pm=1+(Math.random()-.5)*.08,rm=1+(Math.random()-.5)*.06,q=p.trim().slice(-1);
       if(q==="!"){pm*=1.07;rm*=1.06}else if(q==="?"){pm*=1.05}if(mood==="sass"){pm*=1.06;rm*=1.08}if(mood==="calm"){rm*=.95}
+      if(pp.fx==="laugh"){pm*=1.25;rm*=1.35}else if(pp.fx==="sigh"){pm*=.75;rm*=.6}else if(pp.fx==="cough"){pm*=.9;rm*=1.45}else if(pp.fx==="yawn"){pm*=.7;rm*=.55}else if(pp.fx==="sniff"){pm*=1.15;rm*=1.2}
       u.rate=Math.max(.5,Math.min(2,vp.r*rm));u.pitch=Math.max(0,Math.min(2,vp.p*pm+(vp.p<.05&&q==="!"?.1:0)));u.volume=1;
       u.onstart=function(){speaking=true;W.classList.add("talk")};
-      if(i===parts.length-1)u.onend=u.onerror=function(){speaking=false;W.classList.remove("talk");if(end)end()};speechSynthesis.speak(u)})}catch(e){if(end)end()}}
+      if(i===parts.length-1)u.onend=u.onerror=function(){speaking=false;chatEnd=Date.now();W.classList.remove("talk");if(end)end()};speechSynthesis.speak(u)})}catch(e){if(end)end()}}
 function stopSpeak(){try{speechSynthesis.cancel()}catch(e){}speaking=false;if(W)W.classList.remove("talk")}
 
 /* ================= HOL VAN? (nézet, párbeszédablak) ================= */
@@ -213,7 +224,7 @@ function curView(){var m=document.querySelector("main[id^=v-]:not([hidden])");re
 function where(){var d=topDialog();return d?d.id:curView()}
 
 /* ================= MENÜ ================= */
-function menuActs(){var w=where(),a=[["Hol vagyok?",guideNow],["Olvasd fel",readNow],["Viccet!",joke],["Főzési tipp",tip]];
+function menuActs(){var w=where(),a=[["Hol vagyok?",guideNow],["Olvasd fel",readNow],["Viccet!",joke],["Mesélj magadról!",function(){Math.random()<.3?say(pick("fa",L.facts)):story()}],["Főzési tipp",tip]];
   if(w==="ck")a.push([rec?"🎤 Hangvezérlés ki":"🎤 Hangvezérlés",toggleRec]);
   if(w==="rd"&&lastRec)a.splice(1,1,["Olvasd fel a receptet",function(){readRecipe(lastRec)}]);
   a.push([S.voice?"🔇 Csend":"🔊 Hang",function(){S.voice=S.voice?0:1;save();if(!S.voice)stopSpeak();say(S.voice?"Újra hallasz!":"Rendben, csak írok, nem beszélek.",{speak:true})}]);
@@ -261,7 +272,7 @@ function ckTick(){var c=ckInfo();if(!c){stopCk();return}var el=(Date.now()-ck.t0
   if(c.tm&&!c.run&&!ck.tnag&&el>.4&&S.talk){ck.tnag=1;ck.last=now;say(pick("tnag",TIMERNAG),{acts:[["Indítsd!",function(){var b=$("cktm");if(b)b.click()}]]});return}
   var lim=Math.max(m||0,3)+2+ck.nag*6;if(el>lim&&!c.run&&S.talk&&ck.nag<3){ck.nag++;ck.last=now;say(S.style?sl("urge"):pick("urge",URGE),{mood:S.style>1?"sass":"",acts:[["Következő",function(){var b=$("ckn")||$("ckdone");if(b)b.click()}],["Viccet!",joke]]});return}
   /* véletlen időpontban beszólás, vicc vagy tipp */
-  if(!ck.nextR)ck.nextR=now+rnd();if(S.talk&&now>ck.nextR){ck.nextR=now+rnd();ck.last=now;var r=Math.random();
+  if(!ck.nextR)ck.nextR=now+rnd();if(S.talk&&S.talk<3&&now>ck.nextR){ck.nextR=now+rnd();ck.last=now;var r=Math.random();
     if(S.style&&el>.7&&!c.run&&r<.55)say(sl("urge"),{mood:S.style>1?"sass":"",acts:[["Következő",function(){var b=$("ckn")||$("ckdone");if(b)b.click()}],["Hagyj már!",function(){ck.nextR=Date.now()+rnd()*2;say(S.style>1?pick("hagyj",["Jó, jó, durcás vagyok.","Na tessék, megsértődtem. Két percre.","Oké, befogom. A számat, nem az egeret."]):"Rendben, csendben leszek egy kicsit.");}]]});
     else if(r<.8)joke();else say(tipFor(c.step))}}
 function rnd(){var a=S.talk>1?[40,110]:[80,220];return(a[0]+Math.random()*(a[1]-a[0]))*1000}
@@ -296,10 +307,24 @@ function greet(){var h=new Date().getHours(),g=h<5?"Éjjeli nassolás? Nem látt
   var soon=expiring();if(soon.length)return say(g+" Figyelj: "+soon.slice(0,3).join(", ")+(soon.length>1?" hamarosan lejár.":" hamarosan lejár.")+" Főzzünk belőle?",{acts:[["Mutasd a recepteket",function(){var b=document.querySelector('.nav button[data-v="rec"]');if(b)b.click();hide()}],["Majd később",hide]]});
   say(g,{acts:S.seen.intro?null:[["Mit tudsz?",function(){S.seen.intro=1;save();say("Segítek eligazodni az appban, felolvasok, főzésnél végigvezetlek lépésről lépésre, sürgetlek, tippeket adok, és néha viccelek is. Koppints rám bármikor! Ha zavarlak, a menüben elbújhatok.",{stay:1})}]]})}
 function expiring(){var out=[];try{var t=new Date(new Date().toDateString());(window.items||[]).forEach(function(i){var d=Math.round((new Date(i.exp+"T00:00:00")-t)/864e5);if(d>=0&&d<=1)out.push(i.n)})}catch(e){}return out}
-var idleNext=0;function idleTick(){if(!S.on||S.mini||!S.talk||document.hidden||topDialog()||speaking||!B||!B.hidden)return;var now=Date.now();
+var idleNext=0;function idleTick(){if(!S.on||S.mini||!S.talk||S.talk>2||document.hidden||topDialog()||speaking||!B||!B.hidden)return;var now=Date.now();
   if(!idleNext){idleNext=now+(S.talk>1?2:4)*6e4+Math.random()*(S.talk>1?3:5)*6e4;return}if(now<idleNext)return;idleNext=0;lastTalk=now;
   var h=new Date().getHours();if((h>=23||h<4)&&S.style&&Math.random()<.4)return say(sl("night"),{mood:"sass"});Math.random()<.6?say(sl("idle"),{mood:S.style>1?"sass":""}):joke()}
 setInterval(idleTick,20000);
+/* ---- nonstop mód: 7 mp tétlenség után szól, utána 10 mp-enként (a beszéd végétől számolva) ---- */
+var lastAct=Date.now(),chatEnd=0,chatChain=0;
+["pointerdown","keydown","wheel","touchstart","input"].forEach(function(ev){window.addEventListener(ev,function(){lastAct=Date.now();chatChain=0},{passive:true,capture:true})});
+window.addEventListener("scroll",function(){lastAct=Date.now();chatChain=0},{passive:true,capture:true});
+function chatter(){if(!S.on||S.mini||S.talk<3||document.hidden||!W)return;var now=Date.now();
+  if(speaking){chatEnd=now;return}if(now-lastAct<7000)return;if(now-chatEnd<(chatChain?10000:4000))return;
+  var d=topDialog();if(d&&/^(bc|ph|dlg|kid)$/.test(d.id))return;var ae=document.activeElement;if(ae&&/INPUT|TEXTAREA|SELECT/.test(ae.tagName))return;
+  chatChain++;var r=Math.random(),c=ckInfo();
+  if(c){var el=(now-ck.t0)/6e4;if(S.style&&el>.5&&!c.run&&r<.3)say(sl("urge"),{mood:S.style>1?"sass":"",acts:[["Következő",function(){var b=$("ckn")||$("ckdone");if(b)b.click()}],["Hagyj már!",hush]]});
+    else if(r<.5)joke();else if(r<.72)story();else if(r<.86)say(tipFor(c.step));else say(pick("snd",L.sounds));return}
+  if(d&&d.id==="rd"&&r<.25)return say(tipFor((lastRec&&lastRec.lepesek||[]).join(" ")));
+  if(r<.3)story();else if(r<.52)joke();else if(r<.62)offer();else if(r<.72)say(pick("fa",L.facts));else if(r<.86&&S.style)say(sl("idle"),{mood:S.style>1?"sass":""});else say(pick("snd",L.sounds))}
+function hush(){lastAct=Date.now()+50000;chatChain=0;say(S.style>1?pick("hagyj",["Jó, jó, durcás vagyok. Egy percig.","Na tessék, megsértődtem. {sigh}","Oké, befogom. A számat, nem az egeret."]):"Rendben, csendben leszek egy kicsit.")}
+setInterval(chatter,1000);
 function onView(){var v=curView();if(v===lastView)return;lastView=v;if(topDialog())return;
   if(!S.seen[v]){S.seen[v]=1;save();setTimeout(function(){say(GUIDE[v],{stay:1,speak:false,acts:[["Olvasd fel",function(){say(GUIDE[v])}],["Értem",hide]]})},400);lastTalk=Date.now();return}
   if(S.talk&&Date.now()-lastTalk>60000&&Math.random()<(S.talk>1?.5:.2)){lastTalk=Date.now();setTimeout(function(){Math.random()<.5?joke():say(pick("tipa",TIPS)[1])},600)}}
@@ -324,7 +349,7 @@ function drawSet(){var v=$("v-set");if(!v)return;var c=$("chefset");
     '<div class="btns"><button type="button" class="btn sm g" id="chtry">▶ Meghallgatom</button></div>'+
     '<label for="chst">Milyen stílusban beszóljon?</label><select id="chst"><option value="0">Kedves</option><option value="1">Csipkelődő</option><option value="2">Szemtelen, személyeskedő</option></select>'+
     '<label for="chnk">Hogyan szólítson?</label><input id="chnk" maxlength="24" placeholder="pl. séf, főnök, Pisti" value="'+esc(S.nick)+'">'+
-    '<label for="chta">Mennyit beszéljen?</label><select id="chta"><option value="0">Csak ha kérdezem</option><option value="1">Néha beszól</option><option value="2">Sokat dumál</option></select>'+
+    '<label for="chta">Mennyit beszéljen?</label><select id="chta"><option value="0">Csak ha kérdezem</option><option value="1">Néha beszól</option><option value="2">Sokat dumál</option><option value="3">Nonstop (7 mp csend után 10 mp-enként)</option></select>'+
     '<div class="btns"><button type="button" class="btn sm" id="chtest">Próba hang</button><button type="button" class="btn sm" id="chreset">Újra mutassa a tippeket</button></div>'+
     '<div class="q small">'+(window.speechSynthesis?(huVoice?"Magyar hang: "+esc(huVoice.name)+".":"Nem találtam magyar hangot a telefonon. Telepítsd a Google beszédszolgáltatás magyar hangját.")+"":"Ez a böngésző nem tud felolvasni.")+" Főzés módban hangvezérlés is van: koppints rám, és válaszd a 🎤 gombot.</div>";
   c.open=open;$("chta").value=String(S.talk);$("chvp").value=VP[S.vp]?S.vp:"sef";
