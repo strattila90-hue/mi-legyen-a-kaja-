@@ -1,4 +1,4 @@
-var VER="1.17";
+var VER="1.18";
 /* indításkori URL-paraméterek (a sync.js törli őket a címsorból) és platform */
 var BOOTQ=new URLSearchParams(location.search),UA=navigator.userAgent||"";
 var IS_IOS=/iPad|iPhone|iPod/.test(UA)||(navigator.platform==="MacIntel"&&navigator.maxTouchPoints>1),IS_IPAD=/iPad/.test(UA)||(navigator.platform==="MacIntel"&&navigator.maxTouchPoints>1);
@@ -227,8 +227,8 @@ function learn(n,u,loc,d){if(find(n))return;prods.push({n:n,c:"sajat",u:u,l:loc,
 $("fs").onclick=function(){if(!$("f").reportValidity())return;
   var c=find($("fn").value),o={n:c?c.n:$("fn").value.trim(),q:parseFloat($("fq").value),u:$("fu").value,loc:$("fl").value,exp:$("fe").value};
   if(!o.n)return;learn(o.n,o.u,o.loc,Math.max(1,days(o.exp)));
-  if(window.FX)FX.onItemSaved(o);if(cur)Object.assign(cur,o);else{o.id=uid("i");items.push(o)}
-  tab=o.loc;saveItems();$("dlg").close();drawStock();toast(cur?"Mentve.":o.n+" bekerült: "+LOCN[o.loc]+".")};
+  var lm=window.FX&&FX.onItemSaved(o)||"";if(cur)Object.assign(cur,o);else{o.id=uid("i");items.push(o)}
+  tab=o.loc;saveItems();$("dlg").close();drawStock();toast((cur?"Mentve.":o.n+" bekerült: "+LOCN[o.loc]+".")+(lm?" "+lm:""))};
 $("fd").onclick=function(){var id=cur&&cur.id;$("dlg").close();if(id)delItem(id)};
 
 /* étel ötletek */

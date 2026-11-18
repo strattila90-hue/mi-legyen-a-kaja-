@@ -162,9 +162,10 @@ function matchCat(text){var t=" "+norm(text).replace(/[^a-z0-9 ]/g," ")+" ",toks
   if(!best)Object.keys(SYN).some(function(k){if(t.indexOf(" "+k)>=0){best=find(SYN[k]);return true}});return best}
 function parseQty(s){var m=/(\d+(?:[.,]\d+)?)\s*(kg|g|l|ml|dl|cl|db)\b/i.exec(s||"");if(!m)return null;return{q:parseFloat(m[1].replace(",",".")),u:m[2].toLowerCase()}}
 var lastScan=null;
-function applyScan(code,name,qty,info){var cm=/^(.+) \((.+)\)$/.exec(name||""),c=matchCat(name)||find(name)||(cm&&find(cm[1]));if(c&&cm)name=cm[2];$("fn").value=c?c.n:name;$("fn").dispatchEvent(new Event("input"));
+function applyScan(code,name,qty,info,mem){var cm=/^(.+) \((.+)\)$/.exec(name||""),c=matchCat(name)||find(name)||(cm&&find(cm[1]));if(c&&cm)name=cm[2];$("fn").value=c?c.n:name;$("fn").dispatchEvent(new Event("input"));
   if(qty&&["g","kg","ml","dl","l","db"].indexOf(qty.u)>=0){$("fq").value=qty.q;$("fu").value=qty.u}else if(qty&&qty.u==="cl"){$("fq").value=qty.q*10;$("fu").value="ml"}
-  qtySync();$("fph").innerHTML="Vonalkód: "+esc(code)+(name&&(!c||norm(c.n)!==norm(name))?" · "+esc(name):"")+(info?" · "+esc(info):"")+"<br>"+$("fph").innerHTML;lastScan={code:code};photoFlow(qty)}
+  qtySync();$("fph").innerHTML="Vonalkód: "+esc(code)+(name&&(!c||norm(c.n)!==norm(name))?" · "+esc(name):"")+(info?" · "+esc(info):"")+"<br>"+$("fph").innerHTML;var eh=null;if(mem){if(mem.l)$("fl").value=mem.l;if(mem.d){eh=plus(mem.d);$("fe").value=eh}}
+  lastScan={code:code,orig:$("fn").value};photoFlow(qty,eh)}
 /* ---- vonalkód-keresés több forrásból ----
    1) saját/közös emlék (családi szinkron)  2) helyi gyorsítótár  3) Open Food Facts (élelmiszer, minden lánc: Tesco, Aldi, Lidl, Penny, Spar, kifli.hu...)
    4) Open Products / Beauty / Pet Food Facts (háztartás, drogéria, állateledel)  5) UPCitemdb (nemzetközi)
@@ -185,9 +186,9 @@ var SRC1=[offSrc("world.openfoodfacts.org","Open Food Facts")],
 function firstOk(fns,code){return new Promise(function(res,rej){var left=fns.length;fns.forEach(function(f){f(code).then(res,function(){if(--left===0)rej()})})})}
 function bcInfo(code,p){var tx=[];if(p&&p.brand&&norm(p.n).indexOf(norm(p.brand))<0)tx.push(p.brand);var st=p&&storeOf((p.brand||"")+" "+p.n);if(st)tx.push(st.charAt(0).toUpperCase()+st.slice(1)+" saját márka");
   if(/^599/.test(code))tx.push("magyar termék");if(p&&p.src)tx.push(p.src);return tx.join(" · ")}
-function scanDone(code,name,qty,info){$("bc").close();applyScan(code,name,qty,info)}
+function scanDone(code,name,qty,info,mem){$("bc").close();applyScan(code,name,qty,info,mem)}
 function lookup(code){var st=$("bcst"),key=bcKey(code);barmap=ld(KX.bar,{});
-  if(barmap[key]){var m=barmap[key];scanDone(key,m.n,key!==code?null:m.q,key!==code?"bolti címke":"");return}
+  if(barmap[key]){var m=barmap[key];scanDone(key,m.n,key!==code?null:m.q,(key!==code?"bolti címke · ":"")+"megjegyzett termék"+(m.t>1?" ("+m.t+". alkalom)":""),m);return}
   if(key!==code){st.textContent="Bolti címke (pl. pékáru, hús, csemege, kisbolt). Írd be egyszer a nevét, utána felismerem.";scanDone(key,"",null,"bolti címke");$("fn").focus();return}
   var cache=ld(BCACHE,{});if(cache[code]){var c=cache[code];scanDone(code,c.n,c.q,bcInfo(code,c));return}
   st.textContent="Keresem a termékadatbázisokban ("+code+")...";
@@ -202,7 +203,10 @@ function scan(){bcAudio();var d=$("bc");$("bcst").textContent="Tartsd a vonalkó
   navigator.mediaDevices.getUserMedia({video:{facingMode:"environment"}}).then(function(s){bcStream=s;var v=$("bcv");v.srcObject=s;v.play();
     function loop(){if(!bcStream)return;det.detect(v).then(function(r){if(r&&r.length){scanBeep();bcStop();lookup(r[0].rawValue)}else bcLoop=requestAnimationFrame(loop)}).catch(function(){bcLoop=requestAnimationFrame(loop)})}loop()})
   .catch(function(){$("bcst").textContent="Nem kaptam engedélyt a kamerához. Írd be a vonalkódot kézzel."})}
-FX.onItemSaved=function(o){if(lastScan&&lastScan.code){barmap=ld(KX.bar,{});barmap[lastScan.code]={n:o.n,q:{q:o.q,u:o.u}};sv(KX.bar,barmap);lastScan=null}};
+FX.onItemSaved=function(o){if(!lastScan||!lastScan.code)return"";var k=lastScan.code,old;barmap=ld(KX.bar,{});old=barmap[k];
+  var d=Math.round((new Date(o.exp)-new Date(today()))/864e5);
+  barmap[k]={n:o.n,q:{q:o.q,u:o.u},l:o.loc,d:d>0&&d<3650?d:(old&&old.d)||0,t:((old&&old.t)||0)+1,at:today()};sv(KX.bar,barmap);lastScan=null;
+  return !old?"Megjegyeztem a vonalkódot.":(norm(old.n)!==norm(o.n)?"Javítottam a vonalkód nevét.":"")};
 
 /* ================= LEJÁRAT ÉS MENNYISÉG FOTÓRÓL ================= */
 var phW=null;
@@ -235,13 +239,14 @@ FX.parseQtyText=function(text){var t=ocrFix(text||"").replace(/℮/g," e ").repl
   if(!c.length)return null;c.sort(function(a,b){return b.sc-a.sc||b.q-a.q});return{q:c[0].q,u:c[0].u}};
 var PH={exp:{t:"Lejárati dátum",ask:"Fotózd le a lejárati dátumot (minőségét megőrzi / fogyasztható). Közelről, élesen, jó fényben.",fail:"Nem találtam dátumot a képen."},
         qty:{t:"Mennyiség",ask:"Fotózd le a csomagoláson a mennyiséget (pl. 500 g, 1 l, 10 db).",fail:"Nem találtam mennyiséget a képen."}};
-var phQ=[],phManual=[],phQty=null;
-function photoFlow(qty){phQ=["exp","qty"];phManual=[];phQty=qty;phNext()}
-function photoOne(k){phQ=[k];phManual=[];phQty=null;phNext()}
+var phQ=[],phManual=[],phQty=null,phExp=null;
+function photoFlow(qty,eh){phQ=["exp","qty"];phManual=[];phQty=qty;phExp=eh||null;phNext()}
+function photoOne(k){phQ=[k];phManual=[];phQty=null;phExp=null;phNext()}
 function phNext(){var k=phQ.shift();if(!k){phEnd();return}phAsk(k,"",k==="qty"?phQty:null)}
 function phEnd(){var d=$("ph");d.onclose=null;if(d.open)d.close();phDone();
   var f=phManual[0];if(f){var el=$(f==="exp"?"fe":"fq");el.classList.remove("flash");void el.offsetWidth;el.classList.add("flash");el.focus();toast(f==="exp"?"Írd be a lejáratot kézzel.":"Írd be a mennyiséget kézzel.")}}
 function phAsk(k,msg,qty){var P=PH[k],skip="";
+  if(k==="exp"&&phExp)skip='<button type="button" class="btn" data-ph="keep">Jó így: '+esc(phExp.replace(/-/g,". ")+".")+"</button>";
   if(k==="qty"&&qty&&qty.q)skip='<button type="button" class="btn" data-ph="keep">Jó így: '+esc(nfq(qty.q)+" "+qty.u)+"</button>";
   $("pht").textContent=P.t;var d=dlg("ph",(msg?'<div class="warnbox">'+msg+"</div>":"")+'<div class="q">'+P.ask+'</div><div class="btns"><button type="button" class="btn g" data-ph="shot">📷 Fotózás</button>'+skip+'<button type="button" class="btn p" data-ph="man">Nem látszik, kézzel írom be</button></div>');
   d.onclose=function(){phQ=[];phDone()};d.querySelector(".dbody").onclick=function(e){var b=e.target.closest("[data-ph]");if(!b)return;var a=b.dataset.ph;
@@ -384,7 +389,7 @@ function drawRecFx(){var el=$("fxholi");if(el){var h=FX.holiday();el.hidden=!h;i
 /* ================= BEKÖTÉS ================= */
 FX.draw=function(v){drawToday();if(v==="rec")drawRecFx();if(v==="stat"){drawLevel();drawWaste()}if(v==="set")drawSetFx();writeSW();checkBadges()};
 FX.init=function(){var b=$("fnbc");if(b)b.onclick=scan;$("bcgo").onclick=function(){var v=$("bcman").value.replace(/\D/g,"");if(v.length>=8){bcAudio();scanBeep();bcStop();lookup(v)}};qtyInit();
-  $("feph").onclick=function(){photoOne("exp")};$("fqph").onclick=function(){photoOne("qty")};
+  $("dlg").addEventListener("close",function(){lastScan=null});$("feph").onclick=function(){photoOne("exp")};$("fqph").onclick=function(){photoOne("qty")};
   $("fxshopmode").onclick=shopMode;$("fxrc").onclick=receipt;
   $("rcfile").onchange=function(){var f=this.files[0];if(!f)return;dlg("rcd",'<div class="q">Olvasom a blokkot... <b id="rcp">0%</b></div><div class="bar"><b id="rcb" style="width:0%"></b></div><div class="q small" style="margin-top:8px">Első alkalommal pár másodperc, amíg a szövegfelismerő betölt.</div>');
     FX.ocrText(f,function(p){$("rcp").textContent=p+"%";$("rcb").style.width=p+"%"}).then(function(t){reviewReceipt(FX.parseReceipt(t))}).catch(function(e){dlg("rcd",'<div class="warnbox">Nem sikerült beolvasni: '+esc(e.message||e)+"</div>")})};
