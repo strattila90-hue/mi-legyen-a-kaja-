@@ -7,7 +7,7 @@
 if(window.CHEF)return;
 var KEY="kajax.chef";
 function ldc(){try{return JSON.parse(localStorage.getItem(KEY))||null}catch(e){return null}}
-var S=Object.assign({style:2,nick:"",on:1,voice:1,talk:1,seen:{},mini:0,vp:"sef",vpitch:1.45,vrate:1.05,vname:""},ldc()||{});
+var S=Object.assign({pol:1,style:2,nick:"",on:1,voice:1,talk:1,seen:{},mini:0,vp:"sef",vpitch:1.45,vrate:1.05,vname:""},ldc()||{});
 /* hang-karakterek: hangmagasság (pitch 0–2) és tempó (rate) */
 var VP={mano:{n:"Kicsi cuki manó",p:2,r:1.2,s:"Hihi! Én vagyok a pici manószakács. Segítek kevergetni, csak tegyél fel egy kisszékre!"},
   sef:{n:"Vidám séf (alap)",p:1.45,r:1.05,s:"Szia! Én vagyok az Apróséf. Főzzünk valami finomat!"},
@@ -114,9 +114,12 @@ var L=window.CHEF_LINES||{stories:[],facts:[],offers:[],sounds:[],jokes:[],gen:n
 var SND={laugh:["Hahaha!","Hihihi!","Hehehe!","Hahahaha!","Höhöhö!"],sigh:["Hjajj.","Áhh.","Hűű, hjaj."],cough:["Khm, khm!","Köhh, köhh!","Khö-khö!"],yawn:["Ááááh-hamm.","Hoáááá."],sniff:["Szipp, szipp."]};
 var EMO={laugh:"*nevet*",sigh:"*sóhajt*",cough:"*köhög*",yawn:"*ásít*",sniff:"*szipog*"};
 function shown(t){return String(t).replace(/\{(laugh|sigh|cough|yawn|sniff)\}/g,function(_,k){return EMO[k]}).replace(/\s+/g," ").trim()}
-var genUsed={};function genStory(){var g=L.gen;if(!g)return pick("st",L.stories);for(var k=0;k<20;k++){var ix=[g.a,g.b,g.c,g.d].map(function(x){return Math.floor(Math.random()*x.length)}),key=ix.join(".");if(genUsed[key])continue;genUsed[key]=1;
+var genUsed={};function genStory(g2){var g=g2?L.gen2:L.gen;if(!g)return pick("st",L.stories);for(var k=0;k<20;k++){var ix=[g.a,g.b,g.c,g.d].map(function(x){return Math.floor(Math.random()*x.length)}),key=ix.join(".");if(genUsed[key])continue;genUsed[key]=1;
   return g.a[ix[0]]+" "+g.b[ix[1]]+" "+g.c[ix[2]]+" "+g.d[ix[3]]+g.e[Math.floor(Math.random()*g.e.length)]}return pick("st",L.stories)}
-function story(){say(Math.random()<.45&&L.stories.length?pick("st",L.stories):genStory())}
+function story(){var r=Math.random();
+  if(L.human&&r<.45)say(pick("hu",L.human));else if(L.gen2&&r<.8)say(genStory(1));else if(r<.9&&L.stories.length)say(pick("st",L.stories));else say(genStory())}
+function cat(k){var a=L[k];if(!a||!a.length)return story();say(pick("c:"+k,a),{mood:k==="kozelet"||k==="memes"?(S.style>1?"sass":""):""})}
+function polOk(){return S.pol&&L.kozelet}
 function offer(){say(pick("of",L.offers),{acts:[["Mesélj!",story],["Viccet!",joke],["Most ne",function(){hide();lastAct=Date.now()+20000}]]})}
 var TIPS=[
 [/hagym/,"Ha a hagymát vágás előtt tíz percre a hűtőbe teszed, kevésbé csípi a szemed."],
@@ -224,7 +227,7 @@ function curView(){var m=document.querySelector("main[id^=v-]:not([hidden])");re
 function where(){var d=topDialog();return d?d.id:curView()}
 
 /* ================= MENÜ ================= */
-function menuActs(){var w=where(),a=[["Hol vagyok?",guideNow],["Olvasd fel",readNow],["Viccet!",joke],["Mesélj magadról!",function(){Math.random()<.3?say(pick("fa",L.facts)):story()}],["Főzési tipp",tip]];
+function menuActs(){var w=where(),a=[["Hol vagyok?",guideNow],["Olvasd fel",readNow],["Viccet!",joke],["Mesélj magadról!",function(){Math.random()<.2?say(pick("fa",L.facts)):story()}],["Érdekesség",function(){cat("hufacts")}],["Énekelj!",function(){cat("songs")}],["Főzési tipp",tip]];
   if(w==="ck")a.push([rec?"🎤 Hangvezérlés ki":"🎤 Hangvezérlés",toggleRec]);
   if(w==="rd"&&lastRec)a.splice(1,1,["Olvasd fel a receptet",function(){readRecipe(lastRec)}]);
   a.push([S.voice?"🔇 Csend":"🔊 Hang",function(){S.voice=S.voice?0:1;save();if(!S.voice)stopSpeak();say(S.voice?"Újra hallasz!":"Rendben, csak írok, nem beszélek.",{speak:true})}]);
@@ -318,11 +321,13 @@ window.addEventListener("scroll",function(){lastAct=Date.now();chatChain=0},{pas
 function chatter(){if(!S.on||S.mini||S.talk<3||document.hidden||!W)return;var now=Date.now();
   if(speaking){chatEnd=now;return}if(now-lastAct<7000)return;if(now-chatEnd<(chatChain?10000:4000))return;
   var d=topDialog();if(d&&/^(bc|ph|dlg|kid)$/.test(d.id))return;var ae=document.activeElement;if(ae&&/INPUT|TEXTAREA|SELECT/.test(ae.tagName))return;
-  chatChain++;var r=Math.random(),c=ckInfo();
-  if(c){var el=(now-ck.t0)/6e4;if(S.style&&el>.5&&!c.run&&r<.3)say(sl("urge"),{mood:S.style>1?"sass":"",acts:[["Következő",function(){var b=$("ckn")||$("ckdone");if(b)b.click()}],["Hagyj már!",hush]]});
-    else if(r<.5)joke();else if(r<.72)story();else if(r<.86)say(tipFor(c.step));else say(pick("snd",L.sounds));return}
-  if(d&&d.id==="rd"&&r<.25)return say(tipFor((lastRec&&lastRec.lepesek||[]).join(" ")));
-  if(r<.3)story();else if(r<.52)joke();else if(r<.62)offer();else if(r<.72)say(pick("fa",L.facts));else if(r<.86&&S.style)say(sl("idle"),{mood:S.style>1?"sass":""});else say(pick("snd",L.sounds))}
+  chatChain++;var c=ckInfo();
+  function choose(tbl){var tot=0;tbl=tbl.filter(function(x){return x[0]>0});tbl.forEach(function(x){tot+=x[0]});var r=Math.random()*tot;for(var i=0;i<tbl.length;i++){r-=tbl[i][0];if(r<=0)return tbl[i][1]()}return tbl[0][1]()}
+  if(c){var el=(now-ck.t0)/6e4;return choose([[S.style&&el>.5&&!c.run?25:0,function(){say(sl("urge"),{mood:S.style>1?"sass":"",acts:[["Következő",function(){var b=$("ckn")||$("ckdone");if(b)b.click()}],["Hagyj már!",hush]]})}],
+    [14,joke],[16,story],[polOk()?10:0,function(){cat("kozelet")}],[7,function(){cat("memes")}],[6,function(){cat("classic")}],[12,function(){say(tipFor(c.step))}],[7,function(){cat("hufacts")}],[4,function(){cat("songs")}],[4,function(){say(pick("snd",L.sounds))}]])}
+  if(d&&d.id==="rd"&&Math.random()<.25)return say(tipFor((lastRec&&lastRec.lepesek||[]).join(" ")));
+  choose([[26,story],[13,joke],[polOk()?13:0,function(){cat("kozelet")}],[9,function(){cat("memes")}],[8,function(){cat("classic")}],[9,function(){cat("hufacts")}],[5,function(){cat("songs")}],
+    [5,offer],[4,function(){say(pick("fa",L.facts))}],[S.style?5:0,function(){say(sl("idle"),{mood:S.style>1?"sass":""})}],[3,function(){say(pick("snd",L.sounds))}]])}
 function hush(){lastAct=Date.now()+50000;chatChain=0;say(S.style>1?pick("hagyj",["Jó, jó, durcás vagyok. Egy percig.","Na tessék, megsértődtem. {sigh}","Oké, befogom. A számat, nem az egeret."]):"Rendben, csendben leszek egy kicsit.")}
 setInterval(chatter,1000);
 function onView(){var v=curView();if(v===lastView)return;lastView=v;if(topDialog())return;
@@ -348,6 +353,7 @@ function drawSet(){var v=$("v-set");if(!v)return;var c=$("chefset");
       return '<label for="chvs">Hang a telefonon'+(hu.length?"":" (nincs magyar, ezek idegen nyelvűek)")+'</label><select id="chvs"><option value="">Automatikus'+(hu.length?" (magyar)":"")+"</option>"+list.map(function(v){return '<option value="'+esc(v.name)+'"'+(v.name===S.vname?" selected":"")+">"+esc(v.name+" · "+v.lang)+"</option>"}).join("")+"</select>"})()+
     '<div class="btns"><button type="button" class="btn sm g" id="chtry">▶ Meghallgatom</button></div>'+
     '<label for="chst">Milyen stílusban beszóljon?</label><select id="chst"><option value="0">Kedves</option><option value="1">Csipkelődő</option><option value="2">Szemtelen, személyeskedő</option></select>'+
+    '<label class="toggle"><input type="checkbox" id="chpol"'+(S.pol?" checked":"")+'> Közéleti, politikai poénok is</label>'+
     '<label for="chnk">Hogyan szólítson?</label><input id="chnk" maxlength="24" placeholder="pl. séf, főnök, Pisti" value="'+esc(S.nick)+'">'+
     '<label for="chta">Mennyit beszéljen?</label><select id="chta"><option value="0">Csak ha kérdezem</option><option value="1">Néha beszól</option><option value="2">Sokat dumál</option><option value="3">Nonstop (7 mp csend után 10 mp-enként)</option></select>'+
     '<div class="btns"><button type="button" class="btn sm" id="chtest">Próba hang</button><button type="button" class="btn sm" id="chreset">Újra mutassa a tippeket</button></div>'+
@@ -365,6 +371,7 @@ function drawSet(){var v=$("v-set");if(!v)return;var c=$("chefset");
   $("chvo").onchange=function(){S.voice=this.checked?1:0;save();if(!S.voice)stopSpeak()};
   $("chta").onchange=function(){S.talk=+this.value;save()};
   $("chst").value=String(S.style);$("chst").onchange=function(){S.style=+this.value;save();say(S.style>1?"Na végre, levehetem a kesztyűt! Szóval, kis nyomi szakács, főzünk ma, vagy csak nézelődünk?":S.style?"Rendben, csak egy kicsit csipkelődöm, {n}.":"Rendben, kedves leszek. Ígérem!",{mood:S.style>1?"sass":""})};
+  $("chpol").onchange=function(){S.pol=this.checked?1:0;save();say(S.pol?"Rendben, jöhet a közélet is. Mindkét oldalnak jut, ne aggódj!":"Rendben, politika kizárva. Itt csak a pörkölt a téma.")};
   $("chnk").onchange=function(){S.nick=this.value.trim().slice(0,24);save();say("Rendben, mostantól így szólítalak: {n}!")};
   $("chtest").onclick=function(){S.on=1;S.mini=0;save();apply();say("Szia! Én vagyok az Apróséf. "+pick("joke",JOKES),{speak:true});if(!S.voice)say("A hang ki van kapcsolva, de írni azért tudok!",{speak:false})};
   $("chreset").onclick=function(){S.seen={};save();say("Rendben, mindenhol újra elmondom, mi micsoda.")}}
