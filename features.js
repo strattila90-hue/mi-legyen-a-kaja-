@@ -162,21 +162,47 @@ function matchCat(text){var t=" "+norm(text).replace(/[^a-z0-9 ]/g," ")+" ",toks
   if(!best)Object.keys(SYN).some(function(k){if(t.indexOf(" "+k)>=0){best=find(SYN[k]);return true}});return best}
 function parseQty(s){var m=/(\d+(?:[.,]\d+)?)\s*(kg|g|l|ml|dl|cl|db)\b/i.exec(s||"");if(!m)return null;return{q:parseFloat(m[1].replace(",",".")),u:m[2].toLowerCase()}}
 var lastScan=null;
-function applyScan(code,name,qty){var c=matchCat(name)||find(name);$("fn").value=c?c.n:name;$("fn").dispatchEvent(new Event("input"));
+function applyScan(code,name,qty,info){var cm=/^(.+) \((.+)\)$/.exec(name||""),c=matchCat(name)||find(name)||(cm&&find(cm[1]));if(c&&cm)name=cm[2];$("fn").value=c?c.n:name;$("fn").dispatchEvent(new Event("input"));
   if(qty&&["g","kg","ml","dl","l","db"].indexOf(qty.u)>=0){$("fq").value=qty.q;$("fu").value=qty.u}else if(qty&&qty.u==="cl"){$("fq").value=qty.q*10;$("fu").value="ml"}
-  qtySync();$("fph").innerHTML="Vonalkód: "+esc(code)+(name&&(!c||norm(c.n)!==norm(name))?" · "+esc(name):"")+"<br>"+$("fph").innerHTML;lastScan={code:code};photoFlow(qty)}
-function lookup(code){var st=$("bcst");if(barmap[code]){var m=barmap[code];$("bc").close();applyScan(code,m.n,m.q);return}
-  st.textContent="Keresem a termékadatbázisban ("+code+")...";
-  fetch("https://world.openfoodfacts.org/api/v2/product/"+code+".json?fields=product_name,product_name_hu,generic_name,quantity,brands").then(function(r){return r.json()}).then(function(j){
-    var p=j&&j.product;if(!p||!(p.product_name_hu||p.product_name||p.generic_name)){st.innerHTML="Ezt a vonalkódot nem ismerem. Írd be a nevét, a következő alkalommal már emlékszem rá.";$("bc").close();applyScan(code,"",null);$("fn").focus();return}
-    var name=p.product_name_hu||p.product_name||p.generic_name;$("bc").close();applyScan(code,name,parseQty(p.quantity))}).catch(function(){st.textContent="Nincs internet, írd be kézzel a nevét.";$("bc").close();applyScan(code,"",null)})}
+  qtySync();$("fph").innerHTML="Vonalkód: "+esc(code)+(name&&(!c||norm(c.n)!==norm(name))?" · "+esc(name):"")+(info?" · "+esc(info):"")+"<br>"+$("fph").innerHTML;lastScan={code:code};photoFlow(qty)}
+/* ---- vonalkód-keresés több forrásból ----
+   1) saját/közös emlék (családi szinkron)  2) helyi gyorsítótár  3) Open Food Facts (élelmiszer, minden lánc: Tesco, Aldi, Lidl, Penny, Spar, kifli.hu...)
+   4) Open Products / Beauty / Pet Food Facts (háztartás, drogéria, állateledel)  5) UPCitemdb (nemzetközi)
+   Bolti mérlegcímke (2-vel kezdődő EAN: pék-, hús-, csemegepult, kisbolt) a termékkód alapján emlékszik. */
+var BCACHE="kajax.barcache",STOREBR={lidl:["pilos","milbona","chef select","dulano","freeway","crownfield","solevita","snack day","combino","sondey","alesto","kania","vemondo","fin carre","baresa","deluxe","fairglobe","bellarom","cien","w5","lupilu","vitasia","italiamo","eridanous","perlenbacher","favorina","nixe","lidl"],
+  aldi:["milsani","gut bio","moser roth","choceur","lacura","tandil","mamia","aldi"],tesco:["tesco"],spar:["s-budget","s budget","spar"],penny:["penny"],"kifli.hu":["miil","kifli"],auchan:["auchan"],cba:["cba"],coop:["coop"]};
+var CATHU={"en:milks":"Tej","en:yogurts":"Joghurt","en:cheeses":"Sajt","en:butters":"Vaj","en:eggs":"Tojás","en:pastas":"Tészta","en:rices":"Rizs","en:breads":"Kenyér","en:flours":"Liszt","en:sugars":"Cukor","en:sour-creams":"Tejföl","en:hams":"Sonka","en:fresh-cheeses":"Túró","en:creams":"Tejszín","en:sunflower-oils":"Étolaj","en:ketchup":"Ketchup","en:mustards":"Mustár","en:mayonnaises":"Majonéz","en:salamis":"Szalámi","en:mozzarella":"Mozzarella","en:apples":"Alma","en:bananas":"Banán","en:potatoes":"Burgonya","en:onions":"Vöröshagyma","en:tomatoes":"Paradicsom"};
+function storeOf(brands){var b=" "+norm(brands||"")+" ",r="";Object.keys(STOREBR).some(function(k){if(STOREBR[k].some(function(x){return b.indexOf(x)>=0})){r=k;return true}});return r}
+function bcKey(code){return /^2\d{12}$/.test(code)?code.slice(0,7):code}
+function getJ(url,ms){var c=window.AbortController?new AbortController():null,t=setTimeout(function(){if(c)c.abort()},ms||7000);
+  return fetch(url,c?{signal:c.signal}:{}).then(function(r){clearTimeout(t);if(!r.ok)throw new Error(r.status);return r.json()})}
+function offSrc(host,lbl){return function(code){return getJ("https://"+host+"/api/v2/product/"+code+".json?lc=hu&fields=product_name,product_name_hu,generic_name,generic_name_hu,quantity,brands,categories_tags").then(function(j){var p=j&&j.product;
+  var n=p&&(p.product_name_hu||p.product_name||p.generic_name_hu||p.generic_name);if(!n)throw 0;var cat=(p.categories_tags||[]).slice().reverse().map(function(c){return CATHU[c]}).filter(Boolean)[0]||"";
+  return{n:n.trim(),brand:(p.brands||"").split(",")[0].trim(),q:parseQty(p.quantity),cat:cat,src:lbl}})}}
+var SRC1=[offSrc("world.openfoodfacts.org","Open Food Facts")],
+    SRC2=[offSrc("world.openproductsfacts.org","Open Products Facts"),offSrc("world.openbeautyfacts.org","Open Beauty Facts"),offSrc("world.openpetfoodfacts.org","Open Pet Food Facts"),
+      function(code){return getJ("https://api.upcitemdb.com/prod/trial/lookup?upc="+code).then(function(j){var it=j&&j.items&&j.items[0];if(!it||!it.title)throw 0;return{n:it.title,brand:it.brand||"",q:parseQty(it.title+" "+(it.size||"")),cat:"",src:"UPCitemdb"}})}];
+function firstOk(fns,code){return new Promise(function(res,rej){var left=fns.length;fns.forEach(function(f){f(code).then(res,function(){if(--left===0)rej()})})})}
+function bcInfo(code,p){var tx=[];if(p&&p.brand&&norm(p.n).indexOf(norm(p.brand))<0)tx.push(p.brand);var st=p&&storeOf((p.brand||"")+" "+p.n);if(st)tx.push(st.charAt(0).toUpperCase()+st.slice(1)+" saját márka");
+  if(/^599/.test(code))tx.push("magyar termék");if(p&&p.src)tx.push(p.src);return tx.join(" · ")}
+function scanDone(code,name,qty,info){$("bc").close();applyScan(code,name,qty,info)}
+function lookup(code){var st=$("bcst"),key=bcKey(code);barmap=ld(KX.bar,{});
+  if(barmap[key]){var m=barmap[key];scanDone(key,m.n,key!==code?null:m.q,key!==code?"bolti címke":"");return}
+  if(key!==code){st.textContent="Bolti címke (pl. pékáru, hús, csemege, kisbolt). Írd be egyszer a nevét, utána felismerem.";scanDone(key,"",null,"bolti címke");$("fn").focus();return}
+  var cache=ld(BCACHE,{});if(cache[code]){var c=cache[code];scanDone(code,c.n,c.q,bcInfo(code,c));return}
+  st.textContent="Keresem a termékadatbázisokban ("+code+")...";
+  firstOk(SRC1,code).catch(function(){st.textContent="Keresem a háztartási és nemzetközi adatbázisokban...";return firstOk(SRC2,code)}).then(function(p){
+    var ks=Object.keys(cache);if(ks.length>400)delete cache[ks[0]];cache[code]={n:p.n,brand:p.brand,q:p.q,cat:p.cat,src:p.src};sv(BCACHE,cache);
+    scanDone(code,p.cat&&!matchCat(p.n)?p.cat+" ("+p.n+")":p.n,p.q,bcInfo(code,p))
+  }).catch(function(){st.innerHTML=navigator.onLine===false?"Nincs internet, írd be kézzel a nevét.":"Ezt a vonalkódot egyik adatbázis sem ismeri. Írd be a nevét: utána nálad és a közös raktár minden tagjánál felismerem.";
+    scanDone(code,"",null,/^599/.test(code)?"magyar termék":"");$("fn").focus()})}
 function scan(){bcAudio();var d=$("bc");$("bcst").textContent="Tartsd a vonalkódot a keretbe.";$("bcman").value="";d.showModal();d.onclose=bcStop;
   if(!("BarcodeDetector" in window)||!navigator.mediaDevices){$("bcst").textContent="Ez a böngésző nem tud vonalkódot olvasni. Írd be a számokat kézzel.";return}
   var det;try{det=new BarcodeDetector({formats:["ean_13","ean_8","upc_a","upc_e","code_128"]})}catch(e){$("bcst").textContent="A vonalkód-olvasó nem érhető el. Írd be kézzel.";return}
   navigator.mediaDevices.getUserMedia({video:{facingMode:"environment"}}).then(function(s){bcStream=s;var v=$("bcv");v.srcObject=s;v.play();
     function loop(){if(!bcStream)return;det.detect(v).then(function(r){if(r&&r.length){scanBeep();bcStop();lookup(r[0].rawValue)}else bcLoop=requestAnimationFrame(loop)}).catch(function(){bcLoop=requestAnimationFrame(loop)})}loop()})
   .catch(function(){$("bcst").textContent="Nem kaptam engedélyt a kamerához. Írd be a vonalkódot kézzel."})}
-FX.onItemSaved=function(o){if(lastScan&&lastScan.code){barmap[lastScan.code]={n:o.n,q:{q:o.q,u:o.u}};sv(KX.bar,barmap);lastScan=null}};
+FX.onItemSaved=function(o){if(lastScan&&lastScan.code){barmap=ld(KX.bar,{});barmap[lastScan.code]={n:o.n,q:{q:o.q,u:o.u}};sv(KX.bar,barmap);lastScan=null}};
 
 /* ================= LEJÁRAT ÉS MENNYISÉG FOTÓRÓL ================= */
 var phW=null;
