@@ -460,3 +460,11 @@ dialog.big{padding-top:calc(14px + env(safe-area-inset-top,0px))}
 @keyframes shb{50%{transform:translateY(8px)}}
 @media (prefers-reduced-motion:reduce){.sharr{animation:none}}
 .fxban.inst>span:nth-child(2){min-width:0}
+
+/* mennyiség-csúszka, pixeles */
+.qsl{display:flex;align-items:center;gap:10px;margin-top:8px}
+.qsl span{min-width:5.5em;text-align:right;font-weight:bold}
+#fqs{flex:1;-webkit-appearance:none;appearance:none;height:14px;background:var(--panel2);border:3px solid var(--line);box-shadow:2px 2px 0 var(--sh);padding:0;margin:0;touch-action:pan-y}
+#fqs::-webkit-slider-thumb{-webkit-appearance:none;width:22px;height:28px;background:var(--amber);border:3px solid var(--line);border-radius:0;box-shadow:inset -3px -3px 0 var(--amber2);cursor:pointer}
+#fqs::-moz-range-thumb{width:18px;height:24px;background:var(--amber);border:3px solid var(--line);border-radius:0;box-shadow:inset -3px -3px 0 var(--amber2);cursor:pointer}
+#fqs:focus-visible{outline:3px solid var(--teal);outline-offset:3px}

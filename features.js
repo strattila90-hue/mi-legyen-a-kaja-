@@ -147,7 +147,12 @@ document.addEventListener("click",function(e){var b=e.target.closest("[data-bm]"
 FX.shopMode=shopMode;
 
 /* ================= VONALKÓD ================= */
-var bcStream=null,bcLoop=null;
+var bcStream=null,bcLoop=null,bcAC=null;
+function bcAudio(){try{if(!bcAC)bcAC=new (window.AudioContext||window.webkitAudioContext)();if(bcAC.state==="suspended")bcAC.resume()}catch(e){bcAC=null}return bcAC}
+/* bolti vonalkód-olvasó csippanás: rövid, magas, tiszta hang + rövid rezgés */
+function scanBeep(){var A=bcAudio();if(A)try{var t=A.currentTime+.01,o=A.createOscillator(),g=A.createGain();o.type="sine";o.frequency.setValueAtTime(2900,t);
+  g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(.35,t+.005);g.gain.setValueAtTime(.35,t+.11);g.gain.linearRampToValueAtTime(0,t+.13);o.connect(g);g.connect(A.destination);o.start(t);o.stop(t+.15)}catch(e){}
+  try{navigator.vibrate&&navigator.vibrate(60)}catch(e){}}
 function bcStop(){if(bcLoop)cancelAnimationFrame(bcLoop);bcLoop=null;if(bcStream){bcStream.getTracks().forEach(function(t){t.stop()});bcStream=null}}
 function lcp(a,b){var i=0;while(i<a.length&&i<b.length&&a[i]===b[i])i++;return i}
 function matchCat(text){var t=" "+norm(text).replace(/[^a-z0-9 ]/g," ")+" ",toks=t.trim().split(/\s+/),best=null,bs=0;
@@ -159,19 +164,30 @@ function parseQty(s){var m=/(\d+(?:[.,]\d+)?)\s*(kg|g|l|ml|dl|cl|db)\b/i.exec(s|
 var lastScan=null;
 function applyScan(code,name,qty){var c=matchCat(name)||find(name);$("fn").value=c?c.n:name;$("fn").dispatchEvent(new Event("input"));
   if(qty&&["g","kg","ml","dl","l","db"].indexOf(qty.u)>=0){$("fq").value=qty.q;$("fu").value=qty.u}else if(qty&&qty.u==="cl"){$("fq").value=qty.q*10;$("fu").value="ml"}
-  $("fph").innerHTML="Vonalkód: "+esc(code)+(name&&(!c||norm(c.n)!==norm(name))?" · "+esc(name):"")+"<br>"+$("fph").innerHTML;lastScan={code:code}}
+  qtySync();$("fph").innerHTML="Vonalkód: "+esc(code)+(name&&(!c||norm(c.n)!==norm(name))?" · "+esc(name):"")+"<br>"+$("fph").innerHTML;lastScan={code:code}}
 function lookup(code){var st=$("bcst");if(barmap[code]){var m=barmap[code];$("bc").close();applyScan(code,m.n,m.q);return}
   st.textContent="Keresem a termékadatbázisban ("+code+")...";
   fetch("https://world.openfoodfacts.org/api/v2/product/"+code+".json?fields=product_name,product_name_hu,generic_name,quantity,brands").then(function(r){return r.json()}).then(function(j){
     var p=j&&j.product;if(!p||!(p.product_name_hu||p.product_name||p.generic_name)){st.innerHTML="Ezt a vonalkódot nem ismerem. Írd be a nevét, a következő alkalommal már emlékszem rá.";$("bc").close();applyScan(code,"",null);$("fn").focus();return}
     var name=p.product_name_hu||p.product_name||p.generic_name;$("bc").close();applyScan(code,name,parseQty(p.quantity))}).catch(function(){st.textContent="Nincs internet, írd be kézzel a nevét.";$("bc").close();applyScan(code,"",null)})}
-function scan(){var d=$("bc");$("bcst").textContent="Tartsd a vonalkódot a keretbe.";$("bcman").value="";d.showModal();d.onclose=bcStop;
+function scan(){bcAudio();var d=$("bc");$("bcst").textContent="Tartsd a vonalkódot a keretbe.";$("bcman").value="";d.showModal();d.onclose=bcStop;
   if(!("BarcodeDetector" in window)||!navigator.mediaDevices){$("bcst").textContent="Ez a böngésző nem tud vonalkódot olvasni. Írd be a számokat kézzel.";return}
   var det;try{det=new BarcodeDetector({formats:["ean_13","ean_8","upc_a","upc_e","code_128"]})}catch(e){$("bcst").textContent="A vonalkód-olvasó nem érhető el. Írd be kézzel.";return}
   navigator.mediaDevices.getUserMedia({video:{facingMode:"environment"}}).then(function(s){bcStream=s;var v=$("bcv");v.srcObject=s;v.play();
-    function loop(){if(!bcStream)return;det.detect(v).then(function(r){if(r&&r.length){try{navigator.vibrate&&navigator.vibrate(80)}catch(e){}bcStop();lookup(r[0].rawValue)}else bcLoop=requestAnimationFrame(loop)}).catch(function(){bcLoop=requestAnimationFrame(loop)})}loop()})
+    function loop(){if(!bcStream)return;det.detect(v).then(function(r){if(r&&r.length){scanBeep();bcStop();lookup(r[0].rawValue)}else bcLoop=requestAnimationFrame(loop)}).catch(function(){bcLoop=requestAnimationFrame(loop)})}loop()})
   .catch(function(){$("bcst").textContent="Nem kaptam engedélyt a kamerához. Írd be a vonalkódot kézzel."})}
 FX.onItemSaved=function(o){if(lastScan&&lastScan.code){barmap[lastScan.code]={n:o.n,q:{q:o.q,u:o.u}};sv(KX.bar,barmap);lastScan=null}};
+
+/* ================= MENNYISÉG-CSÚSZKA (rezgéssel) ================= */
+var QR={g:[10,2000],dkg:[1,200],kg:[.1,10],ml:[50,3000],dl:[.5,30],l:[.1,10],db:[1,30]},qLast=null,qBuzz=0;
+function qtyRange(){var r=QR[$("fu").value]||[1,30],v=parseFloat($("fq").value)||0,mx=r[1];while(v>mx)mx*=2;var sl=$("fqs");sl.min=r[0];sl.max=mx;sl.step=r[0];return r}
+function qtyLbl(){var sl=$("fqs");$("fqv").textContent=(parseFloat($("fq").value)||0).toLocaleString("hu-HU")+" "+$("fu").value;sl.setAttribute("aria-valuetext",$("fqv").textContent)}
+function qtySync(){var sl=$("fqs");if(!sl)return;qtyRange();var v=parseFloat($("fq").value);sl.value=isNaN(v)?sl.min:v;qLast=+sl.value;qtyLbl()}
+FX.qtySync=qtySync;
+function qtyInit(){var sl=$("fqs");if(!sl)return;
+  sl.addEventListener("input",function(){var r=qtyRange(),st=r[0],v=Math.round(+sl.value/st)*st;v=Math.round(v*100)/100;$("fq").value=v;qtyLbl();
+    if(qLast!==null&&v!==qLast){var now=Date.now(),big=Math.round(v/st)%10===0;if(big||now-qBuzz>35){qBuzz=now;try{navigator.vibrate&&navigator.vibrate(big?25:8)}catch(e){}}}qLast=v});
+  $("fq").addEventListener("input",qtySync);$("fu").addEventListener("change",qtySync);qtySync()}
 
 /* ================= BLOKK OLVASÁSA ================= */
 var ocrLoaded=null;function loadOcr(){if(window.Tesseract)return Promise.resolve();if(ocrLoaded)return ocrLoaded;
@@ -289,7 +305,7 @@ function drawRecFx(){var el=$("fxholi");if(el){var h=FX.holiday();el.hidden=!h;i
 
 /* ================= BEKÖTÉS ================= */
 FX.draw=function(v){drawToday();if(v==="rec")drawRecFx();if(v==="stat"){drawLevel();drawWaste()}if(v==="set")drawSetFx();writeSW();checkBadges()};
-FX.init=function(){var b=$("fnbc");if(b)b.onclick=scan;$("bcgo").onclick=function(){var v=$("bcman").value.replace(/\D/g,"");if(v.length>=8){bcStop();lookup(v)}};
+FX.init=function(){var b=$("fnbc");if(b)b.onclick=scan;$("bcgo").onclick=function(){var v=$("bcman").value.replace(/\D/g,"");if(v.length>=8){bcAudio();scanBeep();bcStop();lookup(v)}};qtyInit();
   $("fxshopmode").onclick=shopMode;$("fxrc").onclick=receipt;
   $("rcfile").onchange=function(){var f=this.files[0];if(!f)return;dlg("rcd",'<div class="q">Olvasom a blokkot... <b id="rcp">0%</b></div><div class="bar"><b id="rcb" style="width:0%"></b></div><div class="q small" style="margin-top:8px">Első alkalommal pár másodperc, amíg a szövegfelismerő betölt.</div>');
     FX.ocrText(f,function(p){$("rcp").textContent=p+"%";$("rcb").style.width=p+"%"}).then(function(t){reviewReceipt(FX.parseReceipt(t))}).catch(function(e){dlg("rcd",'<div class="warnbox">Nem sikerült beolvasni: '+esc(e.message||e)+"</div>")})};

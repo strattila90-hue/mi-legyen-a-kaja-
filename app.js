@@ -1,4 +1,4 @@
-var VER="1.14";
+var VER="1.15";
 /* indításkori URL-paraméterek (a sync.js törli őket a címsorból) és platform */
 var BOOTQ=new URLSearchParams(location.search),UA=navigator.userAgent||"";
 var IS_IOS=/iPad|iPhone|iPod/.test(UA)||(navigator.platform==="MacIntel"&&navigator.maxTouchPoints>1),IS_IPAD=/iPad/.test(UA)||(navigator.platform==="MacIntel"&&navigator.maxTouchPoints>1);
@@ -214,14 +214,14 @@ function delItem(id){var i=items.filter(function(x){return x.id===id})[0];if(!i)
   toast(i.n+(un?" kidobva (lejárt).":" törölve."),"Visszavonás",function(){if(un)un();items.splice(pos,0,i);saveItems();drawStock()})}
 ac($("fn"),$("fns"),function(c){fillFromCat(c)});
 function fillFromCat(c){if(cur)return;$("fu").value=c.u;$("fl").value=c.l;$("fe").value=plus(c.d);
-  if(!$("fq").value)$("fq").value={g:500,kg:1,dkg:20,ml:500,dl:2,l:1,db:1}[c.u]||1;priceHint()}
+  if(!$("fq").value)$("fq").value={g:500,kg:1,dkg:20,ml:500,dl:2,l:1,db:1}[c.u]||1;priceHint();if(window.FX&&FX.qtySync)FX.qtySync()}
 function priceHint(){var c=find($("fn").value),p=c&&priceOf(c.n);
   $("fph").innerHTML=p?"Átlagár: "+SHOPS.map(function(s,i){return s[1]+" "+ft(p[i])}).join(" · ")+" /"+punit(c):(c?"":($("fn").value.trim()?"Új termék: megjegyzem a következő alkalomra.":""))}
 $("fn").addEventListener("input",function(){var c=find(this.value);if(c)fillFromCat(c);else priceHint()});
 function openItem(id){cur=id?items.filter(function(x){return x.id===id})[0]:null;
   $("dt").textContent=cur?"Termék szerkesztése":"Új termék";
   $("fn").value=cur?cur.n:"";$("fq").value=cur?cur.q:"";$("fu").value=cur?cur.u:"g";$("fl").value=cur?cur.loc:tab;$("fe").value=cur?cur.exp:plus(7);
-  $("fd").hidden=!cur;$("fns").hidden=true;priceHint();$("dlg").showModal();if(!cur)setTimeout(function(){$("fn").focus()},50)}
+  $("fd").hidden=!cur;$("fns").hidden=true;priceHint();if(window.FX&&FX.qtySync)FX.qtySync();$("dlg").showModal();if(!cur)setTimeout(function(){$("fn").focus()},50)}
 $("add").onclick=function(){openItem(null)};
 function learn(n,u,loc,d){if(find(n))return;prods.push({n:n,c:"sajat",u:u,l:loc,d:d||7,pr:[0,0,0]});sv(K.prod,prods);reindex()}
 $("fs").onclick=function(){if(!$("f").reportValidity())return;
