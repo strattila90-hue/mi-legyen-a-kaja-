@@ -21,7 +21,7 @@ window.drawValue=function(){var el=$("stockval");if(!el)return;var s=stockValue(
 var ua=navigator.userAgent||"",IOS=/iPad|iPhone|iPod/.test(ua)||(navigator.platform==="MacIntel"&&navigator.maxTouchPoints>1),
   STANDALONE=!!(navigator.standalone||(window.matchMedia&&matchMedia("(display-mode: standalone)").matches)||/^android-app:/.test(document.referrer));
 function r(x,y,w,h,c,cls){return '<rect x="'+x+'" y="'+y+'" width="'+w+'" height="'+h+'" fill="'+c+'"'+(cls?' class="'+cls+'"':"")+"/>"}
-function t(x,y,s,txt,c,anchor){return '<text x="'+x+'" y="'+y+'" font-size="'+s+'" fill="'+(c||"#3a2016")+'" font-family="Pixelify Sans,monospace" font-weight="600"'+(anchor?' text-anchor="'+anchor+'"':"")+">"+txt+"</text>"}
+function t(x,y,s,txt,c,anchor){return '<text x="'+x+'" y="'+y+'" font-size="'+s+'" fill="'+(c||"#3a2016")+'" font-family="KNum,Pixelify Sans,monospace" font-weight="600"'+(anchor?' text-anchor="'+anchor+'"':"")+">"+txt+"</text>"}
 function pic(inner){return '<svg class="igpic" viewBox="0 0 60 40" shape-rendering="crispEdges" aria-hidden="true">'+inner+"</svg>"}
 function shareIcon(x,y,c){return r(x,y+3,7,6,c)+r(x+1,y+4,5,4,"#fff")+r(x+3,y,1,6,c)+r(x+2,y+1,3,1,c)+r(x+1,y+2,1,1,c)+r(x+5,y+2,1,1,c)}
 function arrowDown(x,y){return '<g class="igbounce">'+r(x+1,y,2,5,"#e4472b")+r(x,y+3,4,1,"#e4472b")+r(x+1,y+4,2,1,"#e4472b")+"</g>"}

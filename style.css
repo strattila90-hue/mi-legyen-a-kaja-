@@ -1,3 +1,6 @@
+/* Jól olvasható számjegyek: csak a számjegyek (0-9) jönnek ebből a betűtípusból, a betűk maradnak pixelesek/kerekek */
+@font-face{font-family:"KNum";font-weight:400 600;font-display:swap;src:url(vendor/fonts/num-500.woff2) format("woff2");unicode-range:U+30-39}
+@font-face{font-family:"KNum";font-weight:601 900;font-display:swap;src:url(vendor/fonts/num-700.woff2) format("woff2");unicode-range:U+30-39}
 [hidden]{display:none!important}
 .ic,.pot,.logo,.di,.tile{display:inline-block}.start .pot{display:block}
 :root{--bg:#fff1d0;--panel:#fffaf0;--panel2:#fff4dc;--ink:#3a2016;--line:#3a2016;--red:#e4472b;--red2:#a3281a;--amber:#f2a33a;--amber2:#b9701a;--teal:#2fb5a8;--ok:#3fae5a;--ok2:#25723a;--warn:#f0b31f;--bad:#e4472b;--muted:#5e4130;--sh:#3a2016;--w1:#ffd79a;--w2:#ffeccb;--chip:#ffe6b0;--glow:rgba(255,255,255,.7);color-scheme:light}
@@ -5,9 +8,9 @@
 :root[data-theme="dark"]{--bg:#1d1533;--panel:#2d2350;--panel2:#382c63;--ink:#fff1d0;--line:#0e0a1c;--muted:#ddd0f7;--sh:#0e0a1c;--w1:#2f2357;--w2:#1d1533;--chip:#46387a;--glow:rgba(242,163,58,.18);color-scheme:dark}
 *{box-sizing:border-box}
 html{-webkit-text-size-adjust:100%}
-body{margin:0;background:var(--bg);color:var(--ink);font-family:"Fredoka",ui-rounded,system-ui,sans-serif;font-size:19px;font-weight:500;line-height:1.4;padding-bottom:calc(84px + env(safe-area-inset-bottom,0px));overflow-x:hidden}
+body{font-variant-numeric:tabular-nums slashed-zero;margin:0;background:var(--bg);color:var(--ink);font-family:"KNum","Fredoka",ui-rounded,system-ui,sans-serif;font-size:19px;font-weight:500;line-height:1.4;padding-bottom:calc(84px + env(safe-area-inset-bottom,0px));overflow-x:hidden}
 .px{display:block;width:100%;height:100%;image-rendering:pixelated}
-.pf{font-family:"Pixelify Sans","Fredoka",monospace;letter-spacing:.5px}
+.pf{font-family:"KNum","Pixelify Sans","Fredoka",monospace;letter-spacing:.5px}
 .wrap{max-width:560px;margin:0 auto;padding:calc(58px + env(safe-area-inset-top,0px)) 16px 20px}
 button{font:inherit;color:inherit}
 button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible,[tabindex]:focus-visible{outline:3px dashed var(--amber);outline-offset:3px}
@@ -21,7 +24,7 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
 
 /* cégtábla */
 .sign{position:relative;background:var(--red);border:4px solid var(--line);padding:14px 12px 12px;text-align:center;box-shadow:6px 6px 0 var(--sh);margin-top:4px;outline:4px dotted #ffd84a;outline-offset:-12px}
-.sign h1{font-family:"Pixelify Sans",monospace;font-weight:700;font-size:29px;line-height:1.1;margin:4px 0 0;color:#fff4d6;text-shadow:3px 3px 0 var(--red2);letter-spacing:1px}
+.sign h1{font-family:"KNum","Pixelify Sans",monospace;font-weight:700;font-size:29px;line-height:1.1;margin:4px 0 0;color:#fff4d6;text-shadow:3px 3px 0 var(--red2);letter-spacing:1px}
 .sign p{margin:6px 0 4px;color:#ffe9b3;font-size:16px}
 .sign .logo{position:absolute;width:40px;height:40px;top:14px}
 .sign .logo.l{left:16px}.sign .logo.r{right:16px}
@@ -30,7 +33,7 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
 
 /* kártyák */
 .card{background:var(--panel);border:3px solid var(--line);padding:14px;margin:16px 0;box-shadow:5px 5px 0 var(--sh)}
-.card h2,.hd{font-family:"Pixelify Sans",monospace;font-size:19px;font-weight:700;margin:0 0 10px;color:var(--ink);display:flex;align-items:center;gap:8px}
+.card h2,.hd{font-family:"KNum","Pixelify Sans",monospace;font-size:19px;font-weight:700;margin:0 0 10px;color:var(--ink);display:flex;align-items:center;gap:8px}
 .card h2 .ic,.hd .ic{width:22px;height:22px;flex:none}
 .hd{margin:22px 2px 8px;font-size:21px}
 .q{color:var(--muted);font-size:17px}
@@ -55,7 +58,7 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
 .step{display:flex;align-items:center;gap:8px}
 .step button{width:42px;height:42px;border:3px solid var(--line);background:var(--chip);font-weight:700;font-size:24px;cursor:pointer;box-shadow:3px 3px 0 var(--sh);line-height:1}
 .step button:active{transform:translate(2px,2px);box-shadow:1px 1px 0 var(--sh)}
-.step output{min-width:34px;text-align:center;font-family:"Pixelify Sans",monospace;font-size:24px}
+.step output{min-width:34px;text-align:center;font-family:"KNum","Pixelify Sans",monospace;font-size:24px}
 .prow{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:8px 0;border-bottom:2px dashed var(--bg)}
 .prow:last-child{border-bottom:0}
 
@@ -84,10 +87,10 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
 .li .x{position:static;flex:none;width:30px;height:30px;font-size:18px}
 
 /* nagy gomb */
-.start{display:block;width:100%;margin:22px 0 6px;padding:12px 8px 14px;border:4px solid var(--line);font-family:"Pixelify Sans",monospace;font-weight:700;font-size:24px;color:#fff4d6;cursor:pointer;background:var(--red);box-shadow:6px 6px 0 var(--sh),inset 0 -6px 0 var(--red2),inset 0 4px 0 rgba(255,255,255,.3);text-shadow:2px 2px 0 var(--red2)}
+.start{display:block;width:100%;margin:22px 0 6px;padding:12px 8px 14px;border:4px solid var(--line);font-family:"KNum","Pixelify Sans",monospace;font-weight:700;font-size:24px;color:#fff4d6;cursor:pointer;background:var(--red);box-shadow:6px 6px 0 var(--sh),inset 0 -6px 0 var(--red2),inset 0 4px 0 rgba(255,255,255,.3);text-shadow:2px 2px 0 var(--red2)}
 .start:active{transform:translate(4px,4px);box-shadow:2px 2px 0 var(--sh),inset 0 -6px 0 var(--red2)}
 .start .pot{width:72px;height:72px;margin:0 auto 4px}
-.start small{display:block;font-family:"Fredoka",sans-serif;font-weight:500;font-size:16px;color:#ffe9b3;text-shadow:none}
+.start small{display:block;font-family:"KNum","Fredoka",sans-serif;font-weight:500;font-size:16px;color:#ffe9b3;text-shadow:none}
 
 /* étel kártyák */
 .dishes{display:grid;gap:12px}
@@ -104,7 +107,7 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
 .dt .bdg{display:flex;flex-wrap:wrap;gap:4px;margin-top:4px}
 .dt em{display:inline-block;font-style:normal;font-size:14px;font-weight:700;padding:1px 8px;margin-bottom:3px;background:#ffd84a;color:#3a2016;border:2px solid var(--line)}
 .empty{background:var(--panel);border:3px dashed var(--line);padding:14px;margin-top:14px}
-.price{font-family:"Pixelify Sans",monospace;font-weight:700;white-space:nowrap}
+.price{font-family:"KNum","Pixelify Sans",monospace;font-weight:700;white-space:nowrap}
 
 /* listák */
 .li{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 2px;border-bottom:2px dashed var(--bg)}
@@ -119,7 +122,7 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
 /* bolt tábla */
 .shops{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:8px}
 .shop{border:3px solid var(--line);padding:8px 6px;text-align:center;background:var(--panel2)}
-.shop .sn{font-family:"Pixelify Sans",monospace;font-weight:700;font-size:17px;display:block}
+.shop .sn{font-family:"KNum","Pixelify Sans",monospace;font-weight:700;font-size:17px;display:block}
 .shop .sp{font-size:19px;font-weight:700}
 .shop.best{background:var(--ok);color:#fff}
 .shop.best::after{content:"legolcsóbb";display:block;font-size:13px;font-weight:700}
@@ -134,7 +137,7 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
 /* recept nézet */
 .rhead{display:flex;gap:12px;align-items:center}
 .rhead .di{width:64px;height:64px;padding:5px;background:var(--bg);border:3px solid var(--line);flex:none}
-.rhead h3{margin:0;font-family:"Pixelify Sans",monospace;font-size:24px;line-height:1.15}
+.rhead h3{margin:0;font-family:"KNum","Pixelify Sans",monospace;font-size:24px;line-height:1.15}
 .ing{list-style:none;padding:0;margin:6px 0 0}
 .ing li{display:flex;gap:8px;align-items:flex-start;padding:5px 0;border-bottom:2px dashed var(--bg)}
 .ing li:last-child{border-bottom:0}
@@ -142,13 +145,13 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
 .ing .m.y{background:var(--ok);color:#fff}.ing .m.n{background:var(--bad);color:#fff}.ing .m.o{background:var(--chip)}
 .ing .iq{margin-left:auto;white-space:nowrap;color:var(--muted);font-size:17px}
 .steps{padding-left:22px;margin:6px 0 0}.steps li{margin:6px 0}
-.sec{font-family:"Pixelify Sans",monospace;font-weight:700;font-size:18px;margin:16px 0 4px}
+.sec{font-family:"KNum","Pixelify Sans",monospace;font-weight:700;font-size:18px;margin:16px 0 4px}
 .warnbox{background:#fff0c2;color:#3a2016;border:3px solid var(--line);padding:8px 10px;margin-top:8px;font-size:17px}
 
 /* dialógus */
 dialog{border:4px solid var(--line);padding:16px;width:min(94vw,500px);max-height:88vh;background:var(--panel);color:var(--ink);box-shadow:8px 8px 0 rgba(0,0,0,.35)}
 dialog::backdrop{background:rgba(20,10,30,.6)}
-dialog h3{margin:0;font-family:"Pixelify Sans",monospace;font-size:24px}
+dialog h3{margin:0;font-family:"KNum","Pixelify Sans",monospace;font-size:24px}
 .dclose{position:sticky;top:0;float:right;margin:-6px -6px 0 8px;width:36px;height:36px;border:3px solid var(--line);background:var(--red);color:#fff;font-weight:700;font-size:22px;cursor:pointer;z-index:2;padding:0}
 label{display:block;font-weight:700;margin:12px 0 4px;font-size:17px}
 input,select,textarea{width:100%;font:inherit;padding:9px 11px;border:3px solid var(--line);background:var(--bg);color:var(--ink);border-radius:0}
@@ -183,12 +186,12 @@ input[type=checkbox]{width:auto}
 .cloth{height:56px;margin-top:10px;background:repeating-conic-gradient(var(--red) 0 25%,#fff4d6 0 50%) 0 0/28px 28px;border-top:5px solid var(--line)}
 @media (prefers-reduced-motion:reduce){.bulb{animation:none}.btn:active,.dish:active,.start:active{transform:none}}
 .survey{background:var(--panel);border:3px solid var(--line);box-shadow:4px 4px 0 var(--sh);padding:12px;margin-top:14px}
-.sv-h{font-family:"Pixelify Sans",monospace;font-weight:700;font-size:19px;display:flex;align-items:center;gap:8px}
+.sv-h{font-family:"KNum","Pixelify Sans",monospace;font-weight:700;font-size:19px;display:flex;align-items:center;gap:8px}
 .sv-h .ic{width:22px;height:22px}
 .sv-g{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:10px 0 8px}
 .sv{border:3px solid var(--line);background:var(--panel2);padding:6px;text-align:center}
 .sv .ic{width:28px;height:28px;display:block;margin:0 auto}
-.sv b{display:block;font-family:"Pixelify Sans",monospace;font-size:24px;line-height:1.1}
+.sv b{display:block;font-family:"KNum","Pixelify Sans",monospace;font-size:24px;line-height:1.1}
 .sv small{font-size:15px;color:var(--muted)}
 .dt i.from{font-size:15px;opacity:.95;margin-top:3px}
 .dt i.from b.loc{display:inline;font-size:15px;font-weight:700}
@@ -246,7 +249,7 @@ details.all>summary::before{content:"▸ "}details.all[open]>summary::before{con
 .loc[aria-selected="true"] .frost{animation:frost 1.8s steps(6) infinite}
 .loc[aria-selected="true"] .f2{animation-delay:.6s}.loc[aria-selected="true"] .f3{animation-delay:1.2s}
 @keyframes frost{0%{opacity:0;transform:translateY(0)}20%{opacity:.9}100%{opacity:0;transform:translateY(-260%)}}
-.lbl{display:flex;align-items:center;justify-content:center;gap:5px;font-family:"Pixelify Sans",monospace;font-weight:700;font-size:17px;line-height:1.1}
+.lbl{display:flex;align-items:center;justify-content:center;gap:5px;font-family:"KNum","Pixelify Sans",monospace;font-weight:700;font-size:17px;line-height:1.1}
 .lbl .cnt{display:inline-block;min-width:22px;padding:0 5px;border:2px solid var(--line);background:var(--panel);color:var(--ink);font-size:15px;text-align:center}
 .lbl .cnt:empty{display:none}
 @media (prefers-reduced-motion:reduce){.door,.fd,.sc-fridge::after{transition:none}.frost{animation:none!important}.loc .sc-fridge::after{animation:none!important}}
@@ -345,7 +348,7 @@ details.paste textarea{min-height:140px;margin:8px 0}
 .cd.e{border:0;background:transparent;cursor:default}
 .cd.t{background:var(--chip)}
 .cd.s{outline:3px solid var(--red);outline-offset:-1px}
-.cdn{font-family:"Pixelify Sans",monospace;font-weight:700;font-size:15px;line-height:1}
+.cdn{font-family:"KNum","Pixelify Sans",monospace;font-weight:700;font-size:15px;line-height:1}
 .cdi{display:flex;align-items:center;gap:1px;min-height:18px}
 .cdi .ic{width:17px;height:17px}
 .cdi small{font-size:11px;font-weight:700}
@@ -418,7 +421,7 @@ dialog.sheet.up{margin:0 auto auto;border-width:0 4px 4px;height:auto;min-height
 .slot .tile{grid-row:1 / span 4;width:36px;height:36px;padding:2px}
 .slot>*:not(.tile):not(.x){grid-column:2}
 .slot .n{margin-top:0;padding-right:6px;font-size:16px;overflow-wrap:normal;word-break:normal;hyphens:auto}
-.slot .q{font-size:15px}
+.slot .q{font-size:16px;font-weight:700;color:var(--ink)}
 .slot .hp{margin:4px 0 2px;height:8px}
 .slot .d{font-size:14px}
 .slot .x{width:26px;height:26px;font-size:16px}
