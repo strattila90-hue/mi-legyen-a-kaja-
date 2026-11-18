@@ -468,3 +468,11 @@ dialog.big{padding-top:calc(14px + env(safe-area-inset-top,0px))}
 #fqs::-webkit-slider-thumb{-webkit-appearance:none;width:22px;height:28px;background:var(--amber);border:3px solid var(--line);border-radius:0;box-shadow:inset -3px -3px 0 var(--amber2);cursor:pointer}
 #fqs::-moz-range-thumb{width:18px;height:24px;background:var(--amber);border:3px solid var(--line);border-radius:0;box-shadow:inset -3px -3px 0 var(--amber2);cursor:pointer}
 #fqs:focus-visible{outline:3px solid var(--teal);outline-offset:3px}
+
+/* fotós leolvasás (lejárat, mennyiség) */
+.phb{font:inherit;font-size:14px;line-height:1;padding:2px 5px;margin-left:4px;background:var(--chip);color:var(--ink);border:2px solid var(--line);box-shadow:2px 2px 0 var(--sh);cursor:pointer;vertical-align:middle}
+.phb:active{transform:translate(2px,2px);box-shadow:none}
+#ph .dbody .btns{flex-wrap:wrap}
+.phok{background:#d8f5dc;color:#173d21;border:3px solid var(--line);padding:8px 10px;margin-top:8px;font-size:18px;font-weight:bold}
+.flash{animation:flash 1.2s 2}
+@keyframes flash{50%{outline:4px solid var(--amber);outline-offset:2px}}

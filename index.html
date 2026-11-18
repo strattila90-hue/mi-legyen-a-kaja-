@@ -221,13 +221,13 @@
   <div class="sugg" id="fns" role="listbox" hidden></div>
   <div class="q small" id="fph" style="margin-top:6px"></div>
   <div class="row">
-    <div><label for="fq">Mennyiség</label><input id="fq" type="number" step="any" min="0.01" required inputmode="decimal"></div>
+    <div><label for="fq">Mennyiség <button type="button" class="phb" id="fqph" aria-label="Mennyiség leolvasása fotóról">📷</button></label><input id="fq" type="number" step="any" min="0.01" required inputmode="decimal"></div>
     <div><label for="fu">Egység</label><select id="fu"><option>g</option><option>dkg</option><option>kg</option><option>ml</option><option>dl</option><option>l</option><option>db</option></select></div>
   </div>
   <div class="qsl"><input id="fqs" type="range" min="1" max="30" step="1" aria-label="Mennyiség csúszka"><span id="fqv" class="q small"></span></div>
   <div class="row">
     <div><label for="fl">Hol van?</label><select id="fl"><option value="fridge">Hűtő</option><option value="pantry">Spájz</option><option value="freezer">Fagyasztó</option></select></div>
-    <div><label for="fe">Lejárat</label><input id="fe" type="date" required></div>
+    <div><label for="fe">Lejárat <button type="button" class="phb" id="feph" aria-label="Lejárati dátum leolvasása fotóról">📷</button></label><input id="fe" type="date" required></div>
   </div>
   <div class="btns"><button type="button" class="btn g" id="fs">Mentés</button><button type="button" class="btn r" id="fd" hidden>Törlés</button></div>
 </form></dialog>
@@ -276,6 +276,8 @@
 <dialog id="bc"><button type="button" class="dclose" data-close aria-label="Bezárás">×</button><h3>Vonalkód</h3>
   <video id="bcv" playsinline muted></video><p class="q" id="bcst"></p>
   <label for="bcman">Vagy írd be a számokat</label><div class="row"><div style="flex:3"><input id="bcman" inputmode="numeric" autocomplete="off"></div><div><button type="button" class="btn sm" id="bcgo" style="width:100%">Keres</button></div></div></dialog>
+<dialog id="ph"><button type="button" class="dclose" data-close aria-label="Bezárás">×</button><h3 id="pht"></h3><div class="dbody"></div></dialog>
+<input type="file" id="phfile" accept="image/*" capture="environment" hidden>
 <dialog id="kid" class="big kidd"><div class="dbody"></div></dialog>
 <dialog id="mx" class="big"><button type="button" class="dclose" data-close aria-label="Bezárás">×</button><h3 id="mxt"></h3><div class="dbody"></div></dialog>
 <dialog id="ig" class="big"><button type="button" class="dclose" data-close aria-label="Bezárás">×</button><h3>Telepítés a telefonra</h3><div class="dbody"></div></dialog>
