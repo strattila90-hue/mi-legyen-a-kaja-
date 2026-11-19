@@ -20,7 +20,11 @@ function vpar(){var v=VP[S.vp];return v&&v.p!=null?{p:v.p,r:v.r}:{p:+S.vpitch,r:
 if(!S.mig3){S.mig3=1;S.talk=3}
 /* csak kérésre beszél: alapértelmezés (a beállításokban visszakapcsolható) */
 if(!S.mig0){S.mig0=1;S.talk=0;try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
-function auto(){return S.talk>0}
+if(S.cktalk==null)S.cktalk=2;
+/* főzés módban külön beszédesség: ott jöhetnek a beszólások, viccek, sztorik magától is */
+function inCook(){var d=document.getElementById("ck");return !!(d&&d.open)}
+function TK(){return inCook()?S.cktalk:S.talk}
+function auto(){return TK()>0}
 function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
 function $(id){return document.getElementById(id)}
 function nrm(s){return String(s||"").toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g,"")}
@@ -268,20 +272,20 @@ function onCk(){var c=ckInfo();if(!c)return;if(ck.i<0)ck.done=c.done;
     var pre=first?"Kezdjük! "+c.name+". "+(S.style>1?pick("start",["Na, lássuk, mit tudsz, {n}!","Fel a kötényt, kis nyomi szakács!","Most kiderül, ki a főnök a konyhában. Spoiler: én.","Remélem, a tűzoltók száma megvan."])+" ":""):
       (!fw&&S.style?sl("back")+" ":fw&&dt<12000&&S.style&&ck.i>2?sl("fast")+" ":fw&&Math.random()<.6?sl("praise")+" ":"");
     if(auto()||rec)readStep(false,pre);
-    if(S.talk&&Math.random()<(S.talk>1?.7:.4))setTimeout(function(){var c2=ckInfo();if(c2&&c2.i===c.i&&!speaking)say(tipFor(c.step))},9000+Math.random()*4000)}
+    if(TK()&&Math.random()<(TK()>1?.7:.4))setTimeout(function(){var c2=ckInfo();if(c2&&c2.i===c.i&&!speaking)say(tipFor(c.step))},9000+Math.random()*4000)}
   if(c.done>ck.done&&auto()){say(sl("tdone"),{mood:S.style>1?"sass":"",stay:1})}
   ck.done=c.done}
 function readStep(again,pre){var c=ckInfo();if(!c)return;var t=(pre||"")+c.i+". lépés"+(c.n?" a "+c.n+"-ből":"")+": "+c.step;
   if(c.i===c.n&&!again)t+=" Ez az utolsó lépés!";var shown=(pre||"")+c.i+". lépés"+(c.i===c.n?", az utolsó!":".")+(S.voice?" Felolvastam.":"");say(shown,{read:t,stay:1,acts:[["Ismételd",function(){readStep(true)}],["Tipp",function(){say(tipFor(c.step))}]]})}
 function ckTick(){var c=ckInfo();if(!c){stopCk();return}var el=(Date.now()-ck.t0)/6e4,m=stepMin(c.step),now=Date.now();
   if(speaking||now-ck.last<25000)return;
-  if(c.tm&&!c.run&&!ck.tnag&&el>.4&&S.talk){ck.tnag=1;ck.last=now;say(pick("tnag",TIMERNAG),{acts:[["Indítsd!",function(){var b=$("cktm");if(b)b.click()}]]});return}
-  var lim=Math.max(m||0,3)+2+ck.nag*6;if(el>lim&&!c.run&&S.talk&&ck.nag<3){ck.nag++;ck.last=now;say(S.style?sl("urge"):pick("urge",URGE),{mood:S.style>1?"sass":"",acts:[["Következő",function(){var b=$("ckn")||$("ckdone");if(b)b.click()}],["Viccet!",joke]]});return}
+  if(c.tm&&!c.run&&!ck.tnag&&el>.4&&TK()){ck.tnag=1;ck.last=now;say(pick("tnag",TIMERNAG),{acts:[["Indítsd!",function(){var b=$("cktm");if(b)b.click()}]]});return}
+  var lim=Math.max(m||0,3)+2+ck.nag*6;if(el>lim&&!c.run&&TK()&&ck.nag<3){ck.nag++;ck.last=now;say(S.style?sl("urge"):pick("urge",URGE),{mood:S.style>1?"sass":"",acts:[["Következő",function(){var b=$("ckn")||$("ckdone");if(b)b.click()}],["Viccet!",joke]]});return}
   /* véletlen időpontban beszólás, vicc vagy tipp */
-  if(!ck.nextR)ck.nextR=now+rnd();if(S.talk&&S.talk<3&&now>ck.nextR){ck.nextR=now+rnd();ck.last=now;var r=Math.random();
+  if(!ck.nextR)ck.nextR=now+rnd();if(TK()&&TK()<3&&now>ck.nextR){ck.nextR=now+rnd();ck.last=now;var r=Math.random();
     if(S.style&&el>.7&&!c.run&&r<.55)say(sl("urge"),{mood:S.style>1?"sass":"",acts:[["Következő",function(){var b=$("ckn")||$("ckdone");if(b)b.click()}],["Hagyj már!",function(){ck.nextR=Date.now()+rnd()*2;say(S.style>1?pick("hagyj",["Jó, jó, durcás vagyok.","Na tessék, megsértődtem. Két percre.","Oké, befogom. A számat, nem az egeret."]):"Rendben, csendben leszek egy kicsit.");}]]});
     else if(r<.8)joke();else say(tipFor(c.step))}}
-function rnd(){var a=S.talk>1?[40,110]:[80,220];return(a[0]+Math.random()*(a[1]-a[0]))*1000}
+function rnd(){var a=TK()>1?[40,110]:[80,220];return(a[0]+Math.random()*(a[1]-a[0]))*1000}
 function startCk(){ck={i:-1,t0:Date.now(),timer:0,nag:0,tnag:0,done:0,last:Date.now()};clearInterval(ckT);ckT=setInterval(ckTick,5000);
   var d=$("ck");if(!d.chefObs){d.chefObs=new MutationObserver(function(){onCk()});d.chefObs.observe(d,{childList:true,subtree:true})}setTimeout(onCk,50)}
 function stopCk(){clearInterval(ckT);ckT=null;ck={i:-1};if(rec)toggleRec()}
@@ -321,7 +325,7 @@ setInterval(idleTick,20000);
 var lastAct=Date.now(),chatEnd=0,chatChain=0;
 ["pointerdown","keydown","wheel","touchstart","input"].forEach(function(ev){window.addEventListener(ev,function(){lastAct=Date.now();chatChain=0},{passive:true,capture:true})});
 window.addEventListener("scroll",function(){lastAct=Date.now();chatChain=0},{passive:true,capture:true});
-function chatter(){if(!S.on||S.mini||S.talk<3||document.hidden||!W)return;var now=Date.now();
+function chatter(){if(!S.on||S.mini||TK()<3||document.hidden||!W)return;var now=Date.now();
   if(speaking){chatEnd=now;return}if(now-lastAct<7000)return;if(now-chatEnd<(chatChain?10000:4000))return;
   var d=topDialog();if(d&&/^(bc|ph|dlg|kid)$/.test(d.id))return;var ae=document.activeElement;if(ae&&/INPUT|TEXTAREA|SELECT/.test(ae.tagName))return;
   chatChain++;var c=ckInfo();
@@ -358,7 +362,8 @@ function drawSet(){var v=$("v-set");if(!v)return;var c=$("chefset");
     '<label for="chst">Milyen stílusban beszóljon?</label><select id="chst"><option value="0">Kedves</option><option value="1">Csipkelődő</option><option value="2">Szemtelen, személyeskedő</option></select>'+
     '<label class="toggle"><input type="checkbox" id="chpol"'+(S.pol?" checked":"")+'> Közéleti, politikai poénok is</label>'+
     '<label for="chnk">Hogyan szólítson?</label><input id="chnk" maxlength="24" placeholder="pl. séf, főnök, Pisti" value="'+esc(S.nick)+'">'+
-    '<label for="chta">Mennyit beszéljen?</label><select id="chta"><option value="0">Csak ha kérdezem</option><option value="1">Néha beszól</option><option value="2">Sokat dumál</option><option value="3">Nonstop (7 mp csend után 10 mp-enként)</option></select>'+
+    '<label for="chck">Főzés módban mennyit beszéljen?</label><select id="chck"><option value="0">Csak ha kérdezem</option><option value="1">Néha beszól</option><option value="2">Sokat dumál</option><option value="3">Nonstop (7 mp csend után 10 mp-enként)</option></select>'+
+    '<label for="chta">Máshol az appban mennyit beszéljen?</label><select id="chta"><option value="0">Csak ha kérdezem</option><option value="1">Néha beszól</option><option value="2">Sokat dumál</option><option value="3">Nonstop (7 mp csend után 10 mp-enként)</option></select>'+
     '<div class="btns"><button type="button" class="btn sm" id="chtest">Próba hang</button><button type="button" class="btn sm" id="chreset">Újra mutassa a tippeket</button></div>'+
     '<div class="q small">'+(window.speechSynthesis?(huVoice?"Magyar hang: "+esc(huVoice.name)+".":"Nem találtam magyar hangot a telefonon. Telepítsd a Google beszédszolgáltatás magyar hangját.")+"":"Ez a böngésző nem tud felolvasni.")+" Főzés módban hangvezérlés is van: koppints rám, és válaszd a 🎤 gombot.</div>";
   c.open=open;$("chta").value=String(S.talk);$("chvp").value=VP[S.vp]?S.vp:"sef";
@@ -373,6 +378,7 @@ function drawSet(){var v=$("v-set");if(!v)return;var c=$("chefset");
   $("chon").onchange=function(){S.on=this.checked?1:0;S.mini=0;save();apply();if(S.on)say("Hurrá, újra itt vagyok!");else stopSpeak()};
   $("chvo").onchange=function(){S.voice=this.checked?1:0;save();if(!S.voice)stopSpeak()};
   $("chta").onchange=function(){S.talk=+this.value;save()};
+  $("chck").value=String(S.cktalk);$("chck").onchange=function(){S.cktalk=+this.value;save()};
   $("chst").value=String(S.style);$("chst").onchange=function(){S.style=+this.value;save();say(S.style>1?"Na végre, levehetem a kesztyűt! Szóval, kis nyomi szakács, főzünk ma, vagy csak nézelődünk?":S.style?"Rendben, csak egy kicsit csipkelődöm, {n}.":"Rendben, kedves leszek. Ígérem!",{mood:S.style>1?"sass":""})};
   $("chpol").onchange=function(){S.pol=this.checked?1:0;save();say(S.pol?"Rendben, jöhet a közélet is. Mindkét oldalnak jut, ne aggódj!":"Rendben, politika kizárva. Itt csak a pörkölt a téma.")};
   $("chnk").onchange=function(){S.nick=this.value.trim().slice(0,24);save();say("Rendben, mostantól így szólítalak: {n}!")};

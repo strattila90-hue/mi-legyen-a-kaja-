@@ -276,7 +276,7 @@ dialog.big{width:min(100vw,560px);max-width:100vw;height:100dvh;max-height:100dv
 .bmrow{display:flex;align-items:center;gap:10px;width:100%;text-align:left;border:3px solid var(--line);background:var(--panel);margin-top:8px;padding:10px;font-size:21px;cursor:pointer;box-shadow:3px 3px 0 var(--sh)}
 .bmrow .ic{width:34px;height:34px;flex:none}.bmrow>span:nth-child(3){flex:1}
 .bmrow .ck{width:34px;height:34px}.bmrow.done{opacity:.5}.bmrow.done>span:nth-child(3){text-decoration:line-through}.bmrow.done .ck{background:var(--ok);color:#fff}
-#bcv{width:100%;max-height:45vh;background:#000;border:3px solid var(--line);margin-top:10px;object-fit:cover}
+
 .rcrow{display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:2px dashed var(--bg)}
 .rcrow input[type=checkbox]{width:24px;height:24px;flex:none;accent-color:var(--ok)}.rcn{flex:1;min-width:0}.rcn input{padding:6px 8px}
 .badges{display:grid;grid-template-columns:repeat(auto-fill,minmax(96px,1fr));gap:8px;margin-top:10px}
@@ -510,3 +510,16 @@ dialog.big.chefin{padding-bottom:calc(96px + env(safe-area-inset-bottom,0px))}
 .chsl label{flex:0 0 7.5em;margin:0}
 .chsl input{flex:1;accent-color:var(--red)}
 .chsl span{flex:0 0 4.5em;text-align:right;font-weight:700;font-size:15px}
+
+/* kamera kerettel (vonalkód, lejárat) */
+.camw{position:relative;margin-top:10px;border:3px solid var(--line);background:#000;overflow:hidden}
+.camw video{display:block;width:100%;height:min(46vh,340px);object-fit:cover;margin:0;border:0;max-height:none}
+.camf{position:absolute;left:8%;right:8%;top:30%;height:40%;border:3px solid #fff;box-shadow:0 0 0 999px rgba(0,0,0,.38);border-radius:4px;pointer-events:none}
+.camf.bar1 i{position:absolute;left:4%;right:4%;top:50%;height:2px;background:#e4472b;box-shadow:0 0 6px #e4472b;animation:scanl 1.6s ease-in-out infinite alternate}
+@keyframes scanl{from{transform:translateY(-38px)}to{transform:translateY(38px)}}
+.camf.txt{top:34%;height:28%;border-color:#ffd23f}
+.camb{position:absolute;right:6px;bottom:6px;display:flex;gap:6px}
+.camb .btn{margin:0;padding:5px 8px;font-size:14px}
+.camb .btn[aria-pressed="true"]{background:#ffd23f}
+.phcand{margin-top:8px;font-size:18px}
+@media (prefers-reduced-motion:reduce){.camf.bar1 i{animation:none}}

@@ -153,7 +153,7 @@ function bcAudio(){try{if(!bcAC)bcAC=new (window.AudioContext||window.webkitAudi
 function scanBeep(){var A=bcAudio();if(A)try{var t=A.currentTime+.01,o=A.createOscillator(),g=A.createGain();o.type="sine";o.frequency.setValueAtTime(2900,t);
   g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(.35,t+.005);g.gain.setValueAtTime(.35,t+.11);g.gain.linearRampToValueAtTime(0,t+.13);o.connect(g);g.connect(A.destination);o.start(t);o.stop(t+.15)}catch(e){}
   try{navigator.vibrate&&navigator.vibrate(60)}catch(e){}}
-function bcStop(){if(bcLoop)cancelAnimationFrame(bcLoop);bcLoop=null;if(bcStream){bcStream.getTracks().forEach(function(t){t.stop()});bcStream=null}}
+function bcStop(){if(bcLoop){cancelAnimationFrame(bcLoop);clearTimeout(bcLoop)}bcLoop=null;if(bcStream){bcStream.getTracks().forEach(function(t){t.stop()});bcStream=null}}
 function lcp(a,b){var i=0;while(i<a.length&&i<b.length&&a[i]===b[i])i++;return i}
 function matchCat(text){var t=" "+norm(text).replace(/[^a-z0-9 ]/g," ")+" ",toks=t.trim().split(/\s+/),best=null,bs=0;
   allProds().forEach(function(c){var n=norm(c.n).replace(/[^a-z0-9 ]/g," ").trim();if(n.length<3)return;var sc=0,ok=n.split(/\s+/).every(function(x){var m=0;toks.forEach(function(tk){m=Math.max(m,lcp(x,tk))});if(m<Math.min(4,x.length))return false;sc+=m-(x.length-m)*0.5;return true});
@@ -197,12 +197,39 @@ function lookup(code){var st=$("bcst"),key=bcKey(code);barmap=ld(KX.bar,{});
     scanDone(code,p.cat&&!matchCat(p.n)?p.cat+" ("+p.n+")":p.n,p.q,bcInfo(code,p))
   }).catch(function(){st.innerHTML=navigator.onLine===false?"Nincs internet, írd be kézzel a nevét.":"Ezt a vonalkódot egyik adatbázis sem ismeri. Írd be a nevét: utána nálad és a közös raktár minden tagjánál felismerem.";
     scanDone(code,"",null,/^599/.test(code)?"magyar termék":"");$("fn").focus()})}
-function scan(){bcAudio();var d=$("bc");$("bcst").textContent="Tartsd a vonalkódot a keretbe.";$("bcman").value="";d.showModal();d.onclose=bcStop;
-  if(!("BarcodeDetector" in window)||!navigator.mediaDevices){$("bcst").textContent="Ez a böngésző nem tud vonalkódot olvasni. Írd be a számokat kézzel.";return}
-  var det;try{det=new BarcodeDetector({formats:["ean_13","ean_8","upc_a","upc_e","code_128"]})}catch(e){$("bcst").textContent="A vonalkód-olvasó nem érhető el. Írd be kézzel.";return}
-  navigator.mediaDevices.getUserMedia({video:{facingMode:"environment"}}).then(function(s){bcStream=s;var v=$("bcv");v.srcObject=s;v.play();
-    function loop(){if(!bcStream)return;det.detect(v).then(function(r){if(r&&r.length){scanBeep();bcStop();lookup(r[0].rawValue)}else bcLoop=requestAnimationFrame(loop)}).catch(function(){bcLoop=requestAnimationFrame(loop)})}loop()})
-  .catch(function(){$("bcst").textContent="Nem kaptam engedélyt a kamerához. Írd be a vonalkódot kézzel."})}
+/* ---- kamera segéd: nagy felbontás, folyamatos fókusz, vaku és nagyítás, ha a telefon tudja ---- */
+function camStart(v){return navigator.mediaDevices.getUserMedia({audio:false,video:{facingMode:{ideal:"environment"},width:{ideal:1920},height:{ideal:1080},advanced:[{focusMode:"continuous"}]}})
+  .catch(function(){return navigator.mediaDevices.getUserMedia({video:{facingMode:"environment"}})})
+  .then(function(st){v.srcObject=st;v.setAttribute("playsinline","");v.muted=true;var p=v.play();var tr=st.getVideoTracks()[0],caps={};try{caps=tr.getCapabilities?tr.getCapabilities():{}}catch(e){}
+    try{if(caps.focusMode&&caps.focusMode.indexOf("continuous")>=0)tr.applyConstraints({advanced:[{focusMode:"continuous"}]}).catch(function(){})}catch(e){}
+    return Promise.resolve(p).catch(function(){}).then(function(){return{st:st,tr:tr,caps:caps}})})}
+function camTools(cam,torchBtn,zoomBtn){var c=cam.caps||{},on=false,z=1;
+  if(torchBtn){torchBtn.hidden=!c.torch;torchBtn.onclick=function(){on=!on;cam.tr.applyConstraints({advanced:[{torch:on}]}).catch(function(){});torchBtn.setAttribute("aria-pressed",on)}}
+  if(zoomBtn){var zmax=c.zoom&&c.zoom.max||1;zoomBtn.hidden=!(zmax>1.4);zoomBtn.onclick=function(){z=z>=Math.min(3,zmax)-.01?1:Math.min(z+1,zmax,3);cam.tr.applyConstraints({advanced:[{zoom:z}]}).catch(function(){});zoomBtn.textContent="🔍 "+z+"×"}}}
+/* a látható keretnek megfelelő rész kivágása a videóból (object-fit: cover figyelembevételével) */
+function grab(v,frame,maxW,pad){var vw=v.videoWidth,vh=v.videoHeight;if(!vw||!vh)return null;var bw=v.clientWidth,bh=v.clientHeight,sc=Math.max(bw/vw,bh/vh),ox=(bw-vw*sc)/2,oy=(bh-vh*sc)/2;
+  var vr=v.getBoundingClientRect(),fr=frame?frame.getBoundingClientRect():vr,px=pad?fr.width*pad:0,py=pad?fr.height*pad*1.6:0,x=(fr.left-px-vr.left-ox)/sc,y=(fr.top-py-vr.top-oy)/sc,w=(fr.width+2*px)/sc,h=(fr.height+2*py)/sc;
+  x=Math.max(0,x);y=Math.max(0,y);w=Math.min(vw-x,w);h=Math.min(vh-y,h);var k=Math.min(1,(maxW||1400)/w),c=document.createElement("canvas");c.width=Math.round(w*k);c.height=Math.round(h*k);
+  c.getContext("2d").drawImage(v,x,y,w,h,0,0,c.width,c.height);return c}
+function eanOk(code){if(!/^\d{8}$|^\d{12,14}$/.test(code))return true;var d=code.split("").map(Number),ch=d.pop(),s=0;d.reverse().forEach(function(n,i){s+=n*(i%2?1:3)});return(10-s%10)%10===ch}
+var zxLoaded=null;function loadZx(){if(window.ZXing)return Promise.resolve();if(zxLoaded)return zxLoaded;zxLoaded=new Promise(function(res,rej){var s=document.createElement("script");s.src="vendor/zxing/zxing.min.js";s.onload=res;s.onerror=function(){zxLoaded=null;rej(new Error("zxing"))};document.head.appendChild(s)});return zxLoaded}
+function zxReader(){var Z=window.ZXing,h=new Map(),F=Z.BarcodeFormat;h.set(Z.DecodeHintType.POSSIBLE_FORMATS,[F.EAN_13,F.EAN_8,F.UPC_A,F.UPC_E,F.CODE_128,F.ITF,F.CODE_39]);h.set(Z.DecodeHintType.TRY_HARDER,true);var r=new Z.MultiFormatReader();r.setHints(h);
+  return function(c){var x=c.getContext("2d"),d=x.getImageData(0,0,c.width,c.height).data,g=new Uint8ClampedArray(c.width*c.height);for(var i=0,j=0;j<g.length;i+=4,j++)g[j]=(d[i]*306+d[i+1]*601+d[i+2]*117)>>10;
+    try{var res=r.decode(new Z.BinaryBitmap(new Z.HybridBinarizer(new Z.RGBLuminanceSource(g,c.width,c.height))));return res&&res.getText()}catch(e){return null}finally{try{r.reset()}catch(e){}}}}
+var bcCam=null;
+function scan(){bcAudio();var d=$("bc"),st=$("bcst");st.textContent="Tartsd a vonalkódot a keretbe, kb. 10–15 cm-re.";$("bcman").value="";d.showModal();d.onclose=bcStop;
+  if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia){st.textContent="Ez a böngésző nem fér hozzá a kamerához. Írd be a számokat kézzel.";return}
+  var det=null,zx=null,last="",hits=0,busy=false,tries=0;
+  var prep=("BarcodeDetector" in window?Promise.resolve(BarcodeDetector.getSupportedFormats?BarcodeDetector.getSupportedFormats():["ean_13"]).then(function(f){var want=["ean_13","ean_8","upc_a","upc_e","code_128","itf","code_39"].filter(function(x){return f.indexOf(x)>=0});
+      if(want.indexOf("ean_13")<0)throw 0;det=new BarcodeDetector({formats:want})}):Promise.reject()).catch(function(){return loadZx().then(function(){zx=zxReader()})});
+  Promise.all([prep,camStart($("bcv"))]).then(function(r){var cam=r[1];bcStream=cam.st;bcCam=cam;camTools(cam,$("bctorch"),$("bczoom"));var v=$("bcv");
+    function found(code){code=String(code).trim();if(!eanOk(code))return false;if(code===last)hits++;else{last=code;hits=1}if(hits<2)return false;scanBeep();bcStop();lookup(code);return true}
+    function loop(){if(!bcStream)return;if(busy||v.readyState<2){bcLoop=setTimeout(loop,120);return}busy=true;tries++;
+      if(tries===60)st.textContent="Nem megy? Próbáld közelebb vagy távolabb, jobb fényben"+($("bctorch").hidden?"":", vagy kapcsold be a vakut")+".";
+      var p=det?det.detect(v).then(function(rs){for(var i=0;i<(rs||[]).length;i++)if(found(rs[i].rawValue))return true;return false})
+        :Promise.resolve().then(function(){var c=grab(v,$("bcframe"),1000);if(!c)return false;var t=zx(c);return !!(t&&found(t))});
+      p.catch(function(){return false}).then(function(ok){busy=false;if(!ok&&bcStream)bcLoop=setTimeout(loop,det?90:160)})}
+    loop()}).catch(function(e){st.textContent=e&&e.name==="NotAllowedError"?"Nem kaptam engedélyt a kamerához. Írd be a vonalkódot kézzel.":"Nem sikerült elindítani a kamerát. Írd be a vonalkódot kézzel."})}
 FX.onItemSaved=function(o){if(!lastScan||!lastScan.code)return"";var k=lastScan.code,old;barmap=ld(KX.bar,{});old=barmap[k];
   var d=Math.round((new Date(o.exp)-new Date(today()))/864e5);
   barmap[k]={n:o.n,q:{q:o.q,u:o.u},l:o.loc,d:d>0&&d<3650?d:(old&&old.d)||0,t:((old&&old.t)||0)+1,at:today()};sv(KX.bar,barmap);lastScan=null;
@@ -218,43 +245,86 @@ function prepImg(file){return new Promise(function(res,rej){var u=URL.createObje
   var x=c.getContext("2d");x.drawImage(im,0,0,w,h);URL.revokeObjectURL(u);var d=x.getImageData(0,0,w,h),a=d.data,lo=255,hi=0,i,g;
   for(i=0;i<a.length;i+=4){g=a[i]*.3+a[i+1]*.59+a[i+2]*.11;a[i]=g;if(g<lo)lo=g;if(g>hi)hi=g}var sc=255/Math.max(1,hi-lo);
   for(i=0;i<a.length;i+=4){g=(a[i]-lo)*sc;a[i]=a[i+1]=a[i+2]=g}x.putImageData(d,0,0);res(c)};im.onerror=function(){URL.revokeObjectURL(u);rej(new Error("A kép nem olvasható"))};im.src=u})}
+/* OCR előfeldolgozás: szürke, kontraszt, nagyítás, Otsu-küszöb; elmosott változat a pöttyös (tintasugaras) dátumokhoz */
+function gray(c){var x=c.getContext("2d"),d=x.getImageData(0,0,c.width,c.height),a=d.data,g=new Uint8ClampedArray(c.width*c.height),lo=255,hi=0;
+  for(var i=0,j=0;j<g.length;i+=4,j++){var v=(a[i]*306+a[i+1]*601+a[i+2]*117)>>10;g[j]=v;if(v<lo)lo=v;if(v>hi)hi=v}var sc=255/Math.max(16,hi-lo);for(j=0;j<g.length;j++)g[j]=(g[j]-lo)*sc;return g}
+function blur(g,w,h,r){var o=new Uint8ClampedArray(g.length),t=new Float32Array(g.length),x,y,k,s;
+  for(y=0;y<h;y++)for(x=0;x<w;x++){s=0;for(k=-r;k<=r;k++)s+=g[y*w+Math.min(w-1,Math.max(0,x+k))];t[y*w+x]=s/(2*r+1)}
+  for(y=0;y<h;y++)for(x=0;x<w;x++){s=0;for(k=-r;k<=r;k++)s+=t[Math.min(h-1,Math.max(0,y+k))*w+x];o[y*w+x]=s/(2*r+1)}return o}
+function otsu(g){var hs=new Array(256).fill(0),i,n=g.length;for(i=0;i<n;i++)hs[g[i]]++;var sum=0;for(i=0;i<256;i++)sum+=i*hs[i];var sB=0,wB=0,best=0,th=128;
+  for(i=0;i<256;i++){wB+=hs[i];if(!wB)continue;var wF=n-wB;if(!wF)break;sB+=i*hs[i];var mB=sB/wB,mF=(sum-sB)/wF,v=wB*wF*(mB-mF)*(mB-mF);if(v>best){best=v;th=i}}return th}
+function toCanvas(g,w,h){var c=document.createElement("canvas");c.width=w;c.height=h;var x=c.getContext("2d"),d=x.createImageData(w,h);for(var i=0,j=0;j<g.length;i+=4,j++){d.data[i]=d.data[i+1]=d.data[i+2]=g[j];d.data[i+3]=255}x.putImageData(d,0,0);return c}
+function ocrVariant(src,n){var c=src;if(c.height<160||c.width<700){var k=Math.min(3,Math.max(700/c.width,160/c.height)),u=document.createElement("canvas");u.width=Math.round(c.width*k);u.height=Math.round(c.height*k);var ux=u.getContext("2d");ux.imageSmoothingQuality="high";ux.drawImage(c,0,0,u.width,u.height);c=u}
+  var w=c.width,h=c.height,g=gray(c);if(n===2)return toCanvas(g,w,h);if(n===1)g=blur(g,w,h,Math.max(2,Math.round(h/55)));
+  var th=otsu(g),dark=0;for(var i=0;i<g.length;i++){g[i]=g[i]>th?255:0;if(!g[i])dark++}if(dark>g.length/2)for(i=0;i<g.length;i++)g[i]=255-g[i];
+  if(n===3){/* pötty-összekötés: a sötét pontok kitágítása, hogy összefüggő számjegyek legyenek */var r=Math.max(2,Math.round(h/70)),o=new Uint8ClampedArray(g.length).fill(255),x,y,dx,dy;
+    for(y=0;y<h;y++)for(x=0;x<w;x++)if(!g[y*w+x])for(dy=-r;dy<=r;dy++)for(dx=-r;dx<=r;dx++){var yy=y+dy,xx=x+dx;if(yy>=0&&yy<h&&xx>=0&&xx<w&&dx*dx+dy*dy<=r*r)o[yy*w+xx]=0}g=o}
+  return toCanvas(g,w,h)}
+
+var WL={exp:"0123456789./-: ",qty:""};
+function ocrSet(w,k){return w.setParameters({tessedit_char_whitelist:WL[k]||"",tessedit_pageseg_mode:"6"}).catch(function(){}).then(function(){return w})}
 function ocrFix(t){return t.replace(/(\d)[oOQD](?=\d|\b)/g,"$10").replace(/[oOQD](?=\d)/g,"0").replace(/(\d)[lI|!](?=\d)/g,"$11").replace(/[lI|](?=\d{1,3}[.\/-])/g,"1").replace(/(\d)[sS](?=\d)/g,"$15").replace(/(\d)B(?=\d)/g,"$18")}
 function pad(n){return(n<10?"0":"")+n}
 function okDate(y,m,d){if(m<1||m>12||d<1)return null;var dt=new Date(y,m-1,d);if(dt.getMonth()!==m-1)return null;return y+"-"+pad(m)+"-"+pad(d)}
 function lastDay(y,m){return new Date(y,m,0).getDate()}
-FX.parseExpiry=function(text){var t=ocrFix(text||"").replace(/([.\/-]\s?\d)[lI|](?!\w)/g,"$11"),c=[],m,now=new Date(),y0=now.getFullYear(),re;
+FX.parseExpiry=function(text,strict){var t=ocrFix(text||"").replace(/([.\/-]\s?\d)[lI|](?!\w)/g,"$11"),c=[],m,now=new Date(),y0=now.getFullYear(),re;
   function yy(y){y=+y;return y<100?2000+y:y}
   function add(s,score){if(!s)return;var dd=Math.round((new Date(s)-new Date(today()))/864e5);if(dd<-60||dd>365*6)return;c.push({d:s,sc:score})}
   var near=function(i){var w=norm(t.slice(Math.max(0,i-40),i));return /(gyart|prod|csomagol)/.test(norm(t.slice(Math.max(0,i-15),i)))?-4:/(minoseg|megorz|fogyaszt|lejar|best|exp|use by|mhd|bb)/.test(w)?5:0};
-  re=/(\d{4})\s?[.\/-]\s?(\d{1,2})\s?[.\/-]\s?(\d{1,2})/g;while(m=re.exec(t))add(okDate(+m[1],+m[2],+m[3]),3+near(m.index));
-  re=/(\d{1,2})\s?[.\/-]\s?(\d{1,2})\s?[.\/-]\s?(\d{4}|\d{2})(?!\d)/g;while(m=re.exec(t))add(okDate(yy(m[3]),+m[2],+m[1]),3+near(m.index));
+  re=/(\d{4})\s?([.\/-])\s?(\d{1,2})\s?\2\s?(\d{1,2})(?!\d)/g;while(m=re.exec(t))add(okDate(+m[1],+m[3],+m[4]),3+near(m.index));
+  re=/(?:^|[^\d])(\d{1,2})\s?([.\/-])\s?(\d{1,2})\s?\2\s?(\d{4}|\d{2})(?!\d)/g;while(m=re.exec(t))add(okDate(yy(m[4]),+m[3],+m[1]),3+near(m.index));
   if(!c.length){re=/(?:^|[^\d.])(\d{1,2})\s?[.\/-]\s?(\d{4})(?!\d)/g;while(m=re.exec(t)){var y=+m[2],mo=+m[1];add(okDate(y,mo,mo>=1&&mo<=12?lastDay(y,mo):0),2+near(m.index))}}
   if(!c.length){re=/(?:^|[^\d.])(\d{1,2})\s?[.\/-]\s?(\d{2})(?![\d.\/])/g;while(m=re.exec(t)){var mo2=+m[1],y2=2000+ +m[2];if(+m[2]>12&&mo2>=1&&mo2<=12)add(okDate(y2,mo2,lastDay(y2,mo2)),2+near(m.index))}}
   if(!c.length){re=/(\d{1,2})\s?[.\/]\s?(\d{1,2})\.?(?![\d.\/])/g;while(m=re.exec(t)){var s=okDate(y0,+m[2],+m[1]);if(s&&s<today())s=okDate(y0+1,+m[2],+m[1]);add(s,1+near(m.index))}}
-  if(!c.length)return null;c.sort(function(a,b){return b.sc-a.sc||(a.d<b.d?1:-1)});return c[0].d};
+  if(strict)c=c.filter(function(x){return x.sc>=2});if(!c.length)return null;c.sort(function(a,b){return b.sc-a.sc||(a.d<b.d?1:-1)});return c[0].d};
 FX.parseQtyText=function(text){var t=ocrFix(text||"").replace(/℮/g," e ").replace(/(\d)\s?k[q9](?![a-z])/gi,"$1 kg").replace(/(\d)\s?rnl\b/gi,"$1 ml").replace(/(\d)\s[9q](?![\d\w])/g,"$1 g").replace(/(\d)\s?[I|](?![\w])/g,"$1 l"),re=/(\d+(?:[.,]\d+)?)\s?(kg|g|l|ml|dl|cl|db|darab)\b(\s?e\b)?/gi,m,c=[];
   while(m=re.exec(t)){var q=parseFloat(m[1].replace(",",".")),u=m[2].toLowerCase();if(u==="darab")u="db";if(!(q>0)||q>50000)continue;
     if(u==="cl"){q=q*10;u="ml"}var sc=0,w=norm(t.slice(Math.max(0,m.index-30),m.index)),after=norm(t.slice(m.index+m[0].length,m.index+m[0].length+6));
     if(m[3])sc+=4;if(/(netto|net|toltot|tomeg|mennyiseg|urtartalom)/.test(w))sc+=5;if(q===100&&(u==="g"||u==="ml"))sc-=4;if(/^\s?-?ban|^\s?\/|^\s?-?ra/.test(after))sc-=4;if(/^(\d+)\s?(g|ml)/.test(m[0])&&q<5)sc-=2;c.push({q:q,u:u,sc:sc})}
-  if(!c.length)return null;c.sort(function(a,b){return b.sc-a.sc||b.q-a.q});return{q:c[0].q,u:c[0].u}};
+  if(!c.length){/* gyakori OCR-hiba: a "g" betűt 9-esnek olvassa, szóköz nélkül (750g → 7509) */m=/(?:^|[^\d.,])(\d{2,4})9(?![\d.,])/.exec(t);if(m&&+m[1]>=10)return{q:+m[1],u:"g"};return null}
+  c.sort(function(a,b){return b.sc-a.sc||b.q-a.q});return{q:c[0].q,u:c[0].u}};
 var PH={exp:{t:"Lejárati dátum",ask:"Fotózd le a lejárati dátumot (minőségét megőrzi / fogyasztható). Közelről, élesen, jó fényben.",fail:"Nem találtam dátumot a képen."},
         qty:{t:"Mennyiség",ask:"Fotózd le a csomagoláson a mennyiséget (pl. 500 g, 1 l, 10 db).",fail:"Nem találtam mennyiséget a képen."}};
 var phQ=[],phManual=[],phQty=null,phExp=null;
 function photoFlow(qty,eh){phQ=["exp","qty"];phManual=[];phQty=qty;phExp=eh||null;phNext()}
 function photoOne(k){phQ=[k];phManual=[];phQty=null;phExp=null;phNext()}
 function phNext(){var k=phQ.shift();if(!k){phEnd();return}phAsk(k,"",k==="qty"?phQty:null)}
-function phEnd(){var d=$("ph");d.onclose=null;if(d.open)d.close();phDone();
+function phEnd(){phCamStop();var d=$("ph");d.onclose=null;if(d.open)d.close();phDone();
   var f=phManual[0];if(f){var el=$(f==="exp"?"fe":"fq");el.classList.remove("flash");void el.offsetWidth;el.classList.add("flash");el.focus();toast(f==="exp"?"Írd be a lejáratot kézzel.":"Írd be a mennyiséget kézzel.")}}
 function phAsk(k,msg,qty){var P=PH[k],skip="";
   if(k==="exp"&&phExp)skip='<button type="button" class="btn" data-ph="keep">Jó így: '+esc(phExp.replace(/-/g,". ")+".")+"</button>";
   if(k==="qty"&&qty&&qty.q)skip='<button type="button" class="btn" data-ph="keep">Jó így: '+esc(nfq(qty.q)+" "+qty.u)+"</button>";
-  $("pht").textContent=P.t;var d=dlg("ph",(msg?'<div class="warnbox">'+msg+"</div>":"")+'<div class="q">'+P.ask+'</div><div class="btns"><button type="button" class="btn g" data-ph="shot">📷 Fotózás</button>'+skip+'<button type="button" class="btn p" data-ph="man">Nem látszik, kézzel írom be</button></div>');
+  $("pht").textContent=P.t;var d=dlg("ph",(msg?'<div class="warnbox">'+msg+"</div>":"")+'<div class="q">'+P.ask+'</div><div class="btns"><button type="button" class="btn g" data-ph="live">🎥 Élő olvasás</button><button type="button" class="btn" data-ph="shot">📷 Fotó</button>'+skip+'<button type="button" class="btn p" data-ph="man">Nem látszik, kézzel írom be</button></div>');
   d.onclose=function(){phQ=[];phDone()};d.querySelector(".dbody").onclick=function(e){var b=e.target.closest("[data-ph]");if(!b)return;var a=b.dataset.ph;
+    if(a==="live"){phLive(k,qty);return}
     if(a==="shot"){var inp=$("phfile");inp.value="";inp.onchange=function(){var f=this.files[0];if(f)phRead(k,f,qty)};inp.click();phWorker()}
     else if(a==="keep")phNext();else{phManual.push(k);phNext()}}}
+/* élő olvasás: a keretbe tartott szöveget folyamatosan olvassa, több képváltozattal; kétszer ugyanaz = elfogadja */
+var phCam=null;function phCamStop(){if(phCam){try{phCam.st.getTracks().forEach(function(t){t.stop()})}catch(e){}phCam=null}}
+function phLive(k,qty){var P=PH[k],seen={},n=0,busy=false,alive=true,T=null,cand=null;
+  var d=dlg("ph",'<div class="q small">'+(k==="exp"?"Tartsd a lejárati dátumot a sárga keretbe. Magától olvasom.":"Tartsd a mennyiséget (pl. 500 g) a sárga keretbe. Magától olvasom.")+'</div>'+
+    '<div class="camw"><video id="phv" playsinline muted></video><div class="camf txt" id="phframe"></div><div class="camb"><button type="button" class="btn sm" id="phtorch" hidden aria-pressed="false">🔦 Vaku</button><button type="button" class="btn sm" id="phzoom" hidden>🔍 1×</button></div></div>'+
+    '<div class="q small" id="phst">Indítom a kamerát és a szövegfelismerőt...</div><div id="phc"></div>'+
+    '<div class="btns"><button type="button" class="btn" data-ph="shot">📷 Inkább fotó</button><button type="button" class="btn p" data-ph="man">Kézzel írom be</button></div>');
+  function stop(){alive=false;clearTimeout(T);phCamStop()}
+  function accept(val){stop();if(k==="exp"){$("fe").value=val;phOk("Lejárat: "+val.replace(/-/g,". ")+".")}else{$("fq").value=val.q;$("fu").value=val.u;qtySync();phOk("Mennyiség: "+nfq(val.q)+" "+val.u)}}
+  function show(val){cand=val;var t=k==="exp"?val.replace(/-/g,". ")+".":nfq(val.q)+" "+val.u;$("phc").innerHTML='<div class="phcand">Ezt látom: <b>'+esc(t)+'</b></div><div class="btns"><button type="button" class="btn g" data-ph="ok">✓ Ez az</button></div>'}
+  var oc=d.onclose;d.onclose=function(){stop();if(oc)oc()};
+  d.querySelector(".dbody").onclick=function(e){var b=e.target.closest("[data-ph]");if(!b)return;var a=b.dataset.ph;
+    if(a==="ok"&&cand){accept(cand);return}stop();if(a==="shot"){var inp=$("phfile");inp.value="";inp.onchange=function(){var f=this.files[0];if(f)phRead(k,f,qty);else phAsk(k,"",qty)};inp.click()}else if(a==="man"){phManual.push(k);phNext()}};
+  if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia){$("phst").textContent="Ez a böngésző nem fér hozzá a kamerához. Használd a Fotó gombot.";return}
+  Promise.all([camStart($("phv")),phWorker().then(function(w){return ocrSet(w,k)})]).then(function(r){if(!alive){r[0].st.getTracks().forEach(function(t){t.stop()});return}phCam=r[0];var w=r[1],v=$("phv");camTools(phCam,$("phtorch"),$("phzoom"));
+    $("phst").textContent="Keresem a "+(k==="exp"?"dátumot":"mennyiséget")+"... Tartsd stabilan, közelről.";
+    function loop(){if(!alive)return;if(busy||v.readyState<2){T=setTimeout(loop,200);return}var c=grab(v,$("phframe"),1600,.07);if(!c){T=setTimeout(loop,200);return}busy=true;
+      w.recognize(ocrVariant(c,n++%4)).then(function(o){busy=false;if(!alive)return;var t=o.data.text,val=k==="exp"?FX.parseExpiry(t,1):FX.parseQtyText(t);
+        if(val){var key=JSON.stringify(val);seen[key]=(seen[key]||0)+1;if(seen[key]>=3){accept(val);return}show(val)}
+        if(n===12)$("phst").textContent="Nehezen megy. Próbáld közelebbről, egyenesen, jobb fényben"+($("phtorch").hidden?"":" vagy vakuval")+".";
+        T=setTimeout(loop,150)}).catch(function(){busy=false;T=setTimeout(loop,400)})}
+    loop()}).catch(function(e){$("phst").textContent=e&&e.name==="NotAllowedError"?"Nem kaptam engedélyt a kamerához. Használd a Fotó gombot, vagy írd be kézzel.":"Nem sikerült elindítani. Használd a Fotó gombot, vagy írd be kézzel."})}
 function nfq(q){return String(Math.round(q*100)/100).replace(".",",")}
 function phRead(k,file,qty){dlg("ph",'<div class="q">Olvasom a képet...</div><div class="bar"><b id="phb" style="width:0%"></b></div><div class="q small" style="margin-top:8px">Első alkalommal pár másodperc, amíg a szövegfelismerő betölt.</div>');
-  Promise.all([prepImg(file),phWorker()]).then(function(r){return r[1].recognize(r[0]).then(function(o){return o.data.text})}).then(function(t){
+  Promise.all([prepImg(file),phWorker()]).then(function(r){var src=r[0],w=r[1],n=0,all="";return ocrSet(w,k).then(function(){
+      function next(){return w.recognize(ocrVariant(src,n)).then(function(o){all+="\n"+o.data.text;var ok=k==="exp"?FX.parseExpiry(o.data.text):FX.parseQtyText(o.data.text);if(ok||++n>3)return ok?o.data.text:all;return next()})}return next()})}).then(function(t){
     if(k==="exp"){var e=FX.parseExpiry(t);if(!e)return phAsk(k,P_fail(k),qty);$("fe").value=e;phOk("Lejárat: "+e.replace(/-/g,". ")+".")}
     else{var q=FX.parseQtyText(t);if(!q)return phAsk(k,P_fail(k),qty);$("fq").value=q.q;$("fu").value=q.u;qtySync();phOk("Mennyiség: "+nfq(q.q)+" "+q.u)}
   }).catch(function(e){phAsk(k,"Nem sikerült beolvasni: "+esc(e.message||e),qty)})}
