@@ -1,4 +1,4 @@
-var VER="1.24";
+var VER="1.25";
 /* indításkori URL-paraméterek (a sync.js törli őket a címsorból) és platform */
 var BOOTQ=new URLSearchParams(location.search),UA=navigator.userAgent||"";
 var IS_IOS=/iPad|iPhone|iPod/.test(UA)||(navigator.platform==="MacIntel"&&navigator.maxTouchPoints>1),IS_IPAD=/iPad/.test(UA)||(navigator.platform==="MacIntel"&&navigator.maxTouchPoints>1);
