@@ -1,4 +1,4 @@
-var VER="1.24";
+var VER="1.25";
 /* indításkori URL-paraméterek (a sync.js törli őket a címsorból) és platform */
 var BOOTQ=new URLSearchParams(location.search),UA=navigator.userAgent||"";
 var IS_IOS=/iPad|iPhone|iPod/.test(UA)||(navigator.platform==="MacIntel"&&navigator.maxTouchPoints>1),IS_IPAD=/iPad/.test(UA)||(navigator.platform==="MacIntel"&&navigator.maxTouchPoints>1);
@@ -589,6 +589,7 @@ document.addEventListener("close",function(){if(pendingReload&&!busy())location.
 window.addEventListener("online",checkUpd);
 upd.onclick=function(){if(NEW){NEW.postMessage("skip");return}if(!REG){say("Az automatikus frissítés a weboldalon és a telepített appban működik. Verzió "+VER);return}
   say("Keresem az új verziót...");REG.update().then(function(){setTimeout(function(){if(!NEW)say("A legfrissebb verziót használod ("+VER+"). Az app magától is frissül.")},1500)}).catch(function(){say("Nincs kapcsolat. Az app így is működik offline.")})};
+$("star").onclick=function(){window.open("https://github.com/strattila90-hue/mi-legyen-a-kaja-","_blank","noopener")};
 if(/^android-app:/.test(document.referrer)||matchMedia("(display-mode: standalone)").matches)$("apk").hidden=true;
 window.addEventListener("beforeinstallprompt",function(e){e.preventDefault();DEF=e});
 inst.onclick=function(){if(DEF){DEF.prompt();DEF=null}else say("Telepítés: böngésző menü, majd Hozzáadás a kezdőképernyőhöz.")};
