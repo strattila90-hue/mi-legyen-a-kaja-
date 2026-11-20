@@ -1,4 +1,4 @@
-var VER="1.28";
+var VER="1.29";
 /* indításkori URL-paraméterek (a sync.js törli őket a címsorból) és platform */
 var BOOTQ=new URLSearchParams(location.search),UA=navigator.userAgent||"";
 var IS_IOS=/iPad|iPhone|iPod/.test(UA)||(navigator.platform==="MacIntel"&&navigator.maxTouchPoints>1),IS_IPAD=/iPad/.test(UA)||(navigator.platform==="MacIntel"&&navigator.maxTouchPoints>1);
@@ -194,7 +194,7 @@ function ac(inp,box,onPick){var sel=-1,list=[];
   document.querySelectorAll("[data-i]").forEach(function(e){e.innerHTML=ic(e.dataset.i)});
   if(window.buildLocs)buildLocs()})();
 document.querySelectorAll("dialog [data-close]").forEach(function(b){b.onclick=function(){b.closest("dialog").close()}});
-document.querySelectorAll("dialog").forEach(function(d){d.addEventListener("click",function(e){if(e.target===d)d.close()})});
+document.querySelectorAll("dialog").forEach(function(d){d.addEventListener("click",function(e){if(e.target===d&&d.id!=="rf")d.close()})});
 
 /* ---------- RAKTÁR ---------- */
 var tab="fridge",cur=null,dfil="all",goIdx=0;
@@ -371,16 +371,43 @@ $("rlist").onclick=function(e){var b=e.target.closest("[data-id]");if(b)openReci
 var editing=null;
 $("rc").innerHTML=RCATS.map(function(c){return '<option value="'+c[0]+'">'+c[1]+"</option>"}).join("");
 var UNITS=["g","dkg","kg","ml","dl","l","db","ek","tk","gerezd","szelet","csipet"];
-function ingRow(h){var d=document.createElement("div");d.className="irow";var n=h&&h.k&&h.k[0]?h.k[0]:(h?h.nev:"");d._h=h&&h.k&&h.k.length>1?h:null;
+function ingRow(h){var d=document.createElement("div");d.className="irow";var n=h&&h.k&&h.k[0]?h.k[0]:(h?h.nev:"");d._h=h&&h._h?h._h:h&&h.k&&h.k.length>1?h:null;
   d.innerHTML='<div><input class="in" placeholder="Hozzávaló" autocomplete="off" value="'+esc(n)+'" aria-label="Hozzávaló neve"><div class="sugg" role="listbox" hidden></div></div><input class="iq2" type="number" step="any" min="0" inputmode="decimal" placeholder="Menny." aria-label="Mennyiség" value="'+(h&&h.menny!=null?h.menny:"")+'"><select class="iu" aria-label="Egység">'+UNITS.map(function(u){return"<option"+(h&&h.egyseg===u?" selected":"")+">"+u+"</option>"}).join("")+'</select><button type="button" class="x" aria-label="Hozzávaló törlése">×</button><label class="opt"><input type="checkbox" class="io"'+(h&&h.o?" checked":"")+"> nem kötelező</label>";
   ac(d.querySelector(".in"),d.querySelector(".sugg"),function(c){var s=d.querySelector(".iu");if(!d.querySelector(".iq2").value)s.value=c.u==="kg"?"g":c.u==="l"?"dl":c.u});
-  d.querySelector(".x").onclick=function(){d.remove()};$("rings").appendChild(d)}
+  d.querySelector(".x").onclick=function(){d.remove();rfDirty()};$("rings").appendChild(d)}
 $("ringadd").onclick=function(){ingRow(null);var l=$("rings").lastChild.querySelector(".in");l.focus()};
-function editRecipe(r,copy){editing=r&&!copy?r:null;$("rft").textContent=editing?"Recept szerkesztése":r?"Saját változat":"Saját recept";
+/* A szerkesztő nem zárul be véletlenül (háttérre koppintás, vissza gomb, Esc, ×): mentetlen változásnál rákérdez,
+   és minden gépelés vázlatként megmarad (frissítés vagy az app bezárása után is folytatható). */
+var KDR="kaja.rvazlat.v1",rfState=null,rfQuit=false,rfT=0;
+function rfSnap(){return JSON.stringify({n:$("rn").value,c:$("rc").value,a:$("ra").value,i:$("ri").value,h:$("rh").checked,
+  g:[].map.call($("rings").querySelectorAll(".irow"),function(d){return [d.querySelector(".in").value,d.querySelector(".iq2").value,d.querySelector(".iu").value,d.querySelector(".io").checked,d._h||null]}),
+  s:$("rs").value,k:$("rk").value,t:$("rt").value,l:$("rl").value})}
+function rfIsDirty(){return rfState!==null&&rfSnap()!==rfState}
+function rfFlush(){clearTimeout(rfT);if(rfState===null)return;if(rfIsDirty())sv(KDR,{id:editing?editing.id:null,t:$("rft").textContent,f:JSON.parse(rfSnap()),at:Date.now()});else localStorage.removeItem(KDR)}
+function rfDirty(){clearTimeout(rfT);rfT=setTimeout(rfFlush,300)}
+window.addEventListener("pagehide",rfFlush);document.addEventListener("visibilitychange",function(){if(document.hidden)rfFlush()});
+function rfFill(f){$("rn").value=f.n;$("rc").value=f.c;$("ra").value=f.a;$("ri").value=f.i;$("rh").checked=!!f.h;$("rings").innerHTML="";
+  (f.g.length?f.g:[["","","g",false,null]]).forEach(function(x){ingRow({nev:x[0],k:[x[0]],menny:x[1]===""?null:x[1],egyseg:x[2],o:x[3]?1:0,_h:x[4]})});
+  $("rs").value=f.s;$("rk").value=f.k;$("rt").value=f.t;$("rl").value=f.l}
+function editRecipe(r,copy,draft){editing=r&&!copy?r:null;$("rft").textContent=editing?"Recept szerkesztése":r?"Saját változat":"Saját recept";
   $("rn").value=r?(copy?r.nev+" (saját)":r.nev):"";$("rc").value=r?r.cat:"egyeb";$("ra").value=r?r.adag:4;$("ri").value=r?r.ido_perc:30;$("rh").checked=!!(r&&r.hideg);
   $("rings").innerHTML="";(r?r.hozzavalok.filter(function(h){return !h.f}):[null,null,null]).forEach(ingRow);
   $("rs").value=r?r.lepesek.join("\n"):"";$("rk").value=r?r.kritikus.join(" "):"";$("rt").value=r?r.talalas:"";$("rl").value=r?r.allergenek.join(", "):"";
-  $("rdel").hidden=!editing;$("rf").showModal()}
+  rfState=rfSnap();var dr=ld(KDR,null),note=$("rdraft");note.hidden=true;
+  /* félbehagyott vázlat ugyanehhez (új receptnél: új recepthez) */
+  if(dr&&dr.f&&(draft||(!copy&&(dr.id||null)===(editing?editing.id:null)))){if(dr.t)$("rft").textContent=dr.t;rfFill(dr.f);
+    note.innerHTML='✎ Visszatöltöttem a félbehagyott vázlatot. <button type="button" class="btn sm r" id="rdrop">Vázlat elvetése</button>';note.hidden=false;
+    $("rdrop").onclick=function(){localStorage.removeItem(KDR);editRecipe(r,copy)}}
+  $("rdel").hidden=!editing;$("rfask").hidden=true;rfQuit=false;var d=$("rf");if(!d.open)d.showModal();d.scrollTop=0}
+function rfClose(){if(rfIsDirty()){rfFlush();$("rfask").hidden=false;$("rfask").scrollIntoView({block:"nearest"});return}rfQuit=true;$("rf").close()}
+$("rff").addEventListener("input",rfDirty);$("rff").addEventListener("change",rfDirty);
+$("rfx").onclick=rfClose;
+$("rfstay").onclick=function(){$("rfask").hidden=true};
+$("rfquit").onclick=function(){rfFlush();rfQuit=true;$("rf").close();toast("A vázlatot megőriztem.","Folytatás",function(){editRecipe(editing,false,true)})};
+$("rf").addEventListener("cancel",function(e){if(rfIsDirty()){e.preventDefault();rfClose()}});
+/* ha a telefon vissza gombja mégis bezárná, azonnal visszanyitjuk */
+$("rf").addEventListener("close",function(){var d=this;if(!rfQuit&&rfIsDirty()){rfFlush();setTimeout(function(){if(!d.open){d.showModal();$("rfask").hidden=false}},0);return}
+  if(!rfIsDirty()&&!rfQuit)localStorage.removeItem(KDR);rfState=null});
 $("radd").onclick=function(){editRecipe(null)};
 $("rsave").onclick=function(){if(!$("rff").reportValidity())return;var ing=[];
   $("rings").querySelectorAll(".irow").forEach(function(d){var n=d.querySelector(".in").value.trim();if(!n)return;var c=find(n),q=parseFloat(d.querySelector(".iq2").value);
@@ -392,8 +419,8 @@ $("rsave").onclick=function(){if(!$("rff").reportValidity())return;var ing=[];
   var o={id:editing?editing.id:uid("own-"),own:1,nev:$("rn").value.trim(),cat:$("rc").value,adag:Math.max(1,parseInt($("ra").value)||4),ido_perc:Math.max(1,parseInt($("ri").value)||30),
     hozzavalok:ing,lepesek:$("rs").value.split("\n").map(function(s){return s.trim()}).filter(Boolean),kritikus:$("rk").value.trim()?[$("rk").value.trim()]:[],
     talalas:$("rt").value.trim(),allergenek:$("rl").value.split(",").map(function(s){return s.trim()}).filter(Boolean),hideg:$("rh").checked?1:0,mini:0};
-  if(editing)Object.assign(editing,o);else ownRec.push(o);sv(K.rec,ownRec);$("rf").close();drawAll();toast("Recept elmentve: "+o.nev+".");openRecipe(o.id)};
-$("rdel").onclick=function(){if(!editing)return;var r=editing;$("rf").close();var pos=ownRec.indexOf(r);ownRec.splice(pos,1);sv(K.rec,ownRec);drawAll();
+  if(editing)Object.assign(editing,o);else ownRec.push(o);sv(K.rec,ownRec);localStorage.removeItem(KDR);rfState=null;rfQuit=true;$("rf").close();drawAll();toast("Recept elmentve: "+o.nev+".");openRecipe(o.id)};
+$("rdel").onclick=function(){if(!editing)return;var r=editing;localStorage.removeItem(KDR);rfState=null;rfQuit=true;$("rf").close();var pos=ownRec.indexOf(r);ownRec.splice(pos,1);sv(K.rec,ownRec);drawAll();
   toast("Recept törölve.","Visszavonás",function(){ownRec.splice(pos,0,r);sv(K.rec,ownRec);drawAll()})};
 
 /* ---------- BOLT ---------- */
@@ -572,6 +599,8 @@ drawAll();
 /* ---------- PWA ---------- */
 var st=$("st"),upd=$("upd"),inst=$("inst"),REG=null,NEW=null,DEF=null;
 function say(t){st.textContent=t}
+(function(){var dr=ld(KDR,null);if(!dr||!dr.f)return;var r=dr.id?allRec().filter(function(x){return x.id===dr.id})[0]:null;
+  setTimeout(function(){toast("Van egy félbehagyott recepted"+(dr.f.n?": "+dr.f.n:"")+".","Folytatás",function(){editRecipe(r||null,false,true)})},800)})();
 say("Verzió "+VER+" · "+allRec().length+" recept · "+allProds().length+" termék");
 /* Automatikus frissítés: induláskor, visszatéréskor és óránként megnézi, van-e új verzió.
    Ha van, magától átvált rá; ha épp nyitva van egy űrlap, megvárja, amíg bezárod vagy elhagyod az appot. */
@@ -584,7 +613,7 @@ if("serviceWorker" in navigator){hadCtrl=!!navigator.serviceWorker.controller;
     r.addEventListener("updatefound",function(){var w=r.installing;if(!w)return;w.addEventListener("statechange",function(){if(w.state==="installed"&&navigator.serviceWorker.controller){NEW=w;say("Új verzió letöltve, telepítem...");w.postMessage("skip")}})});
     setInterval(checkUpd,36e5)}).catch(function(){});
   var reloading=false;navigator.serviceWorker.addEventListener("controllerchange",function(){if(reloading||!hadCtrl){hadCtrl=true;return}reloading=true;toast("Frissítettem az appot a legújabb verzióra.");setTimeout(doReload,600)})}
-document.addEventListener("visibilitychange",function(){if(document.hidden){if(pendingReload)location.reload()}else checkUpd()});
+document.addEventListener("visibilitychange",function(){if(document.hidden){if(pendingReload&&!$("rf").open)location.reload()}else checkUpd()});
 document.addEventListener("close",function(){if(pendingReload&&!busy())location.reload()},true);
 window.addEventListener("online",checkUpd);
 upd.onclick=function(){if(NEW){NEW.postMessage("skip");return}if(!REG){say("Az automatikus frissítés a weboldalon és a telepített appban működik. Verzió "+VER);return}

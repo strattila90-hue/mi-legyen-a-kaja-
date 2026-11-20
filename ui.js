@@ -33,6 +33,7 @@ function bindTiles(){var t;
   if((t=$("tprep")))t.onclick=function(){MORE.prep()};
   if((t=$("tguest")))t.onclick=function(){MORE.guest()};
   if((t=$("tkid")))t.onclick=function(){FX.kidMode()};
+  if((t=$("tmine")))t.onclick=function(){var b=document.querySelector('#rcat [data-c="own"]');if(b){b.click();var c=$("rcount");if(c&&c.scrollIntoView)c.scrollIntoView({behavior:"smooth",block:"start"})}};
   if((t=$("tfav")))t.onclick=function(){var b=document.querySelector('#rcat [data-c="fav"]');if(b){b.click();var c=$("rcount");if(c&&c.scrollIntoView)c.scrollIntoView({behavior:"smooth",block:"start"})}}}
 bindTiles();
 $("addbc").onclick=function(){openItem(null);setTimeout(function(){$("fnbc").click()},120)};

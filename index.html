@@ -74,11 +74,12 @@
       <div class="chips" id="rmode" role="group" aria-label="Mit mutasson?"></div>
       <div class="chips" id="rcat" role="group" aria-label="Kategória"></div>
     </section>
+    <button type="button" class="btn g rwrite" id="radd"><span class="ic" id="i-pen"></span>Új recept írása</button>
     <div class="tgrid" role="group" aria-label="Eszközök">
       <button type="button" class="tool" id="tmenu"><span class="ic" data-i="book"></span>Heti menü</button>
       <button type="button" class="tool" id="tprep"><span class="ic" data-i="pot"></span>Előfőzés</button>
       <button type="button" class="tool" id="tguest"><span class="ic" data-i="cake"></span>Vendégek</button>
-      <button type="button" class="tool" id="radd"><span class="ic" id="i-pen"></span>Saját recept</button>
+      <button type="button" class="tool" id="tmine"><span class="ic" data-i="pen"></span>Saját receptjeim</button>
       <button type="button" class="tool" id="tfav"><span class="ic" data-i="heart"></span>Kedvencek</button>
       <button type="button" class="tool" id="tkid"><span class="ic" data-i="egg"></span>Gyerek mód</button>
     </div>
@@ -241,8 +242,8 @@
 <dialog id="rd"><button type="button" class="dclose" data-close aria-label="Bezárás">×</button><div id="rdb"></div></dialog>
 
 <!-- saját recept -->
-<dialog id="rf"><form id="rff" onsubmit="return false">
-  <button type="button" class="dclose" data-close aria-label="Bezárás">×</button>
+<dialog id="rf" class="big rfd"><form id="rff" onsubmit="return false">
+  <button type="button" class="dclose" id="rfx" aria-label="Bezárás">×</button>
   <h3 id="rft">Saját recept</h3>
   <details class="paste" id="rpaste"><summary>Recept beillesztése szövegből</summary>
     <div class="q small">Másold be egy weboldalról vagy üzenetből: a hozzávalókat és a lépéseket kitöltöm helyetted.</div>
@@ -264,7 +265,11 @@
   <label for="rk">Figyelj erre (nem kötelező)</label><input id="rk" autocomplete="off">
   <label for="rt">Tálalás (nem kötelező)</label><input id="rt" autocomplete="off">
   <label for="rl">Allergének, vesszővel (nem kötelező)</label><input id="rl" autocomplete="off" placeholder="glutén, tej, tojás">
-  <div class="btns"><button type="button" class="btn g" id="rsave">Recept mentése</button><button type="button" class="btn r" id="rdel" hidden>Törlés</button></div>
+  <div class="q small" id="rdraft" hidden></div>
+  <div class="rfbar">
+    <div class="warnbox" id="rfask" hidden>Nincs elmentve! Kilépsz? A vázlatot megőrzöm, később folytathatod.<div class="btns tight"><button type="button" class="btn g" id="rfstay">Folytatom</button><button type="button" class="btn r" id="rfquit">Kilépés</button></div></div>
+    <div class="btns tight"><button type="button" class="btn g" id="rsave">Recept mentése</button><button type="button" class="btn r" id="rdel" hidden>Törlés</button></div>
+  </div>
 </form></dialog>
 
 <!-- általános űrlap -->

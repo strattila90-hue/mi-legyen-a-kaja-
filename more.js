@@ -232,7 +232,7 @@ function fillFromText(){var p=parseRecipe($("rpt").value);if(!p.ings.length&&!p.
   $("rc").value=guessCat(p);$("rh").checked=!!COLD[$("rc").value];
   if(p.ings.length){$("rings").innerHTML="";p.ings.forEach(function(h){var o=Object.assign({},h);delete o._c;delete o.o;if(h.o)o.o=1;ingRow(o)})}
   if(p.steps.length)$("rs").value=p.steps.join("\n");if(p.tal)$("rt").value=p.tal;
-  $("rpaste").open=false;var un=p.ings.filter(function(h){return !h._c}).length;
+  $("rpaste").open=false;if(window.rfFlush)rfFlush();var un=p.ings.filter(function(h){return !h._c}).length;
   toast("Kitöltve: "+p.ings.length+" hozzávaló, "+p.steps.length+" lépés."+(un?" "+un+" hozzávalót nem ismertem fel, nézd át.":""))}
 M.parseRecipe=parseRecipe;
 M.prep=function(){renderPrep()};M.guest=function(){renderGuest()};

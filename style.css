@@ -531,3 +531,12 @@ dialog.big.chefin{padding-bottom:calc(96px + env(safe-area-inset-bottom,0px))}
 .vk-li .btn.sm{flex:none;margin:0}
 .vk-li.vk-ok .ic{opacity:.75}
 .vk-tips ul{margin:6px 0 0;padding-left:20px}.vk-tips li{margin:4px 0}
+
+/* receptíró: kiemelt gomb, teljes képernyős szerkesztő, mindig látható mentés-sáv */
+.rwrite{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;margin:14px 0 0;min-height:58px;font-size:20px}
+.rwrite .ic{width:30px;height:30px}
+dialog.rfd .rfbar{position:sticky;bottom:calc(-20px - env(safe-area-inset-bottom,0px));margin:14px -16px calc(-20px - env(safe-area-inset-bottom,0px));padding:6px 16px calc(14px + env(safe-area-inset-bottom,0px));background:var(--panel);border-top:4px solid var(--line);z-index:3}
+dialog.rfd .rfbar .btns{margin-top:6px}
+dialog.rfd .rfbar .warnbox{margin:4px 0 2px}
+dialog.big.rfd.chefin .rfbar{margin-bottom:calc(-96px - env(safe-area-inset-bottom,0px));bottom:calc(-96px - env(safe-area-inset-bottom,0px));padding-bottom:calc(96px + env(safe-area-inset-bottom,0px))}
+#rdraft{margin-top:10px}#rdraft .btn{margin-left:6px}
