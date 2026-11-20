@@ -209,7 +209,24 @@ var CATALOG_SRC=[
 "Rozmaring|fuszer|g|p|720|14990|16990|13990",
 "Narancslé|ital|l|p|180|599|649|549|Egy pohár narancslé",
 "Almalé|ital|l|p|180|549|599|499|Egy pohár almalé",
-"Ásványvíz|ital|l|p|360|99|119|89"
+"Ásványvíz|ital|l|p|360|99|119|89",
+/* vészhelyzeti készlet (v1.28): tartós, melegítés nélkül is ehető termékek */
+"Tartós tej|tej|l|p|180|399|429|379|Egy pohár tartós tej",
+"Kétszersült|pek|g|p|240|2490|2790|2290",
+"Tartós kenyér|pek|db|p|60|699|749|649",
+"Müzliszelet|edes|db|p|240|199|229|179|Egy müzliszelet",
+"Aszalt gyümölcs|szaraz|g|p|270|5990|6490|5490|Pár szem aszalt gyümölcs",
+"Instant zabkása|szaraz|db|p|270|249|279|229",
+"Makrélakonzerv|hal|db|p|720|599|649|549",
+"Sült hal konzerv|hal|db|p|720|549|599|499",
+"Babgulyás konzerv|konz|db|p|720|999|1099|949",
+"Sólet konzerv|konz|db|p|720|899|999|849",
+"Paradicsomos bab konzerv|konz|db|p|720|499|549|449",
+"Befőtt|konz|db|p|720|899|999|849|Pár szem befőtt",
+"Májkrém konzerv|konz|db|p|720|349|399|299",
+"Pástétom|konz|db|p|720|399|449|379",
+"Löncshús konzerv|konz|db|p|720|899|999|849",
+"Sűrített tej|konz|db|p|365|699|749|649"
 ];
 var CATN={hus:"Hús",felv:"Felvágott, kolbász",hal:"Hal",tej:"Tejtermék",sajt:"Sajt",tojas:"Tojás",zold:"Zöldség",gyum:"Gyümölcs",pek:"Pékáru",szaraz:"Száraz, tartós",konz:"Konzerv, savanyúság",szosz:"Szósz, kence",fuszer:"Olaj, fűszer",fagy:"Fagyasztott",edes:"Édesség",ital:"Ital",sajat:"Saját termék"};
 var CATI={hus:"meat",felv:"sausage",hal:"fish",tej:"milk",sajt:"cheese",tojas:"egg",zold:"veg",gyum:"fruit",pek:"bread",szaraz:"jar",konz:"can",szosz:"jar",fuszer:"bottle",fagy:"ice",edes:"choco",ital:"bottle",sajat:"jar"};

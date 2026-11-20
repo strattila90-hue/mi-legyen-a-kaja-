@@ -2,6 +2,15 @@
    Hangjelek a szövegben: {laugh} nevetés, {sigh} sóhaj, {cough} köhögés, {yawn} ásítás, {sniff} szipogás.
    A történet-generátor elemeiből több tízezer különböző vicces sztori áll össze. */
 window.CHEF_LINES={
+/* vészhelyzeti készlet (Bolt nézet, „Apróséf tanácsa” gomb) */
+prep:["A legjobb vészhelyzeti készlet az, amit egyszer sem kell használni. De azért legyen!",
+"Konzervnyitó nélkül a konzerv csak egy nagyon makacs doboz. Tudom, próbáltam a fogammal. {sigh}",
+"Régebbit előre, újat hátra! Így a spájzban sosem lesz régiség-kiállítás.",
+"Víz nélkül még én sem tudok főzni, pedig én mindenre képes vagyok. Fejenként napi két liter!",
+"Évente egyszer tarts spájz-szemlét! Ami hamarosan lejár, abból lesz a heti menü. Babgulyás-parti, valaki?",
+"Egyszer három napig egy szem mogyoróvajon éltem. Jó, egy fél üvegen. Na jó, kettőn. {laugh}",
+"A makréla paradicsomos szószban hidegen is úr. Kétszersülttel olyan, mint egy kis piknik az áramszünetben.",
+"Csokit is tegyél a készletbe! Vészhelyzetben a jókedv is fontos tápanyag."],
 stories:[
 "Egyszer beleestem egy fazék krumplilevesbe. Három napig úsztam, mire kiértem. Azóta tudok pillangózni. {laugh}",
 "Volt egy kis kertem a spájz sarkában. Egy szem petrezselyem nőtt benne. Petinek neveztem el. Aztán valaki beletette a levesbe. {sniff} Pihenj békében, Peti.",

@@ -523,3 +523,11 @@ dialog.big.chefin{padding-bottom:calc(96px + env(safe-area-inset-bottom,0px))}
 .camb .btn[aria-pressed="true"]{background:#ffd23f}
 .phcand{margin-top:8px;font-size:18px}
 @media (prefers-reduced-motion:reduce){.camf.bar1 i{animation:none}}
+/* ---------- v1.28: vészhelyzeti készlet (Bolt) ---------- */
+.vk-sum{margin-top:8px;font-size:17px}
+.vk-sec{display:flex;align-items:center;gap:8px}.vk-sec .ic{width:22px;height:22px;flex:none}
+.vk-li .vk-t{flex:1;min-width:0;line-height:1.35}
+.vk-li .badge{margin-left:2px;vertical-align:1px}
+.vk-li .btn.sm{flex:none;margin:0}
+.vk-li.vk-ok .ic{opacity:.75}
+.vk-tips ul{margin:6px 0 0;padding-left:20px}.vk-tips li{margin:4px 0}
