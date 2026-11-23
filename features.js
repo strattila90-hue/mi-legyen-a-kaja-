@@ -159,13 +159,55 @@ function lcp(a,b){var i=0;while(i<a.length&&i<b.length&&a[i]===b[i])i++;return i
 function matchCat(text){var t=" "+norm(text).replace(/[^a-z0-9 ]/g," ")+" ",toks=t.trim().split(/\s+/),best=null,bs=0;
   allProds().forEach(function(c){var n=norm(c.n).replace(/[^a-z0-9 ]/g," ").trim();if(n.length<3)return;var sc=0,ok=n.split(/\s+/).every(function(x){var m=0;toks.forEach(function(tk){m=Math.max(m,lcp(x,tk))});if(m<Math.min(4,x.length))return false;sc+=m-(x.length-m)*0.5;return true});
     if(ok&&sc>bs){bs=sc;best=c}});
-  var SYN={trappista:"Sajt",edami:"Sajt",gouda:"Gouda",teszta:"Tészta",spagetti:"Spagetti",fusilli:"Tészta",penne:"Tészta",kifli:"Kifli",zsemle:"Zsemle",kenyer:"Kenyér",tojas:"Tojás",tejfol:"Tejföl",joghurt:"Joghurt",vaj:"Vaj",liszt:"Liszt",cukor:"Cukor",rizs:"Rizs",sonka:"Sonka",parizsi:"Párizsi",szalami:"Szalámi",csirkemell:"Csirkemell",csirkecomb:"Csirkecomb",burgonya:"Burgonya",krumpli:"Burgonya",hagyma:"Vöröshagyma",paradicsom:"Paradicsom",paprika:"Paprika",uborka:"Uborka",alma:"Alma",banan:"Banán",tej:"Tej",turo:"Túró",mozzarella:"Mozzarella",olaj:"Étolaj",ketchup:"Ketchup",mustar:"Mustár",majonez:"Majonéz"};
+  var SYN={trappista:"Sajt",edami:"Sajt",gouda:"Gouda",teszta:"Tészta",spagetti:"Spagetti",fusilli:"Tészta",penne:"Tészta",kifli:"Kifli",zsemle:"Zsemle",kenyer:"Kenyér",tojas:"Tojás",tejfol:"Tejföl",joghurt:"Joghurt",vaj:"Vaj",liszt:"Liszt",cukor:"Cukor",rizs:"Rizs",sonka:"Sonka",parizsi:"Párizsi",szalami:"Szalámi",csirkemell:"Csirkemell",csirkecomb:"Csirkecomb",burgonya:"Burgonya",krumpli:"Burgonya",hagyma:"Vöröshagyma",paradicsom:"Paradicsom",paprika:"Paprika",uborka:"Uborka",alma:"Alma",banan:"Banán",tej:"Tej",turo:"Túró",mozzarella:"Mozzarella",olaj:"Étolaj",ketchup:"Ketchup",mustar:"Mustár",majonez:"Majonéz",
+    /* v1.32: idegen nyelvű termékadatbázis-nevek (angol, német, olasz, francia, lengyel, cseh, szlovák) */
+    vollmilch:"Tej",frischmilch:"Tej",haltbare:"Tartós tej",orangensaft:"Narancslé",orangejuice:"Narancslé",apfelsaft:"Almalé",applejuice:"Almalé",milk:"Tej",milch:"Tej",latte:"Tej",lait:"Tej",mleko:"Tej",butter:"Vaj",burro:"Vaj",beurre:"Vaj",maslo:"Vaj",cheese:"Sajt",kase:"Sajt",formaggio:"Sajt",fromage:"Sajt",syr:"Sajt",
+    yoghurt:"Joghurt",yogurt:"Joghurt",jogurt:"Joghurt",yaourt:"Joghurt",quark:"Túró",tvaroh:"Túró",twarog:"Túró",cream:"Tejszín",sahne:"Tejszín",panna:"Tejszín",smetana:"Tejföl",eggs:"Tojás",eier:"Tojás",uova:"Tojás",oeufs:"Tojás",jaja:"Tojás",vejce:"Tojás",
+    bread:"Kenyér",brot:"Kenyér",pane:"Kenyér",pain:"Kenyér",chleb:"Kenyér",chleba:"Kenyér",toast:"Toast kenyér",flour:"Liszt",mehl:"Liszt",farina:"Liszt",farine:"Liszt",mouka:"Liszt",sugar:"Cukor",zucker:"Cukor",zucchero:"Cukor",sucre:"Cukor",cukier:"Cukor",
+    rice:"Rizs",reis:"Rizs",riso:"Rizs",ryz:"Rizs",pasta:"Tészta",nudeln:"Tészta",makaron:"Tészta",schinken:"Sonka",prosciutto:"Sonka",jambon:"Sonka",szynka:"Sonka",sunka:"Sonka",salami:"Szalámi",sausage:"Füstölt kolbász",wurst:"Füstölt kolbász",kielbasa:"Füstölt kolbász",
+    wiener:"Virsli",frankfurter:"Virsli",bacon:"Bacon",speck:"Szalonna",chicken:"Csirkehús",hahnchen:"Csirkehús",pollo:"Csirkehús",poulet:"Csirkehús",kurczak:"Csirkehús",pork:"Sertéshús",schwein:"Sertéshús",beef:"Marhahús",rind:"Marhahús",manzo:"Marhahús",
+    turkey:"Pulykamell",pute:"Pulykamell",tuna:"Tonhalkonzerv",thunfisch:"Tonhalkonzerv",tonno:"Tonhalkonzerv",thon:"Tonhalkonzerv",salmon:"Lazac",lachs:"Lazac",salmone:"Lazac",saumon:"Lazac",fish:"Halfilé",fisch:"Halfilé",
+    potato:"Burgonya",potatoes:"Burgonya",kartoffel:"Burgonya",patate:"Burgonya",onion:"Vöröshagyma",zwiebel:"Vöröshagyma",cipolla:"Vöröshagyma",garlic:"Fokhagyma",knoblauch:"Fokhagyma",aglio:"Fokhagyma",tomato:"Paradicsom",tomaten:"Paradicsom",pomodoro:"Paradicsom",pelati:"Konzerv paradicsom",
+    carrot:"Sárgarépa",karotte:"Sárgarépa",mohren:"Sárgarépa",cucumber:"Uborka",gurke:"Uborka",gherkins:"Csemegeuborka",pepper:"Paprika",mushroom:"Gomba",pilze:"Gomba",champignon:"Gomba",funghi:"Gomba",spinach:"Spenót",spinat:"Spenót",
+    apple:"Alma",apfel:"Alma",mela:"Alma",pomme:"Alma",banana:"Banán",banane:"Banán",orange:"Narancs",lemon:"Citrom",zitrone:"Citrom",limone:"Citrom",grapes:"Szőlő",trauben:"Szőlő",strawberr:"Eper",erdbeer:"Eper",
+    oil:"Étolaj",olio:"Étolaj",huile:"Étolaj",olej:"Étolaj",olive:"Olívaolaj",vinegar:"Ecet",essig:"Ecet",aceto:"Ecet",salt:"Só",salz:"Só",honey:"Méz",honig:"Méz",miele:"Méz",miel:"Méz",
+    jam:"Lekvár",marmelade:"Lekvár",konfiture:"Lekvár",confettura:"Lekvár",chocolate:"Csokoládé",schokolade:"Csokoládé",cioccolato:"Csokoládé",chocolat:"Csokoládé",czekolada:"Csokoládé",cokolada:"Csokoládé",
+    biscuit:"Keksz",cookies:"Keksz",kekse:"Keksz",biscotti:"Keksz",coffee:"Kávé",kaffee:"Kávé",caffe:"Kávé",cafe:"Kávé",kawa:"Kávé",kava:"Kávé",tea:"Tea",tee:"Tea",cocoa:"Kakaópor",kakao:"Kakaópor",
+    oats:"Zabpehely",hafer:"Zabpehely",avena:"Zabpehely",cornflakes:"Kukoricapehely",muesli:"Müzli",musli:"Müzli",sweetcorn:"Kukorica konzerv",peas:"Zöldborsó konzerv",erbsen:"Zöldborsó konzerv",beans:"Bab konzerv",bohnen:"Bab konzerv",fagioli:"Bab konzerv",
+    lentils:"Lencse",linsen:"Lencse",chickpeas:"Csicseriborsó konzerv",kichererbsen:"Csicseriborsó konzerv",ceci:"Csicseriborsó konzerv",water:"Ásványvíz",wasser:"Ásványvíz",acqua:"Ásványvíz",woda:"Ásványvíz",voda:"Ásványvíz",
+    juice:"Narancslé",saft:"Narancslé",succo:"Narancslé",beer:"Sör",bier:"Sör",birra:"Sör",piwo:"Sör",pivo:"Sör",wine:"Vörösbor",wein:"Vörösbor",vino:"Vörösbor",chips:"Chips",crisps:"Chips",pretzel:"Sós perec",brezel:"Sós perec",
+    peanuts:"Földimogyoró",erdnusse:"Földimogyoró",walnut:"Dió",walnusse:"Dió",noci:"Dió",icecream:"Jégkrém",speiseeis:"Jégkrém",gelato:"Jégkrém",pizza:"Fagyasztott pizza",fries:"Fagyasztott hasábburgonya",pommes:"Fagyasztott hasábburgonya",
+    mayonnaise:"Majonéz",maionese:"Majonéz",senf:"Mustár",mustard:"Mustár",ketschup:"Ketchup",yeast:"Élesztő",hefe:"Élesztő",lievito:"Élesztő"};
   if(!best)Object.keys(SYN).some(function(k){if(t.indexOf(" "+k)>=0){best=find(SYN[k]);return true}});return best}
 function parseQty(s){var m=/(\d+(?:[.,]\d+)?)\s*(kg|g|l|ml|dl|cl|db)\b/i.exec(s||"");if(!m)return null;return{q:parseFloat(m[1].replace(",",".")),u:m[2].toLowerCase()}}
 var lastScan=null;
-function applyScan(code,name,qty,info,mem){var cm=/^(.+) \((.+)\)$/.exec(name||""),c=matchCat(name)||find(name)||(cm&&find(cm[1]));if(c&&cm)name=cm[2];$("fn").value=c?c.n:name;$("fn").dispatchEvent(new Event("input"));
+/* ---- GS1: DataMatrix, QR (GS1 Digital Link), GS1-128 és DataBar – a kódban lejárat (17), minőségmegőrzés (15), nettó tömeg (310n), térfogat (315n), darab (30) ---- */
+var GSFIX={"00":18,"01":14,"02":14,"11":6,"12":6,"13":6,"15":6,"16":6,"17":6,"20":2},GSVAR={"10":20,"21":20,"22":20,"30":8,"37":8,"240":30,"241":30,"90":30,"91":90,"92":90,"93":90,"94":90,"95":90,"96":90,"97":90,"98":90,"99":90};
+function gsDate(v){if(!/^\d{6}$/.test(v))return null;var y=2000+ +v.slice(0,2),m=+v.slice(2,4),d=+v.slice(4);if(!d)d=lastDay(y,m);return okDate(y,m,d)}
+function gtinEan(g){g=String(g).replace(/^0+(?=\d{13}$)/,"");if(/^0{6}\d{8}$/.test(g)||/^0{5}\d{8}$/.test(g))g=g.slice(-8);return g}
+FX.parseGS1=function(raw){var s=String(raw||"").trim(),o={},m;if(!s)return null;
+  /* GS1 Digital Link: https://valami/01/05991234567890/10/LOT?17=270312 */
+  if(/^https?:\/\//i.test(s)){m=/\/01\/(\d{8,14})/.exec(s);if(!m)return null;o.gtin=gtinEan(m[1]);var q=/[\/?&](17|15)[=\/](\d{6})/.exec(s);if(q)o[q[1]==="17"?"exp":"best"]=gsDate(q[2]);var l=/\/10\/([^\/?]+)/.exec(s);if(l)o.lot=decodeURIComponent(l[1]);return o}
+  s=s.replace(/^\][A-Za-z]\d/,"");
+  if(/^\(\d{2,4}\)/.test(s)){var re=/\((\d{2,4})\)([^(]*)/g;while(m=re.exec(s))put(m[1],m[2].trim())}
+  else{if(!/^(01|02)\d{14}/.test(s)&&s.indexOf("\x1d")<0)return null;var p=0,guard=0;while(p<s.length&&guard++<20){if(s[p]==="\x1d"){p++;continue}var a2=s.substr(p,2),a3=s.substr(p,3),ai,len;
+      if(GSFIX[a2]){ai=a2;len=GSFIX[a2];put(ai,s.substr(p+2,len));p+=2+len;continue}
+      if(/^3[1-6]\d$/.test(a3)){ai=s.substr(p,4);put(ai,s.substr(p+4,6));p+=10;continue}
+      ai=GSVAR[a3]?a3:GSVAR[a2]?a2:null;if(!ai)break;var e=s.indexOf("\x1d",p+ai.length);if(e<0)e=s.length;put(ai,s.slice(p+ai.length,Math.min(e,p+ai.length+GSVAR[ai])));p=e}}
+  function put(ai,v){if(ai==="01"||ai==="02")o.gtin=gtinEan(v);else if(ai==="17")o.exp=gsDate(v);else if(ai==="15"||ai==="16")o.best=gsDate(v);else if(ai==="10")o.lot=v;
+    else if(/^310\d$/.test(ai))o.qty={q:+v/Math.pow(10,+ai[3]),u:"kg"};else if(/^315\d$/.test(ai))o.qty={q:+v/Math.pow(10,+ai[3]),u:"l"};else if(ai==="30"||ai==="37")o.qty={q:+v,u:"db"}}
+  if(o.qty&&o.qty.u==="kg"&&o.qty.q<1){o.qty={q:Math.round(o.qty.q*1000),u:"g"}}
+  return o.gtin?o:null};
+/* GS1 cégelőtag → ország (a kódot kiadó szervezet, nem feltétlenül a gyártás helye) */
+var GSC=[[0,139,"USA/Kanada"],[200,299,"bolti belső kód"],[300,379,"Franciaország"],[380,380,"Bulgária"],[383,383,"Szlovénia"],[385,385,"Horvátország"],[387,387,"Bosznia"],[389,389,"Montenegró"],[400,440,"Németország"],[450,459,"Japán"],[460,469,"Oroszország"],[471,471,"Tajvan"],[474,474,"Észtország"],[475,475,"Lettország"],[477,477,"Litvánia"],[480,480,"Fülöp-szigetek"],[482,482,"Ukrajna"],[484,484,"Moldova"],[489,489,"Hongkong"],[490,499,"Japán"],[500,509,"Egyesült Királyság"],[520,521,"Görögország"],[528,528,"Libanon"],[529,529,"Ciprus"],[530,530,"Albánia"],[531,531,"Észak-Macedónia"],[535,535,"Málta"],[539,539,"Írország"],[540,549,"Belgium/Luxemburg"],[560,560,"Portugália"],[569,569,"Izland"],[570,579,"Dánia"],[590,590,"Lengyelország"],[594,594,"Románia"],[599,599,"Magyarország"],[600,601,"Dél-Afrika"],[640,649,"Finnország"],[690,699,"Kína"],[700,709,"Norvégia"],[729,729,"Izrael"],[730,739,"Svédország"],[740,745,"Közép-Amerika"],[750,750,"Mexikó"],[754,755,"Kanada"],[760,769,"Svájc"],[770,771,"Kolumbia"],[779,779,"Argentína"],[780,780,"Chile"],[789,790,"Brazília"],[800,839,"Olaszország"],[840,849,"Spanyolország"],[858,858,"Szlovákia"],[859,859,"Csehország"],[860,860,"Szerbia"],[868,869,"Törökország"],[870,879,"Hollandia"],[880,880,"Dél-Korea"],[885,885,"Thaiföld"],[888,888,"Szingapúr"],[890,890,"India"],[893,893,"Vietnám"],[899,899,"Indonézia"],[900,919,"Ausztria"],[930,939,"Ausztrália"],[940,949,"Új-Zéland"],[955,955,"Malajzia"]];
+function gsCountry(code){if(!/^\d{13}$/.test(code))return"";var p=+code.slice(0,3);for(var i=0;i<GSC.length;i++)if(p>=GSC[i][0]&&p<=GSC[i][1])return GSC[i][2];return""}
+FX.gsCountry=gsCountry;FX.matchName=function(n){var c=rcLookup(n);return c?c.n:null};FX.zxReader=function(){return loadZx().then(zxReader)};FX.ocrVariant=ocrVariant;
+var gs1Pend=null;
+function applyScan(code,name,qty,info,mem){var g1=gs1Pend;gs1Pend=null;if(g1&&g1.qty)qty=g1.qty;
+  if(g1){var gi=[];if(g1.exp||g1.best)gi.push("lejárat a kódból: "+(g1.exp||g1.best).replace(/-/g,". ")+".");if(g1.qty)gi.push("mennyiség a kódból");if(g1.lot)gi.push("tétel: "+g1.lot);if(gi.length)info=(info?info+" · ":"")+gi.join(" · ")}
+  var cm=/^(.+) \((.+)\)$/.exec(name||""),c=(name?rcLookup(name):null)||find(name)||(cm&&find(cm[1]));if(c&&cm)name=cm[2];$("fn").value=c?c.n:name;$("fn").dispatchEvent(new Event("input"));
   if(qty&&["g","kg","ml","dl","l","db"].indexOf(qty.u)>=0){$("fq").value=qty.q;$("fu").value=qty.u}else if(qty&&qty.u==="cl"){$("fq").value=qty.q*10;$("fu").value="ml"}
-  qtySync();$("fph").innerHTML="Vonalkód: "+esc(code)+(name&&(!c||norm(c.n)!==norm(name))?" · "+esc(name):"")+(info?" · "+esc(info):"")+"<br>"+$("fph").innerHTML;var eh=null;if(mem){if(mem.l)$("fl").value=mem.l;if(mem.d){eh=plus(mem.d);$("fe").value=eh}}
+  qtySync();$("fph").innerHTML="Vonalkód: "+esc(code)+(name&&(!c||norm(c.n)!==norm(name))?" · "+esc(name):"")+(info?" · "+esc(info):"")+"<br>"+$("fph").innerHTML;var eh=null;if(mem){if(mem.l)$("fl").value=mem.l;if(mem.d){eh=plus(mem.d);$("fe").value=eh}}if(g1&&(g1.exp||g1.best)){eh=g1.exp||g1.best;$("fe").value=eh}
   lastScan={code:code,orig:$("fn").value};photoFlow(qty,eh)}
 /* ---- vonalkód-keresés több forrásból ----
    1) saját/közös emlék (családi szinkron)  2) helyi gyorsítótár  3) Open Food Facts (élelmiszer, minden lánc: Tesco, Aldi, Lidl, Penny, Spar, kifli.hu...)
@@ -186,7 +228,7 @@ var SRC1=[offSrc("world.openfoodfacts.org","Open Food Facts")],
       function(code){return getJ("https://api.upcitemdb.com/prod/trial/lookup?upc="+code).then(function(j){var it=j&&j.items&&j.items[0];if(!it||!it.title)throw 0;return{n:it.title,brand:it.brand||"",q:parseQty(it.title+" "+(it.size||"")),cat:"",src:"UPCitemdb"}})}];
 function firstOk(fns,code){return new Promise(function(res,rej){var left=fns.length;fns.forEach(function(f){f(code).then(res,function(){if(--left===0)rej()})})})}
 function bcInfo(code,p){var tx=[];if(p&&p.brand&&norm(p.n).indexOf(norm(p.brand))<0)tx.push(p.brand);var st=p&&storeOf((p.brand||"")+" "+p.n);if(st)tx.push(st.charAt(0).toUpperCase()+st.slice(1)+" saját márka");
-  if(/^599/.test(code))tx.push("magyar termék");if(p&&p.src)tx.push(p.src);return tx.join(" · ")}
+  var gc=gsCountry(code);if(gc&&gc!=="bolti belső kód")tx.push(gc==="Magyarország"?"magyar termék":"GS1: "+gc);if(p&&p.src)tx.push(p.src);return tx.join(" · ")}
 function scanDone(code,name,qty,info,mem){$("bc").close();applyScan(code,name,qty,info,mem)}
 function lookup(code){var st=$("bcst"),key=bcKey(code);barmap=ld(KX.bar,{});
   if(barmap[key]){var m=barmap[key];scanDone(key,m.n,key!==code?null:m.q,(key!==code?"bolti címke · ":"")+"megjegyzett termék"+(m.t>1?" ("+m.t+". alkalom)":""),m);return}
@@ -202,7 +244,8 @@ function lookup(code){var st=$("bcst"),key=bcKey(code);barmap=ld(KX.bar,{});
 function camStart(v){return navigator.mediaDevices.getUserMedia({audio:false,video:{facingMode:{ideal:"environment"},width:{ideal:1920},height:{ideal:1080},advanced:[{focusMode:"continuous"}]}})
   .catch(function(){return navigator.mediaDevices.getUserMedia({video:{facingMode:"environment"}})})
   .then(function(st){v.srcObject=st;v.setAttribute("playsinline","");v.muted=true;var p=v.play();var tr=st.getVideoTracks()[0],caps={};try{caps=tr.getCapabilities?tr.getCapabilities():{}}catch(e){}
-    try{if(caps.focusMode&&caps.focusMode.indexOf("continuous")>=0)tr.applyConstraints({advanced:[{focusMode:"continuous"}]}).catch(function(){})}catch(e){}
+    try{var adv={};if(caps.focusMode&&caps.focusMode.indexOf("continuous")>=0)adv.focusMode="continuous";if(caps.exposureMode&&caps.exposureMode.indexOf("continuous")>=0)adv.exposureMode="continuous";
+      if(caps.whiteBalanceMode&&caps.whiteBalanceMode.indexOf("continuous")>=0)adv.whiteBalanceMode="continuous";if(Object.keys(adv).length)tr.applyConstraints({advanced:[adv]}).catch(function(){})}catch(e){}
     return Promise.resolve(p).catch(function(){}).then(function(){return{st:st,tr:tr,caps:caps}})})}
 function camTools(cam,torchBtn,zoomBtn){var c=cam.caps||{},on=false,z=1;
   if(torchBtn){torchBtn.hidden=!c.torch;torchBtn.onclick=function(){on=!on;cam.tr.applyConstraints({advanced:[{torch:on}]}).catch(function(){});torchBtn.setAttribute("aria-pressed",on)}}
@@ -214,22 +257,34 @@ function grab(v,frame,maxW,pad){var vw=v.videoWidth,vh=v.videoHeight;if(!vw||!vh
   c.getContext("2d").drawImage(v,x,y,w,h,0,0,c.width,c.height);return c}
 function eanOk(code){if(!/^\d{8}$|^\d{12,14}$/.test(code))return true;var d=code.split("").map(Number),ch=d.pop(),s=0;d.reverse().forEach(function(n,i){s+=n*(i%2?1:3)});return(10-s%10)%10===ch}
 var zxLoaded=null;function loadZx(){if(window.ZXing)return Promise.resolve();if(zxLoaded)return zxLoaded;zxLoaded=new Promise(function(res,rej){var s=document.createElement("script");s.src="vendor/zxing/zxing.min.js";s.onload=res;s.onerror=function(){zxLoaded=null;rej(new Error("zxing"))};document.head.appendChild(s)});return zxLoaded}
-function zxReader(){var Z=window.ZXing,h=new Map(),F=Z.BarcodeFormat;h.set(Z.DecodeHintType.POSSIBLE_FORMATS,[F.EAN_13,F.EAN_8,F.UPC_A,F.UPC_E,F.CODE_128,F.ITF,F.CODE_39]);h.set(Z.DecodeHintType.TRY_HARDER,true);var r=new Z.MultiFormatReader();r.setHints(h);
-  return function(c){var x=c.getContext("2d"),d=x.getImageData(0,0,c.width,c.height).data,g=new Uint8ClampedArray(c.width*c.height);for(var i=0,j=0;j<g.length;i+=4,j++)g[j]=(d[i]*306+d[i+1]*601+d[i+2]*117)>>10;
-    try{var res=r.decode(new Z.BinaryBitmap(new Z.HybridBinarizer(new Z.RGBLuminanceSource(g,c.width,c.height))));return res&&res.getText()}catch(e){return null}finally{try{r.reset()}catch(e){}}}}
-var bcCam=null;
-function scan(){bcAudio();var d=$("bc"),st=$("bcst");st.textContent="Tartsd a vonalkódot a keretbe, kb. 10–15 cm-re.";$("bcman").value="";d.showModal();d.onclose=bcStop;
+/* ZXing tartalék, képváltozatokkal: 0 alap, 1 inverz (fényes/fém felület, világos vonalak sötéten), 2 elforgatva 90° (álló kód dobozon, üvegen),
+   3 globális küszöb (egyenletes fény), 4 kontraszt+gamma (sötét/fakó), 5 teljes kép (DataMatrix/QR a kereten kívül) */
+function zxReader(){var Z=window.ZXing,h=new Map(),F=Z.BarcodeFormat;h.set(Z.DecodeHintType.POSSIBLE_FORMATS,[F.EAN_13,F.EAN_8,F.UPC_A,F.UPC_E,F.CODE_128,F.ITF,F.CODE_39,F.CODE_93,F.CODABAR,F.RSS_14,F.RSS_EXPANDED,F.DATA_MATRIX,F.QR_CODE].filter(function(x){return x!=null}));h.set(Z.DecodeHintType.TRY_HARDER,true);var r=new Z.MultiFormatReader();r.setHints(h);
+  return function(c,n){n=n||0;if(n===2)c=rotC(c,90);var x=c.getContext("2d"),d=x.getImageData(0,0,c.width,c.height).data,g=new Uint8ClampedArray(c.width*c.height),i,j;for(i=0,j=0;j<g.length;i+=4,j++)g[j]=(d[i]*306+d[i+1]*601+d[i+2]*117)>>10;
+    if(n===1)for(j=0;j<g.length;j++)g[j]=255-g[j];
+    if(n===4){var lo=255,hi=0;for(j=0;j<g.length;j++){if(g[j]<lo)lo=g[j];if(g[j]>hi)hi=g[j]}var sc=255/Math.max(16,hi-lo);for(j=0;j<g.length;j++)g[j]=(g[j]-lo)*sc;gammaFix(g)}
+    try{var L=new Z.RGBLuminanceSource(g,c.width,c.height),B=n===3&&Z.GlobalHistogramBinarizer?new Z.GlobalHistogramBinarizer(L):new Z.HybridBinarizer(L),res=r.decode(new Z.BinaryBitmap(B));return res&&res.getText()}catch(e){return null}finally{try{r.reset()}catch(e){}}}}
+/* BarcodeDetector másodlagos próbája feldolgozott képen (inverz / kontraszt), ha a nyers kép nem ment */
+function bdVariant(c,n){var x=c.getContext("2d"),im=x.getImageData(0,0,c.width,c.height),a=im.data,i;if(n%2){for(i=0;i<a.length;i+=4){a[i]=255-a[i];a[i+1]=255-a[i+1];a[i+2]=255-a[i+2]}}
+  else{var lo=255,hi=0,g;for(i=0;i<a.length;i+=4){g=(a[i]*3+a[i+1]*6+a[i+2])/10;a[i]=a[i+1]=a[i+2]=g;if(g<lo)lo=g;if(g>hi)hi=g}var sc=255/Math.max(16,hi-lo);for(i=0;i<a.length;i+=4){g=(a[i]-lo)*sc;a[i]=a[i+1]=a[i+2]=g}}x.putImageData(im,0,0);return c}
+var bcCam=null,BCTIPS=["Tartsd a vonalkódot a keretbe, kb. 10–15 cm-re.","Hajlított felületen (doboz, üveg) a vonalak álljanak függőlegesen, a kód legyen középen.","Fényes fólián döntsd meg kicsit a terméket, hogy ne csillogjon.","Kicsi kódnál használd a 🔍 nagyítást, és ne menj túl közel.","A négyzetes kódot (DataMatrix, QR) is olvasom: abból a lejáratot is kiveszem."];
+function scan(){bcAudio();var d=$("bc"),st=$("bcst");st.textContent=BCTIPS[0];$("bcman").value="";d.showModal();d.onclose=bcStop;gs1Pend=null;
   if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia){st.textContent="Ez a böngésző nem fér hozzá a kamerához. Írd be a számokat kézzel.";return}
   var det=null,zx=null,last="",hits=0,busy=false,tries=0;
-  var prep=("BarcodeDetector" in window?Promise.resolve(BarcodeDetector.getSupportedFormats?BarcodeDetector.getSupportedFormats():["ean_13"]).then(function(f){var want=["ean_13","ean_8","upc_a","upc_e","code_128","itf","code_39"].filter(function(x){return f.indexOf(x)>=0});
+  var prep=("BarcodeDetector" in window?Promise.resolve(BarcodeDetector.getSupportedFormats?BarcodeDetector.getSupportedFormats():["ean_13"]).then(function(f){var want=["ean_13","ean_8","upc_a","upc_e","code_128","itf","code_39","code_93","codabar","data_matrix","qr_code"].filter(function(x){return f.indexOf(x)>=0});
       if(want.indexOf("ean_13")<0)throw 0;det=new BarcodeDetector({formats:want})}):Promise.reject()).catch(function(){return loadZx().then(function(){zx=zxReader()})});
   Promise.all([prep,camStart($("bcv"))]).then(function(r){var cam=r[1];bcStream=cam.st;bcCam=cam;camTools(cam,$("bctorch"),$("bczoom"));var v=$("bcv");
-    function found(code){code=String(code).trim();if(!eanOk(code))return false;if(code===last)hits++;else{last=code;hits=1}if(hits<2)return false;scanBeep();bcStop();lookup(code);return true}
+    function found(code){code=String(code).trim();var g=FX.parseGS1(code);if(g&&g.gtin){code=g.gtin}else if(!/^\d{6,14}$/.test(code))return false;
+      if(!eanOk(code))return false;if(code===last)hits++;else{last=code;hits=1}if(hits<2&&!g)return false;gs1Pend=g;scanBeep();bcStop();lookup(code);return true}
     function loop(){if(!bcStream)return;if(busy||v.readyState<2){bcLoop=setTimeout(loop,120);return}busy=true;tries++;
-      if(tries===60)st.textContent="Nem megy? Próbáld közelebb vagy távolabb, jobb fényben"+($("bctorch").hidden?"":", vagy kapcsold be a vakut")+".";
-      var p=det?det.detect(v).then(function(rs){for(var i=0;i<(rs||[]).length;i++)if(found(rs[i].rawValue))return true;return false})
-        :Promise.resolve().then(function(){var c=grab(v,$("bcframe"),1000);if(!c)return false;var t=zx(c);return !!(t&&found(t))});
-      p.catch(function(){return false}).then(function(ok){busy=false;if(!ok&&bcStream)bcLoop=setTimeout(loop,det?90:160)})}
+      if(tries%15===0){var lc=grab(v,null,320),lt=lc&&lightTip(lc,$("bctorch"));st.textContent=lt||BCTIPS[Math.floor(tries/15)%BCTIPS.length]}
+      /* a ZXing a BarcodeDetector mellé is betöltődik, ha sokáig nem megy (inverz, sérült, elforgatott kód) */
+      if(tries===90&&det&&!zx)loadZx().then(function(){zx=zxReader()}).catch(function(){});
+      var p=det?det.detect(v).then(function(rs){for(var i=0;i<(rs||[]).length;i++)if(found(rs[i].rawValue))return true;
+          if(tries%3===0){var c=grab(v,tries%6===0?null:$("bcframe"),1200,.15);if(c)return det.detect(bdVariant(c,tries/3)).then(function(r2){for(var j=0;j<(r2||[]).length;j++)if(found(r2[j].rawValue))return true;
+            if(zx&&tries%9===0){var t=zx(c,(tries/9)%6);return !!(t&&found(t))}return false})}return false})
+        :Promise.resolve().then(function(){var n=tries%6,c=grab(v,n===5?null:$("bcframe"),n===5?1400:1000,n===2?.6:.1);if(!c)return false;var t=zx(c,n===5?0:n);return !!(t&&found(t))});
+      p.catch(function(){return false}).then(function(ok){busy=false;if(!ok&&bcStream)bcLoop=setTimeout(loop,det?90:140)})}
     loop()}).catch(function(e){st.textContent=e&&e.name==="NotAllowedError"?"Nem kaptam engedélyt a kamerához. Írd be a vonalkódot kézzel.":"Nem sikerült elindítani a kamerát. Írd be a vonalkódot kézzel."})}
 FX.onItemSaved=function(o){if(!lastScan||!lastScan.code)return"";var k=lastScan.code,old;barmap=ld(KX.bar,{});old=barmap[k];
   var d=Math.round((new Date(o.exp)-new Date(today()))/864e5);
@@ -255,33 +310,107 @@ function blur(g,w,h,r){var o=new Uint8ClampedArray(g.length),t=new Float32Array(
 function otsu(g){var hs=new Array(256).fill(0),i,n=g.length;for(i=0;i<n;i++)hs[g[i]]++;var sum=0;for(i=0;i<256;i++)sum+=i*hs[i];var sB=0,wB=0,best=0,th=128;
   for(i=0;i<256;i++){wB+=hs[i];if(!wB)continue;var wF=n-wB;if(!wF)break;sB+=i*hs[i];var mB=sB/wB,mF=(sum-sB)/wF,v=wB*wF*(mB-mF)*(mB-mF);if(v>best){best=v;th=i}}return th}
 function toCanvas(g,w,h){var c=document.createElement("canvas");c.width=w;c.height=h;var x=c.getContext("2d"),d=x.createImageData(w,h);for(var i=0,j=0;j<g.length;i+=4,j++){d.data[i]=d.data[i+1]=d.data[i+2]=g[j];d.data[i+3]=255}x.putImageData(d,0,0);return c}
-function ocrVariant(src,n){var c=src;if(c.height<160||c.width<700){var k=Math.min(3,Math.max(700/c.width,160/c.height)),u=document.createElement("canvas");u.width=Math.round(c.width*k);u.height=Math.round(c.height*k);var ux=u.getContext("2d");ux.imageSmoothingQuality="high";ux.drawImage(c,0,0,u.width,u.height);c=u}
-  var w=c.width,h=c.height,g=gray(c);if(n===2)return toCanvas(g,w,h);if(n===1)g=blur(g,w,h,Math.max(2,Math.round(h/55)));
-  var th=otsu(g),dark=0;for(var i=0;i<g.length;i++){g[i]=g[i]>th?255:0;if(!g[i])dark++}if(dark>g.length/2)for(i=0;i<g.length;i++)g[i]=255-g[i];
-  if(n===3){/* pötty-összekötés: a sötét pontok kitágítása, hogy összefüggő számjegyek legyenek */var r=Math.max(2,Math.round(h/70)),o=new Uint8ClampedArray(g.length).fill(255),x,y,dx,dy;
-    for(y=0;y<h;y++)for(x=0;x<w;x++)if(!g[y*w+x])for(dy=-r;dy<=r;dy++)for(dx=-r;dx<=r;dx++){var yy=y+dy,xx=x+dx;if(yy>=0&&yy<h&&xx>=0&&xx<w&&dx*dx+dy*dy<=r*r)o[yy*w+xx]=0}g=o}
+/* v1.32: képváltozatok minden helyzetre – fényviszonyok (sötét, csillogó, árnyékos), felületek (fólia, doboz, hajlított, dombornyomott),
+   betűtípusok (pöttyös tintasugaras, lézeres, hétszegmenses, vékony, dőlt). NV = változatok száma. */
+var NV=10;
+function upscale(c){if(c.height>=160&&c.width>=700)return c;var k=Math.min(3,Math.max(700/c.width,160/c.height)),u=document.createElement("canvas");u.width=Math.round(c.width*k);u.height=Math.round(c.height*k);var ux=u.getContext("2d");ux.imageSmoothingQuality="high";ux.drawImage(c,0,0,u.width,u.height);return u}
+function bin(g,th){var dark=0;for(var i=0;i<g.length;i++){g[i]=g[i]>th?255:0;if(!g[i])dark++}if(dark>g.length/2)for(i=0;i<g.length;i++)g[i]=255-g[i];return g}
+/* helyi (Bradley) küszöb: egyenetlen fény, árnyék, hajlított felület, csillanás ellen */
+function bradley(g,w,h,t){var s=Math.max(8,Math.round(Math.min(w,h)/6)),I=new Float64Array((w+1)*(h+1)),x,y,o=new Uint8ClampedArray(g.length),dark=0;
+  for(y=0;y<h;y++){var row=0;for(x=0;x<w;x++){row+=g[y*w+x];I[(y+1)*(w+1)+x+1]=I[y*(w+1)+x+1]+row}}
+  for(y=0;y<h;y++)for(x=0;x<w;x++){var x1=Math.max(0,x-s),x2=Math.min(w-1,x+s),y1=Math.max(0,y-s),y2=Math.min(h-1,y+s),cnt=(x2-x1+1)*(y2-y1+1),
+    sum=I[(y2+1)*(w+1)+x2+1]-I[y1*(w+1)+x2+1]-I[(y2+1)*(w+1)+x1]+I[y1*(w+1)+x1];var v=g[y*w+x]*cnt<sum*(1-(t||0.15))?0:255;o[y*w+x]=v;if(!v)dark++}
+  if(dark>g.length/2)for(x=0;x<o.length;x++)o[x]=255-o[x];return o}
+/* gamma: sötét képet világosít, túlexponáltat sötétít */
+function gammaFix(g){var s=0,i;for(i=0;i<g.length;i+=7)s+=g[i];var m=s/Math.ceil(g.length/7),ga=m<90?0.55:m>175?1.8:1;if(ga===1)return g;var L=new Uint8ClampedArray(256);for(i=0;i<256;i++)L[i]=255*Math.pow(i/255,ga);for(i=0;i<g.length;i++)g[i]=L[g[i]];return g}
+/* a legnagyobb kontrasztú színcsatorna (pl. kék tinta piros dobozon, fekete nyomat sárga fólián) */
+function bestChan(c){var x=c.getContext("2d"),d=x.getImageData(0,0,c.width,c.height).data,n=c.width*c.height,best=0,bv=-1,k,i;
+  for(k=0;k<3;k++){var s=0,s2=0;for(i=k;i<d.length;i+=16){s+=d[i];s2+=d[i]*d[i]}var cnt=Math.ceil(d.length/16),v=s2/cnt-(s/cnt)*(s/cnt);if(v>bv){bv=v;best=k}}
+  var g=new Uint8ClampedArray(n),lo=255,hi=0;for(i=0;i<n;i++){g[i]=d[i*4+best];if(g[i]<lo)lo=g[i];if(g[i]>hi)hi=g[i]}var sc=255/Math.max(16,hi-lo);for(i=0;i<n;i++)g[i]=(g[i]-lo)*sc;return g}
+/* élesítés (életlen, bemozdult kép) */
+function sharpen(g,w,h){var b=blur(g,w,h,1),o=new Uint8ClampedArray(g.length);for(var i=0;i<g.length;i++)o[i]=g[i]+(g[i]-b[i])*1.6;return o}
+/* dombornyomott / lézergravírozott, azonos színű felirat: élek kiemelése (Sobel) */
+function sobel(g,w,h){var o=new Uint8ClampedArray(g.length).fill(255),x,y;for(y=1;y<h-1;y++)for(x=1;x<w-1;x++){var i=y*w+x,
+  gx=-g[i-w-1]-2*g[i-1]-g[i+w-1]+g[i-w+1]+2*g[i+1]+g[i+w+1],gy=-g[i-w-1]-2*g[i-w]-g[i-w+1]+g[i+w-1]+2*g[i+w]+g[i+w+1];o[i]=255-Math.min(255,Math.sqrt(gx*gx+gy*gy)*0.7)}return o}
+function dilate(g,w,h,r){var o=new Uint8ClampedArray(g.length).fill(255),x,y,dx,dy;for(y=0;y<h;y++)for(x=0;x<w;x++)if(!g[y*w+x])for(dy=-r;dy<=r;dy++)for(dx=-r;dx<=r;dx++){var yy=y+dy,xx=x+dx;if(yy>=0&&yy<h&&xx>=0&&xx<w&&dx*dx+dy*dy<=r*r)o[yy*w+xx]=0}return o}
+function rotC(c,deg){var r=document.createElement("canvas"),s=deg%180!==0;r.width=s?c.height:c.width;r.height=s?c.width:c.height;var x=r.getContext("2d");x.translate(r.width/2,r.height/2);x.rotate(deg*Math.PI/180);x.drawImage(c,-c.width/2,-c.height/2);return r}
+/* 0: Otsu  1: elmosás+Otsu (pöttyös)  2: szürke  3: pötty-összekötés  4: helyi küszöb (árnyék, csillanás)  5: legjobb színcsatorna + helyi küszöb
+   6: gamma (sötét/túlexponált) + Otsu  7: élesítés + helyi küszöb  8: dombornyomott (élek)  9: hétszegmenses/vékony: helyi küszöb + vastagítás */
+function ocrVariant(src,n){var c=upscale(src),w=c.width,h=c.height,g;n=n%NV;
+  if(n===5)return toCanvas(bradley(bestChan(c),w,h,0.12),w,h);
+  g=gray(c);if(n===2)return toCanvas(g,w,h);
+  if(n===4)return toCanvas(bradley(g,w,h,0.15),w,h);
+  if(n===6)return toCanvas(bin(gammaFix(g),otsu(g)),w,h);
+  if(n===7)return toCanvas(bradley(sharpen(g,w,h),w,h,0.12),w,h);
+  if(n===8){var e=sobel(blur(g,w,h,1),w,h);return toCanvas(bin(e,otsu(e)),w,h)}
+  if(n===9)return toCanvas(dilate(bradley(g,w,h,0.18),w,h,Math.max(1,Math.round(h/110))),w,h);
+  if(n===1)g=blur(g,w,h,Math.max(2,Math.round(h/55)));
+  g=bin(g,otsu(g));if(n===3)g=dilate(g,w,h,Math.max(2,Math.round(h/70)));
   return toCanvas(g,w,h)}
+/* fényerő a keretben: sötét → vaku, nagyon világos → csillanás */
+function lightOf(c){var x=c.getContext("2d"),d=x.getImageData(0,0,c.width,c.height).data,s=0,hi=0,n=0;for(var i=0;i<d.length;i+=64){var v=(d[i]*3+d[i+1]*6+d[i+2])/10;s+=v;if(v>245)hi++;n++}return{m:s/n,glare:hi/n}}
+function lightTip(c,torchBtn){var L=lightOf(c);if(L.m<70){if(torchBtn&&!torchBtn.hidden){torchBtn.classList.remove("flash");void torchBtn.offsetWidth;torchBtn.classList.add("flash")}return"Sötét van"+(torchBtn&&!torchBtn.hidden?": kapcsold be a vakut 🔦":": menj világosabb helyre")+"."}
+  if(L.glare>0.18)return"Csillog a felület: döntsd meg kicsit a terméket, vagy kapcsold ki a vakut.";return""}
 
+/* OCR-módok: 0 csak számok (6: blokk), 1 csak számok (7: egy sor), 2 betűk is (hónapnevek, kulcsszavak), 3 ritkás szöveg (11: szétszórt felirat) */
 var WL={exp:"0123456789./-: ",qty:""};
-function ocrSet(w,k){return w.setParameters({tessedit_char_whitelist:WL[k]||"",tessedit_pageseg_mode:"6"}).catch(function(){}).then(function(){return w})}
-function ocrFix(t){return t.replace(/(\d)[oOQD](?=\d|\b)/g,"$10").replace(/[oOQD](?=\d)/g,"0").replace(/(\d)[lI|!](?=\d)/g,"$11").replace(/[lI|](?=\d{1,3}[.\/-])/g,"1").replace(/(\d)[sS](?=\d)/g,"$15").replace(/(\d)B(?=\d)/g,"$18")}
+function ocrSet(w,k,mode){mode=mode||0;var wl=k==="exp"&&mode<2?WL.exp:"",psm=["6","7","6","11"][mode]||"6";return w.setParameters({tessedit_char_whitelist:wl,tessedit_pageseg_mode:psm}).catch(function(){}).then(function(){return w})}
+function ocrFix(t){return t.replace(/(\d)[oOQD](?=\d|\b)/g,"$10").replace(/[oOQD](?=\d)/g,"0").replace(/(\d)[lI|!](?=\d)/g,"$11").replace(/[lI|](?=\d{1,3}[.\/-])/g,"1").replace(/(\d)[sS](?=\d)/g,"$15").replace(/(\d)B(?=\d)/g,"$18").replace(/(\d)[zZ](?=\d)/g,"$12").replace(/(\d)G(?=\d)/g,"$16").replace(/(\d)T(?=\d)/g,"$17")}
 function pad(n){return(n<10?"0":"")+n}
 function okDate(y,m,d){if(m<1||m>12||d<1)return null;var dt=new Date(y,m-1,d);if(dt.getMonth()!==m-1)return null;return y+"-"+pad(m)+"-"+pad(d)}
 function lastDay(y,m){return new Date(y,m,0).getDate()}
-FX.parseExpiry=function(text,strict){var t=ocrFix(text||"").replace(/([.\/-]\s?\d)[lI|](?!\w)/g,"$11"),c=[],m,now=new Date(),y0=now.getFullYear(),re;
+/* hónapnevek: magyar, angol, német, francia, olasz, spanyol, lengyel (rövid és hosszú alak) */
+var MONS=[[1,"januar|january|janvier|gennaio|enero|janv|jan|gen|ene|sty"],[2,"februar|february|fevrier|febbraio|febrero|febr|fevr|feb|fev|lut"],[3,"marcius|march|maerz|marzo|marz|mars|marc|mrz|mar"],
+  [4,"aprilis|april|avril|aprile|abril|apr|avr|abr|kwi"],[5,"majus|mayo|maggio|maj|may|mai|mag"],[6,"junius|june|juni|juin|giugno|junio|jun|giu|cze"],[7,"julius|july|juli|juillet|luglio|julio|juil|jul|lug|lip"],
+  [8,"augusztus|august|aout|agosto|aug|ago|sie"],[9,"szeptember|september|settembre|septiembre|szept|sept|sep|set|wrz"],[10,"oktober|october|octobre|ottobre|octubre|okt|oct|ott|paz"],
+  [11,"november|novembre|noviembre|nov|lis"],[12,"december|dezember|decembre|dicembre|diciembre|dec|dez|dic|gru"]];
+var MONX=MONS.map(function(m){return m[1]}).join("|"),MONI={};MONS.forEach(function(m){m[1].split("|").forEach(function(x){MONI[x]=m[0]})});
+var ROMX="xii|xi|x|ix|viii|vii|vi|v|iv|iii|ii|i",ROMI={i:1,ii:2,iii:3,iv:4,v:5,vi:6,vii:7,viii:8,ix:9,x:10,xi:11,xii:12};
+function low(s){return String(s||"").toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g,"")}
+var KW_GOOD=/(minoseg|megorz|\bmmi\b|fogyaszt|felhasznal|lejar|\blej\b|best|\bbbe?\b|\bexp|use by|\bmhd\b|mindestens|haltbar|verbrauch|\bdlc\b|dluo|consommer|consumarsi|\bscad|consumir|caducidad|spotreb|najlepiej|spozyc|termen|valabil|vervaldatum|houdbaar)/,
+    KW_BAD=/(gyart|\bgy\b|\bprod|csomagol|\bpkd|packed|\bmfg|\bmfd|\blot\b|\btetel|toltve|hergestellt|abgefullt|fabric|\bfab\b|vyrob|wyprod|\bl:)/;
+FX.parseExpiry=function(text,strict,cands){var raw=text||"",t=ocrFix(raw).replace(/([.\/-]\s?\d)[lI|](?!\w)/g,"$11").replace(/(\d)[,;\\_](?=\d)/g,"$1."),nt=ocrFix(low(raw)).replace(/(\d)[,;\\_](?=\d)/g,"$1."),c=[],m,y0=new Date().getFullYear(),re;
   function yy(y){y=+y;return y<100?2000+y:y}
   function add(s,score){if(!s)return;var dd=Math.round((new Date(s)-new Date(today()))/864e5);if(dd<-60||dd>365*6)return;c.push({d:s,sc:score})}
-  var near=function(i){var w=norm(t.slice(Math.max(0,i-40),i));return /(gyart|prod|csomagol)/.test(norm(t.slice(Math.max(0,i-15),i)))?-4:/(minoseg|megorz|fogyaszt|lejar|best|exp|use by|mhd|bb)/.test(w)?5:0};
-  re=/(\d{4})\s?([.\/-])\s?(\d{1,2})\s?\2\s?(\d{1,2})(?!\d)/g;while(m=re.exec(t))add(okDate(+m[1],+m[3],+m[4]),3+near(m.index));
-  re=/(?:^|[^\d])(\d{1,2})\s?([.\/-])\s?(\d{1,2})\s?\2\s?(\d{4}|\d{2})(?!\d)/g;while(m=re.exec(t))add(okDate(yy(m[4]),+m[3],+m[1]),3+near(m.index));
-  if(!c.length){re=/(?:^|[^\d.])(\d{1,2})\s?[.\/-]\s?(\d{4})(?!\d)/g;while(m=re.exec(t)){var y=+m[2],mo=+m[1];add(okDate(y,mo,mo>=1&&mo<=12?lastDay(y,mo):0),2+near(m.index))}}
-  if(!c.length){re=/(?:^|[^\d.])(\d{1,2})\s?[.\/-]\s?(\d{2})(?![\d.\/])/g;while(m=re.exec(t)){var mo2=+m[1],y2=2000+ +m[2];if(+m[2]>12&&mo2>=1&&mo2<=12)add(okDate(y2,mo2,lastDay(y2,mo2)),2+near(m.index))}}
-  if(!c.length){re=/(\d{1,2})\s?[.\/]\s?(\d{1,2})\.?(?![\d.\/])/g;while(m=re.exec(t)){var s=okDate(y0,+m[2],+m[1]);if(s&&s<today())s=okDate(y0+1,+m[2],+m[1]);add(s,1+near(m.index))}}
+  function near(i){var w=low(t.slice(Math.max(0,i-45),i)),w2=low(t.slice(Math.max(0,i-16),i));return KW_BAD.test(w2)?-4:KW_GOOD.test(w)?5:KW_BAD.test(w)?-2:0}
+  /* számos dátumok: 2027.03.12, 12.03.2027, 12/03/27, 12-03-2027, 12:03:2027 (vegyes elválasztóval is) */
+  re=/(20\d{2})\s?[.\/\-:]\s?(\d{1,2})\s?[.\/\-:]\s?(\d{1,2})(?!\d)/g;while(m=re.exec(t))add(okDate(+m[1],+m[2],+m[3]),3+near(m.index));
+  re=/(?:^|[^\d])(\d{1,2})\s?([.\/\-:])\s?(\d{1,2})\s?[.\/\-:]\s?(\d{4}|\d{2})(?!\d)/g;while(m=re.exec(t)){var a1=+m[1],a2=+m[3],Y=yy(m[4]),s1=okDate(Y,a2,a1);
+    if(s1)add(s1,3+near(m.index)-(m[2]===":"?1:0));else add(okDate(Y,a1,a2),2+near(m.index))}/* amerikai sorrend, ha a nap/hó nem lehet */
+  re=/(?:^|[^\d])(\d{1,2}) (\d{1,2}) (20\d{2}|\d{2})(?![\d.])/g;while(m=re.exec(t))add(okDate(yy(m[3]),+m[2],+m[1]),1+near(m.index));
+  /* hónapnévvel: 12 MAR 2027, 12MAR27, 2027. márc. 12., MAR 12, 2027, márc. 2027 */
+  re=new RegExp("(?:^|[^a-z\\d])(\\d{1,2})\\.?\\s?[\\-\\/ ]?\\s?("+MONX+")[a-z]*\\.?\\s?[\\-\\/ ,.]?\\s?(\\d{4}|\\d{2})(?!\\d)","g");while(m=re.exec(nt))add(okDate(yy(m[3]),MONI[m[2]],+m[1]),4+near(m.index));
+  re=new RegExp("(20\\d{2})\\.?\\s?[\\-\\/ ]?\\s?("+MONX+")[a-z]*\\.?\\s?[\\-\\/ ]?\\s?(\\d{1,2})(?!\\d)","g");while(m=re.exec(nt))add(okDate(+m[1],MONI[m[2]],+m[3]),4+near(m.index));
+  re=new RegExp("(?:^|[^a-z])("+MONX+")[a-z]*\\.?\\s?(\\d{1,2})(?:st|nd|rd|th)?,?\\s(20\\d{2})(?!\\d)","g");while(m=re.exec(nt))add(okDate(+m[3],MONI[m[1]],+m[2]),4+near(m.index));
+  re=new RegExp("(?:^|[^a-z\\d])("+MONX+")[a-z]*\\.?\\s?[\\-\\/ ]?\\s?(20\\d{2}|\\d{2})(?![\\d.])","g");while(m=re.exec(nt)){var Ym=yy(m[2]),Mm=MONI[m[1]];add(okDate(Ym,Mm,lastDay(Ym,Mm)),2+near(m.index))}
+  re=new RegExp("(?:^|[^a-z])("+MONX+")[a-z]*\\.?\\s?(\\d{1,2})\\.?(?![\\d])","g");while(m=re.exec(nt)){var sm=okDate(y0,MONI[m[1]],+m[2]);if(sm&&sm<today())sm=okDate(y0+1,MONI[m[1]],+m[2]);add(sm,1+near(m.index))}
+  /* római számos hónap: 12.III.2027, 2027.III.12. */
+  re=new RegExp("(?:^|[^a-z\\d])(\\d{1,2})\\s?[.\\-\\/ ]\\s?("+ROMX+")\\s?[.\\-\\/ ]\\s?(\\d{4}|\\d{2})(?!\\d)","g");while(m=re.exec(nt))add(okDate(yy(m[3]),ROMI[m[2]],+m[1]),4+near(m.index));
+  re=new RegExp("(20\\d{2})\\s?[.\\-\\/ ]\\s?("+ROMX+")\\s?[.\\-\\/ ]\\s?(\\d{1,2})(?!\\d)","g");while(m=re.exec(nt))add(okDate(+m[1],ROMI[m[2]],+m[3]),4+near(m.index));
+  /* hónap + év: 03/2027, 2027/03, 03/27 */
+  re=/(?:^|[^\d.])(\d{1,2})\s?[.\/-]\s?(20\d{2})(?!\d)/g;while(m=re.exec(t)){var y=+m[2],mo=+m[1];add(okDate(y,mo,mo>=1&&mo<=12?lastDay(y,mo):0),2+near(m.index))}
+  re=/(20\d{2})\s?[.\/-]\s?(\d{1,2})(?![\d]|\s?[.\/\-:]\s?\d)/g;while(m=re.exec(t)){var y3=+m[1],mo3=+m[2];add(okDate(y3,mo3,mo3>=1&&mo3<=12?lastDay(y3,mo3):0),2+near(m.index))}
+  re=/(?:^|[^\d.])(\d{1,2})\s?[.\/-]\s?(\d{2})(?![\d.\/])/g;while(m=re.exec(t)){var mo2=+m[1],y2=2000+ +m[2];if(+m[2]>12&&mo2>=1&&mo2<=12)add(okDate(y2,mo2,lastDay(y2,mo2)),2+near(m.index))}
+  /* elválasztó nélkül: 12032027, 20270312, 120327 (NNHHÉÉ), 270312 (ÉÉHHNN) – csak kulcsszó mellett erős */
+  re=/(?:^|[^\d])(\d{8}|\d{6})(?!\d)/g;while(m=re.exec(t)){var z=m[1],nr=near(m.index);
+    if(z.length===8){if(/^20/.test(z))add(okDate(+z.slice(0,4),+z.slice(4,6),+z.slice(6)),nr);else add(okDate(+z.slice(4),+z.slice(2,4),+z.slice(0,2)),nr)}
+    else{add(okDate(2000+ +z.slice(4),+z.slice(2,4),+z.slice(0,2)),nr+0.3);add(okDate(2000+ +z.slice(0,2),+z.slice(2,4),+z.slice(4)),nr)}}
+  /* nap.hó. év nélkül */
+  re=/(\d{1,2})\s?[.\/]\s?(\d{1,2})\.?(?![\d.\/])/g;while(m=re.exec(t)){var s=okDate(y0,+m[2],+m[1]);if(s&&s<today())s=okDate(y0+1,+m[2],+m[1]);add(s,1+near(m.index))}
+  /* betűközös, ritkás számok (1 2 . 0 3 . 2 0 2 7): összevont változat is, kicsit kisebb súllyal */
+  var sq=raw.replace(/(^|\s)[lI|](?=[ \t]*[\d.])/g,"$11").replace(/([\d.\/-])[ \t]+(?=[\d.\/-])/g,"$1").replace(/([.\/-])\1+/g,"$1");if(sq!==raw)FX.parseExpiry(sq,0,1).forEach(function(x){x.sc-=0.5;c.push(x)});
+  if(cands)return c;
   if(strict)c=c.filter(function(x){return x.sc>=2});if(!c.length)return null;c.sort(function(a,b){return b.sc-a.sc||(a.d<b.d?1:-1)});return c[0].d};
-FX.parseQtyText=function(text){var t=ocrFix(text||"").replace(/℮/g," e ").replace(/(\d)\s?k[q9](?![a-z])/gi,"$1 kg").replace(/(\d)\s?rnl\b/gi,"$1 ml").replace(/(\d)\s[9q](?![\d\w])/g,"$1 g").replace(/(\d)\s?[I|](?![\w])/g,"$1 l"),re=/(\d+(?:[.,]\d+)?)\s?(kg|g|l|ml|dl|cl|db|darab)\b(\s?e\b)?/gi,m,c=[];
+FX.parseQtyText=function(text){var t=ocrFix(text||"").replace(/℮/g," e ").replace(/ℓ/g,"l").replace(/(\d)\s?k[q9](?![a-z])/gi,"$1 kg").replace(/(\d)\s?(?:rnl|m1|mI)\b/gi,"$1 ml").replace(/(\d)\s?cI\b/g,"$1 cl")
+    .replace(/(\d)\s?(?:gramm|gram|gr)\b\.?/gi,"$1 g").replace(/(\d)\s?(?:kilogramm|kilogram)\b/gi,"$1 kg").replace(/(\d)\s?(?:liter|litre|ltr|lit)\b\.?/gi,"$1 l").replace(/(\d)\s?(?:pcs|pc|stk|st\.|stuck|darabos|db-os|szelet)\b/gi,"$1 db")
+    .replace(/(\d)\s[9q](?![\d\w])/g,"$1 g").replace(/(\d)\s?[I|](?![\w])/g,"$1 l"),c=[],m;
+  /* gyűjtőcsomag: 4 x 125 g, 6×1,5 l */
+  var re2=/(\d{1,2})\s?[x×*]\s?(\d+(?:[.,]\d+)?)\s?(kg|dkg|g|l|ml|dl|cl)\b/gi;while(m=re2.exec(t)){var n=+m[1],q0=parseFloat(m[2].replace(",",".")),u0=m[3].toLowerCase();if(n>1&&n<=48&&q0>0){if(u0==="dkg"){q0*=10;u0="g"}if(u0==="cl"){q0*=10;u0="ml"}c.push({q:Math.round(n*q0*1000)/1000,u:u0,sc:3})}}
+  var re=/(\d+(?:[.,]\d+)?)\s?(kg|dkg|g|l|ml|dl|cl|db|darab)\b(\s?e\b)?/gi;
   while(m=re.exec(t)){var q=parseFloat(m[1].replace(",",".")),u=m[2].toLowerCase();if(u==="darab")u="db";if(!(q>0)||q>50000)continue;
-    if(u==="cl"){q=q*10;u="ml"}var sc=0,w=norm(t.slice(Math.max(0,m.index-30),m.index)),after=norm(t.slice(m.index+m[0].length,m.index+m[0].length+6));
-    if(m[3])sc+=4;if(/(netto|net|toltot|tomeg|mennyiseg|urtartalom)/.test(w))sc+=5;if(q===100&&(u==="g"||u==="ml"))sc-=4;if(/^\s?-?ban|^\s?\/|^\s?-?ra/.test(after))sc-=4;if(/^(\d+)\s?(g|ml)/.test(m[0])&&q<5)sc-=2;c.push({q:q,u:u,sc:sc})}
+    if(u==="cl"){q=q*10;u="ml"}if(u==="dkg"){q=q*10;u="g"}var sc=0,w=low(t.slice(Math.max(0,m.index-30),m.index)),after=low(t.slice(m.index+m[0].length,m.index+m[0].length+6));
+    if(/[x×*]\s?$/.test(t.slice(Math.max(0,m.index-3),m.index)))sc-=3;
+    if(m[3])sc+=4;if(/(netto|\bnet\b|net wt|toltot|tomeg|mennyiseg|urtartalom|inhalt|poids|peso|contenuto|zawartosc|obsah|tartalom)/.test(w))sc+=5;if(q===100&&(u==="g"||u==="ml"))sc-=4;if(/^\s?-?ban|^\s?\/|^\s?-?ra|^\s?-?bol/.test(after))sc-=4;if(/^(\d+)\s?(g|ml)/.test(m[0])&&q<5)sc-=2;c.push({q:q,u:u,sc:sc})}
   if(!c.length){/* gyakori OCR-hiba: a "g" betűt 9-esnek olvassa, szóköz nélkül (750g → 7509) */m=/(?:^|[^\d.,])(\d{2,4})9(?![\d.,])/.exec(t);if(m&&+m[1]>=10)return{q:+m[1],u:"g"};return null}
   c.sort(function(a,b){return b.sc-a.sc||b.q-a.q});return{q:c[0].q,u:c[0].u}};
 var PH={exp:{t:"Lejárati dátum",ask:"Fotózd le a lejárati dátumot (minőségét megőrzi / fogyasztható). Közelről, élesen, jó fényben.",fail:"Nem találtam dátumot a képen."},
@@ -317,17 +446,25 @@ function phLive(k,qty){var P=PH[k],seen={},n=0,busy=false,alive=true,T=null,cand
   Promise.all([camStart($("phv")),phWorker().then(function(w){return ocrSet(w,k)})]).then(function(r){if(!alive){r[0].st.getTracks().forEach(function(t){t.stop()});return}phCam=r[0];var w=r[1],v=$("phv");camTools(phCam,$("phtorch"),$("phzoom"));
     $("phst").textContent="Keresem a "+(k==="exp"?"dátumot":"mennyiséget")+"... Tartsd stabilan, közelről.";
     function loop(){if(!alive)return;if(busy||v.readyState<2){T=setTimeout(loop,200);return}var c=grab(v,$("phframe"),1600,.07);if(!c){T=setTimeout(loop,200);return}busy=true;
-      w.recognize(ocrVariant(c,n++%4)).then(function(o){busy=false;if(!alive)return;var t=o.data.text,val=k==="exp"?FX.parseExpiry(t,1):FX.parseQtyText(t);
+      var fi=n++,mode=k==="exp"?fi%4:(fi%3===2?3:2);if(fi%8===0){var lt=lightTip(c,$("phtorch"));if(lt)$("phst").textContent=lt}
+      ocrSet(w,k,mode).then(function(){return w.recognize(ocrVariant(c,fi%NV))}).then(function(o){busy=false;if(!alive)return;var t=o.data.text,val=k==="exp"?FX.parseExpiry(t,1):FX.parseQtyText(t);
         if(val){var key=JSON.stringify(val);seen[key]=(seen[key]||0)+1;if(seen[key]>=3){accept(val);return}show(val)}
-        if(n===12)$("phst").textContent="Nehezen megy. Próbáld közelebbről, egyenesen, jobb fényben"+($("phtorch").hidden?"":" vagy vakuval")+".";
+        if(n===14)$("phst").textContent="Nehezen megy. Próbáld közelebbről, egyenesen, jobb fényben"+($("phtorch").hidden?"":" vagy vakuval")+".";
         T=setTimeout(loop,150)}).catch(function(){busy=false;T=setTimeout(loop,400)})}
     loop()}).catch(function(e){$("phst").textContent=e&&e.name==="NotAllowedError"?"Nem kaptam engedélyt a kamerához. Használd a Fotó gombot, vagy írd be kézzel.":"Nem sikerült elindítani. Használd a Fotó gombot, vagy írd be kézzel."})}
 function nfq(q){return String(Math.round(q*100)/100).replace(".",",")}
-function phRead(k,file,qty){dlg("ph",'<div class="q">Olvasom a képet...</div><div class="bar"><b id="phb" style="width:0%"></b></div><div class="q small" style="margin-top:8px">Első alkalommal pár másodperc, amíg a szövegfelismerő betölt.</div>');
-  Promise.all([prepImg(file),phWorker()]).then(function(r){var src=r[0],w=r[1],n=0,all="";return ocrSet(w,k).then(function(){
-      function next(){return w.recognize(ocrVariant(src,n)).then(function(o){all+="\n"+o.data.text;var ok=k==="exp"?FX.parseExpiry(o.data.text):FX.parseQtyText(o.data.text);if(ok||++n>3)return ok?o.data.text:all;return next()})}return next()})}).then(function(t){
-    if(k==="exp"){var e=FX.parseExpiry(t);if(!e)return phAsk(k,P_fail(k),qty);$("fe").value=e;phOk("Lejárat: "+e.replace(/-/g,". ")+".")}
-    else{var q=FX.parseQtyText(t);if(!q)return phAsk(k,P_fail(k),qty);$("fq").value=q.q;$("fu").value=q.u;qtySync();phOk("Mennyiség: "+nfq(q.q)+" "+q.u)}
+/* fotóból: képváltozatok × olvasási módok, majd elforgatva (függőleges, fejjel lefelé felirat) */
+var PHPLAN=[[0,2],[4,2],[2,2],[5,2],[1,0],[6,2],[7,2],[3,0],[9,0],[8,2],[4,0],[0,3],[4,3]],PHROT=[[90,4],[270,4],[180,4],[90,0],[270,0]],VNAME=["alap","pöttyös","szürke","pötty-összekötés","árnyék/csillanás","színcsatorna","sötét/világos","élesítés","dombornyomás","vékony betű"];
+FX.ocrRead=function(src,k,w,prog){var steps=PHPLAN.map(function(p){return[0,p[0],p[1]]}).concat(PHROT.map(function(p){return[p[0],p[1],2]})),i=0,all="";
+  function next(){if(i>=steps.length)return Promise.resolve({ok:null,text:all});var s=steps[i++],img=s[0]?rotC(src,s[0]):src;if(prog)prog(i,steps.length,VNAME[s[1]]+(s[0]?" · "+s[0]+"°":""));
+    return ocrSet(w,k,s[2]).then(function(){return w.recognize(ocrVariant(img,s[1]))}).then(function(o){var tx=o.data.text;all+="\n"+tx;
+      if(k==="exp"){/* teljes dátumnál (nap is) azonnal kész; csak hónap/év esetén tovább próbál, a legjobbat megjegyzi */var cs=FX.parseExpiry(tx,0,1).sort(function(a,b){return b.sc-a.sc});if(cs[0]&&cs[0].sc>=2.5)return{ok:FX.parseExpiry(tx),text:tx,step:i};if(cs[0]&&cs[0].sc>=2&&(!part||cs[0].sc>part.sc))part={d:cs[0].d,sc:cs[0].sc,step:i}}
+      else{var ok=FX.parseQtyText(tx);if(ok)return{ok:ok,text:tx,step:i}}return next()})}
+  var part=null;return next().then(function(r){if(!r.ok){if(part){r.ok=part.d;r.step=part.step}else r.ok=k==="exp"?FX.parseExpiry(r.text,1):FX.parseQtyText(r.text)}return r})};
+function phRead(k,file,qty){dlg("ph",'<div class="q">Olvasom a képet... <span id="phs" class="q small"></span></div><div class="bar"><b id="phb" style="width:0%"></b></div><div class="q small" style="margin-top:8px">Több képváltozattal próbálom (fény, felület, betűtípus). Első alkalommal pár másodperc, amíg a szövegfelismerő betölt.</div>');
+  Promise.all([prepImg(file),phWorker()]).then(function(r){return FX.ocrRead(r[0],k,r[1],function(i,n,nm){var e=$("phs");if(e)e.textContent=i+"/"+n+" · "+nm})}).then(function(res){
+    if(k==="exp"){var e=res.ok;if(!e)return phAsk(k,P_fail(k),qty);$("fe").value=e;phOk("Lejárat: "+e.replace(/-/g,". ")+".")}
+    else{var q=res.ok;if(!q)return phAsk(k,P_fail(k),qty);$("fq").value=q.q;$("fu").value=q.u;qtySync();phOk("Mennyiség: "+nfq(q.q)+" "+q.u)}
   }).catch(function(e){phAsk(k,"Nem sikerült beolvasni: "+esc(e.message||e),qty)})}
 function P_fail(k){return PH[k].fail+" Próbáld újra közelebbről, vagy írd be kézzel."}
 function phOk(txt){scanBeep();dlg("ph",'<div class="phok">✓ '+esc(txt)+'</div><div class="q small">Beírtam. Mentés előtt még átírhatod.</div>');var d=$("ph");setTimeout(function(){if(d.open)phNext()},1100)}
@@ -538,7 +675,7 @@ function drawRecFx(){var el=$("fxholi");if(el){var h=FX.holiday();el.hidden=!h;i
 
 /* ================= BEKÖTÉS ================= */
 FX.draw=function(v){drawToday();if(v==="rec")drawRecFx();if(v==="stat"){drawLevel();drawWaste()}if(v==="set")drawSetFx();writeSW();checkBadges()};
-FX.init=function(){var b=$("fnbc");if(b)b.onclick=scan;$("bcgo").onclick=function(){var v=$("bcman").value.replace(/\D/g,"");if(v.length>=8){bcAudio();scanBeep();bcStop();lookup(v)}};qtyInit();
+FX.init=function(){var b=$("fnbc");if(b)b.onclick=scan;$("bcgo").onclick=function(){var raw=$("bcman").value.trim(),g=/[(\/]|^01\d{14}\d/.test(raw)?FX.parseGS1(raw):null,v=g?g.gtin:raw.replace(/\D/g,"");if(v.length>=8){bcAudio();scanBeep();bcStop();gs1Pend=g;lookup(v)}};qtyInit();
   $("dlg").addEventListener("close",function(){lastScan=null});$("feph").onclick=function(){photoOne("exp")};$("fqph").onclick=function(){photoOne("qty")};
   $("fxshopmode").onclick=shopMode;$("fxrc").onclick=receipt;$("rcd").addEventListener("close",function(){rcAcc=null});
   $("rcfile").onchange=function(){var f=this.files[0];if(!f)return;dlg("rcd",'<div class="q">Olvasom a blokkot... <b id="rcp">0%</b></div><div class="bar"><b id="rcb" style="width:0%"></b></div><div class="q small" style="margin-top:8px">Első alkalommal pár másodperc, amíg a szövegfelismerő betölt.</div>');
