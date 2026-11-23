@@ -628,3 +628,14 @@ dialog#kbd.kbfull{height:88dvh}
 .rcrow{position:relative}.rcrow .price{position:absolute;right:0;top:4px;margin:0;font-size:16px}
 .rcn .rcname{display:block;width:calc(100% - 84px)}.rcn>.q{display:block;margin-top:2px}
 .rcq input{width:76px;padding:6px 6px}.rcq select{padding:6px 4px;font-size:16px}.rcq select[data-ru]{flex:0 0 66px}.rcq .rcloc{flex:1 1 auto;font-weight:700}
+/* v1.31: túllépett heti keret villog; 3 helyes főzés gomb */
+.sumfold.over{animation:wover 1s steps(2) infinite;border-color:var(--bad)}
+@keyframes wover{50%{box-shadow:5px 5px 0 var(--sh),inset 0 0 0 4px var(--bad);background:#ffd6cc}}
+.wblink{animation:wtxt 1s steps(2) infinite}@keyframes wtxt{50%{opacity:.35}}
+.bar.over{animation:wover2 1s steps(2) infinite}@keyframes wover2{50%{border-color:var(--bad);box-shadow:0 0 0 3px var(--bad)}}
+.start .go3{display:block;font-family:"Fredoka",sans-serif;font-size:15px;font-weight:600;color:#ffe9b3;margin-top:2px;letter-spacing:0}
+#v-stock>.start{margin:14px 0 4px}
+@media (prefers-reduced-motion:reduce){.sumfold.over,.wblink,.bar.over{animation:none}.sumfold.over{box-shadow:5px 5px 0 var(--sh),inset 0 0 0 4px var(--bad)}}
+#v-stock>.start{display:grid;grid-template-columns:58px 1fr;column-gap:10px;align-items:center;text-align:left;padding:10px 12px;font-size:20px;line-height:1.15}
+#v-stock>.start .pot{width:56px;height:56px;margin:0;grid-row:1 / span 3}
+#v-stock>.start small{font-size:14px}

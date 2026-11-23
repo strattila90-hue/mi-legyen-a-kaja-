@@ -1,4 +1,4 @@
-var VER="1.30";
+var VER="1.31";
 /* indításkori URL-paraméterek (a sync.js törli őket a címsorból) és platform */
 var BOOTQ=new URLSearchParams(location.search),UA=navigator.userAgent||"";
 var IS_IOS=/iPad|iPhone|iPod/.test(UA)||(navigator.platform==="MacIntel"&&navigator.maxTouchPoints>1),IS_IPAD=/iPad/.test(UA)||(navigator.platform==="MacIntel"&&navigator.maxTouchPoints>1);
@@ -482,7 +482,7 @@ function gform(title,fields,vals,onSave,onDel,delTxt){var d=$("gd"),armed=false;
 /* ---------- KÖLTSÉG ---------- */
 function wk(){var dw=(new Date().getDay()+6)%7;return[plus(-dw),plus(6-dw)]}
 function sum(a,b){return exps.filter(function(x){return x.date>=a&&x.date<=b}).reduce(function(s,x){return s+x.a},0)}
-function pbar(l,sp,lim){var p=lim>0?Math.min(100,sp/lim*100):0,ov=lim>0&&sp>lim;return '<div style="margin:12px 0 2px">'+l+": <b>"+ft(sp)+"</b>"+(lim>0?" / "+ft(lim):"")+'</div><div class="bar"><b style="width:'+p+"%"+(ov?";background:var(--bad)":"")+'"></b></div>'}
+function pbar(l,sp,lim,bl){var p=lim>0?Math.min(100,sp/lim*100):0,ov=lim>0&&sp>lim,ob=ov&&bl;return '<div style="margin:12px 0 2px"'+(ob?' class="wblink"':"")+'>'+l+": <b>"+ft(sp)+"</b>"+(lim>0?" / "+ft(lim):"")+(ov?' <b class="neg">(+'+ft(sp-lim)+" túl)</b>":"")+'</div><div class="bar'+(ov?" over":"")+'"><b style="width:'+p+"%"+(ov?";background:var(--bad)":"")+'"></b></div>'}
 function bcalc(p,a){var d=p==="d"?a:p==="w"?a/7:a*12/365;return{d:Math.round(d),w:Math.round(d*7),m:Math.round(d*365/12)}}
 function bpv(x,g){var r=bcalc(g("p").value,parseFloat(g("a").value)||0);g("pv").textContent="Ez napi "+ft(r.d)+", heti "+ft(r.w)+", havi "+ft(r.m)+"."}
 $("bset").onclick=function(){var b=bud||{p:"m",a:""};gform("Költségkeret",[
@@ -501,7 +501,7 @@ function drawBudget(){var t=plus(0),sp=sum(t,t);
   if(bud&&bud.d>0){var l=bud.d-sp;$("bt").textContent=l>=0?ft(l)+" maradt "+ft(bud.d)+"-ból":ft(-l)+" a napi kereten túl";$("bb").style.width=Math.max(0,l)/bud.d*100+"%"}
   else{$("bt").textContent="Állítsd be a keretet a Költség oldalon.";$("bb").style.width="0%"}}
 function drawCost(){var t=plus(0),w=wk(),m=t.slice(0,7);
-  $("bsum").innerHTML=bud?'<div class="q">Megadott keret: '+({d:"napi",w:"heti",m:"havi"}[bud.p||"m"])+" "+ft(bud.a||bud.m||0)+"</div>"+pbar("Ma",sum(t,t),bud.d)+pbar("Ezen a héten",sum(w[0],w[1]),bud.w)+pbar("Ebben a hónapban",sum(m+"-01",m+"-31"),bud.m):'<div class="q">Még nincs keret beállítva.</div>';
+  $("bsum").innerHTML=bud?'<div class="q">Megadott keret: '+({d:"napi",w:"heti",m:"havi"}[bud.p||"m"])+" "+ft(bud.a||bud.m||0)+"</div>"+pbar("Ma",sum(t,t),bud.d)+pbar("Ezen a héten",sum(w[0],w[1]),bud.w,1)+pbar("Ebben a hónapban",sum(m+"-01",m+"-31"),bud.m):'<div class="q">Még nincs keret beállítva.</div>';
   $("bset").textContent=bud?"Keret szerkesztése":"Keret beállítása";
   var a=exps.slice().sort(function(x,y){return x.date<y.date?1:-1});
   $("xlist").innerHTML=a.length?a.map(function(x){return '<div class="li" data-id="'+x.id+'"><span class="lt" tabindex="0" role="button">'+esc(x.date)+" "+esc(x.n)+(x.shop?" ("+esc(x.shop)+")":"")+'</span><b class="price">'+ft(x.a)+'</b><button type="button" class="x" data-x="1" aria-label="Kiadás törlése">×</button></div>'}).join(""):'<div class="q">Még nincs kiadás. Koppints az Új kiadás gombra.</div>'}

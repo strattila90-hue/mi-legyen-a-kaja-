@@ -104,7 +104,9 @@ R("par-15","Muffin zsúrra (vaníliás, színes)","desszert",12,40,"Liszt 250 g;
 R("par-16","Mini fasírtgolyók","egyeb",8,40,"Darált sertéshús/Darált hús/Darált pulykahús 500 g=darált hús;Zsemle 1 db;Tojás 1 db;Vöröshagyma 1 db;?Fokhagyma 1 gerezd;?Pirospaprika 1 tk;?Majoránna 1 csipet;?Só 1 tk;Zsemlemorzsa 60 g;Étolaj 3 dl","A zsemlét beáztatjuk, kinyomkodjuk, a darált hússal, tojással, reszelt hagymával és fűszerekkel összegyúrjuk.|Vizes kézzel diónyi golyókat formázunk, zsemlemorzsába forgatjuk.|Közepesen forró olajban 5-6 perc alatt körbesütjük (vagy sütőben 200 °C-on 18-20 percig).","Darált hús: mindig teljesen süsd át (maghőmérséklet legalább 72 °C).","glutén,tojás","Fogpiszkálóval, ketchuppal vagy joghurtos mártással."),
 R("par-17","Kaszinótojás-falatok szendvicshez","hidegtal",8,30,"Tojás 8 db;Majonéz 80 g;?Mustár 1 tk;?Vaj 20 g;?Sonka 50 g;?Pirospaprika 1 csipet;?Só 1 csipet","A tojásokat 10 percig keményre főzzük, hideg vízbe tesszük, megpucoljuk, és hosszában félbevágjuk.|A sárgáját áttörjük, a majonézzel, mustárral, vajjal, sóval krémesre keverjük (finomra vágott sonkával is dúsíthatjuk).|Nyomózsákkal visszatöltjük a fehérjékbe, pirospaprikával díszítjük.","Majonézes falat: tálalásig hűtőben tartsd.","tojás,mustár","Az ünnepi hidegtál és a szilveszteri asztal alapja.","h")
 ];
-for(var i=0;i<NEW.length;i++)BASE_RECIPES.push(NEW[i]);
+/* italok és partifalatok: a heti menübe nem kerülnek */
+var PARTY=/^(par-|kar-1[01]$|kar-0[5-8]$)/;
+for(var i=0;i<NEW.length;i++){if(PARTY.test(NEW[i].id))NEW[i].party=1;BASE_RECIPES.push(NEW[i])}
 
 /* ---- szakmai pontosítások meglévő receptekhez (Figyelj erre) ---- */
 var TIP={

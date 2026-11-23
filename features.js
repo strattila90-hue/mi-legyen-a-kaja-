@@ -76,7 +76,7 @@ document.addEventListener("click",function(e){var o=e.target.closest("[data-open
 /* ================= HETI MENÜ ================= */
 var LUNCH={hus:1,hal:1,leves:1,foz:1,teszta:1,zoldseg:1,egyeb:1},DINNER={hus:1,hal:1,foz:1,teszta:1,zoldseg:1,egyeb:1,salata:1,szendvics:1,hidegtal:1,hideg:1,reggeli:1};
 var DNAME=["vasárnap","hétfő","kedd","szerda","csütörtök","péntek","szombat"];
-function candidates(){return allRec().map(check).filter(function(c){return !c.bl&&!c.r.mini&&kedv[c.r.id]!==-1&&(c.ok||c.miss.length<=2)})}
+function candidates(){return allRec().map(check).filter(function(c){return !c.bl&&!c.r.mini&&!c.r.party&&kedv[c.r.id]!==-1&&(c.ok||c.miss.length<=2)})}
 function pickOne(cands,slot,ctx){var best=[];cands.forEach(function(c){var r=c.r;if(ctx.used[r.id])return;if(!(slot==="l"?LUNCH:DINNER)[r.cat])return;
     var s=(c.ok?60:30-c.miss.length*10)+c.sc*0.4;
     if(ctx.lastCat===r.cat)s-=25;if(r.cat==="hus"&&ctx.hus>=3)s-=30;if(r.cat==="hal"&&!ctx.hal)s+=12;if(r.cat==="foz"&&ctx.foz<2)s+=10;if(r.cat==="leves"&&ctx.lev>=2)s-=20;

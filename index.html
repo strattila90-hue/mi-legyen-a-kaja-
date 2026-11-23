@@ -53,6 +53,7 @@
       <div class="bar"><b id="bb" style="width:0%"></b></div>
       <div id="stockval" aria-live="polite"></div>
     </details>
+    <button class="start" id="go" type="button"><span class="pot" id="pot"></span>Mit főzzek abból, ami itthon van?<small class="go3">Hűtő + Spájz + Fagyasztó együtt</small><small id="gos"></small></button>
     <div class="tabs" role="tablist" aria-label="Hol van az étel?">
       <button role="tab" aria-selected="true" data-t="fridge">Hűtő</button>
       <button role="tab" aria-selected="false" data-t="pantry">Spájz</button>
@@ -62,7 +63,6 @@
     <section class="card" aria-live="polite"><div class="grid" id="grid"></div></section>
 
     <div id="fxtoday"></div>
-    <button class="start" id="go" type="button"><span class="pot" id="pot"></span>Mit főzzek abból, ami itthon van?<small id="gos"></small></button>
     <div class="chips" id="dfil" role="group" aria-label="Szűrés"></div>
     <div id="dishes"></div>
   </main>
@@ -107,6 +107,7 @@
       <div id="stot"></div><div id="mxshop"></div>
       <div class="btns" id="sbtns"></div>
     </section>
+    <section class="card" id="wkshop"></section>
     <details class="card fold" id="vkit">
       <summary><h2><span class="ic" data-i="can"></span>Vészhelyzeti készlet</h2></summary>
       <div id="vkitb"></div>
@@ -329,6 +330,7 @@
 <script src="more.js"></script>
 <script src="veszkeszlet.js"></script>
 <script src="unnep.js"></script>
+<script src="heti.js"></script>
 <script src="ui.js"></script>
 <script src="chef-lines.js"></script>
 <script src="chef.js"></script>

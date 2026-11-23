@@ -6,6 +6,8 @@ var U={};window.UI=U;
 /* ---------- összesítő sor (keret, készlet, lejárók) ---------- */
 function sumline(){var el=$("sumline");if(!el)return;var t=plus(0),sp=sum(t,t),parts=[];
   if(bud&&bud.d>0){var l=bud.d-sp;parts.push(l>=0?"Ma még <b>"+ft(l)+"</b>":'<b class="neg">Ma '+ft(-l)+" túl</b>")}
+  var wo=false;if(bud&&bud.w>0){var w=wk(),ws=sum(w[0],w[1]);if(ws>bud.w){wo=true;parts.unshift('<b class="neg wblink">Heti keret túllépve: +'+ft(ws-bud.w)+"</b>")}}
+  var sf=$("sumfold");if(sf)sf.classList.toggle("over",wo);
   if(window.stockValue){var v=stockValue();if(v.tot)parts.push("Készlet <b>"+ft(v.tot)+"</b>")}
   var soon=items.filter(function(i){var d=days(i.exp);return d>=0&&d<=1&&i.q>0}).length,gone=items.filter(function(i){return days(i.exp)<0}).length;
   if(soon)parts.push('<b class="neg">'+soon+" hamar lejár</b>");if(gone)parts.push('<b class="neg">'+gone+" lejárt</b>");
