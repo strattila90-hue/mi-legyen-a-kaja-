@@ -82,6 +82,9 @@
       <button type="button" class="tool" id="tmine"><span class="ic" data-i="pen"></span>Saját receptjeim</button>
       <button type="button" class="tool" id="tfav"><span class="ic" data-i="heart"></span>Kedvencek</button>
       <button type="button" class="tool" id="tkid"><span class="ic" data-i="egg"></span>Gyerek mód</button>
+      <button type="button" class="tool vip" id="tholi"><span class="ic" data-i="platter"></span>Ünnepi menü</button>
+      <button type="button" class="tool vip" id="tparty"><span class="ic" data-i="cup"></span>Szülinap, rágcsák</button>
+      <button type="button" class="tool vip" id="tkb"><span class="ic" data-i="jar"></span>Konyhai alapok</button>
     </div>
     <section class="card" id="fxholi" hidden></section>
     <div class="q" id="rcount" style="margin:12px 2px 8px"></div>
@@ -290,6 +293,7 @@
 <input type="file" id="phfile" accept="image/*" capture="environment" hidden>
 <dialog id="kid" class="big kidd"><div class="dbody"></div></dialog>
 <dialog id="mx" class="big"><button type="button" class="dclose" data-close aria-label="Bezárás">×</button><h3 id="mxt"></h3><div class="dbody"></div></dialog>
+<dialog id="kbd" class="sheet"><button type="button" class="dclose" data-close aria-label="Bezárás">×</button><div class="dbody"></div></dialog>
 <dialog id="ig" class="big"><button type="button" class="dclose" data-close aria-label="Bezárás">×</button><h3>Telepítés a telefonra</h3><div class="dbody"></div></dialog>
 <datalist id="shops"><option value="Lidl"><option value="Aldi"><option value="Spar"><option value="Tesco"><option value="Penny"><option value="CBA"><option value="Coop"><option value="Auchan"><option value="Piac"></datalist>
 <datalist id="meals"></datalist>
@@ -314,6 +318,8 @@
 
 <script src="sprites.js"></script>
 <script src="data.js"></script>
+<script src="data2.js"></script>
+<script src="tudas.js"></script>
 <script src="scenes.js"></script>
 <script src="firebase-config.js"></script>
 <script src="app.js"></script>
@@ -322,6 +328,7 @@
 <script src="extras.js"></script>
 <script src="more.js"></script>
 <script src="veszkeszlet.js"></script>
+<script src="unnep.js"></script>
 <script src="ui.js"></script>
 <script src="chef-lines.js"></script>
 <script src="chef.js"></script>

@@ -540,3 +540,91 @@ dialog.rfd .rfbar .btns{margin-top:6px}
 dialog.rfd .rfbar .warnbox{margin:4px 0 2px}
 dialog.big.rfd.chefin .rfbar{margin-bottom:calc(-96px - env(safe-area-inset-bottom,0px));bottom:calc(-96px - env(safe-area-inset-bottom,0px));padding-bottom:calc(96px + env(safe-area-inset-bottom,0px))}
 #rdraft{margin-top:10px}#rdraft .btn{margin-left:6px}
+
+/* ================= v1.30: PRÉMIUM (VIP) RÉTEG – arany keretek, finomabb fények, simább mozgás ================= */
+:root{--gold:#f5c542;--gold2:#b8860b;--gold3:#fff3c4;--vip:#7a1f3d;--goldline:rgba(184,134,11,.55);--hi:rgba(255,255,255,.38)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--gold:#ffd166;--gold2:#e0a526;--gold3:#4a3b1a;--goldline:rgba(255,209,102,.4);--hi:rgba(255,255,255,.14)}}
+:root[data-theme="dark"]{--gold:#ffd166;--gold2:#e0a526;--gold3:#4a3b1a;--goldline:rgba(255,209,102,.4);--hi:rgba(255,255,255,.14)}
+html{-webkit-tap-highlight-color:transparent}
+button,.btn,.chip,.tool,.dish,a{touch-action:manipulation}
+.bg{transform:translateZ(0)}
+/* cégtábla: mélyebb vörös, arany szegély, egyszeri csillanás */
+.sign{background:linear-gradient(180deg,#ef5a3c 0,var(--red) 45%,#c9381f 100%);overflow:hidden;box-shadow:6px 6px 0 var(--sh),inset 0 0 0 3px var(--gold2),inset 0 5px 0 var(--hi)}
+.sign::after{content:"";position:absolute;top:0;bottom:0;left:-60%;width:40%;background:linear-gradient(100deg,transparent,rgba(255,240,200,.45),transparent);transform:skewX(-18deg);animation:shine 2.6s ease-out .6s 1 both;pointer-events:none}
+@keyframes shine{to{left:130%}}
+.sign h1{text-shadow:3px 3px 0 var(--red2),0 0 14px rgba(255,214,102,.35)}
+/* kártyák: belső arany vonal, finom fényátmenet */
+.card{background:linear-gradient(180deg,var(--panel) 0,var(--panel) 60%,var(--panel2) 100%);box-shadow:5px 5px 0 var(--sh),inset 0 0 0 2px var(--goldline)}
+.card h2 .ic,.hd .ic{filter:drop-shadow(1px 1px 0 rgba(0,0,0,.18))}
+/* gombok: felső fény, gyors, sima lenyomás */
+.btn,.chip,.tool,.tabs button,.step button,.dish,.start{transition:transform .08s ease-out,box-shadow .08s ease-out,background-color .15s,filter .15s}
+.btn{box-shadow:4px 4px 0 var(--sh),inset 0 3px 0 var(--hi),inset 0 -3px 0 rgba(0,0,0,.12)}
+.btn:active{box-shadow:1px 1px 0 var(--sh),inset 0 2px 0 rgba(0,0,0,.15)}
+.btn.g{background:linear-gradient(180deg,#4cc267,var(--ok))}.btn.r{background:linear-gradient(180deg,#f0603f,var(--red))}.btn.t{background:linear-gradient(180deg,#3fc7ba,var(--teal))}
+.btn:not(.g):not(.r):not(.t):not(.p){background:linear-gradient(180deg,#ffbf5a,var(--amber))}
+@media (hover:hover){.btn:hover,.chip:hover,.tool:hover,.dish:hover{filter:brightness(1.06)}}
+.tool:active,.chip:active{transform:translate(2px,2px);box-shadow:1px 1px 0 var(--sh)}
+.tool.vip{background:linear-gradient(160deg,var(--gold3),var(--panel) 60%);border-color:var(--line);box-shadow:3px 3px 0 var(--sh),inset 0 0 0 2px var(--gold2);position:relative}
+.tool.vip::after{content:"★";position:absolute;top:2px;right:6px;font-size:13px;color:var(--gold2)}
+.start{background:linear-gradient(180deg,#ef5a3c,var(--red) 60%,#c9381f)}
+/* alsó menü: arany felső él */
+.nav{background:linear-gradient(180deg,#ea5233,var(--red));box-shadow:0 -3px 0 var(--gold2) inset,0 -2px 12px rgba(0,0,0,.18)}
+.nav button[aria-selected="true"]{box-shadow:inset 0 -3px 0 var(--gold2),0 0 0 2px var(--gold) }
+/* párbeszédablakok: puha megjelenés */
+dialog[open]{animation:dlgin .16s ease-out}
+dialog.sheet[open]{animation:dlgup .2s ease-out}
+dialog::backdrop{background:rgba(20,10,30,.6);-webkit-backdrop-filter:blur(2px);backdrop-filter:blur(2px)}
+@keyframes dlgin{from{opacity:0;transform:scale(.97)}to{opacity:1;transform:none}}
+@keyframes dlgup{from{opacity:.4;transform:translateY(24px)}to{opacity:1;transform:none}}
+dialog{box-shadow:8px 8px 0 rgba(0,0,0,.35),inset 0 0 0 2px var(--goldline)}
+/* hosszú listák: csak a látható rész renderelődik */
+#rlist .dish,#dishes .dish{content-visibility:auto;contain-intrinsic-size:auto 76px}
+.ux-kb,.vk-li{content-visibility:auto;contain-intrinsic-size:auto 52px}
+@media (prefers-reduced-motion:reduce){.sign::after{animation:none;display:none}dialog[open],dialog.sheet[open]{animation:none}.btn,.chip,.tool,.dish,.start{transition:none}}
+
+/* ================= v1.30: ÜNNEPI MENÜ, ZSÚR, TUDÁSTÁR ================= */
+.ux-occ{display:flex;gap:8px;overflow-x:auto;padding:2px 2px 8px;margin:0 -2px;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+.ux-occ::-webkit-scrollbar{display:none}
+.ux-oc{flex:none;display:flex;align-items:center;gap:6px;border:3px solid var(--line);background:var(--panel);padding:6px 10px;font-weight:700;font-size:16px;cursor:pointer;box-shadow:2px 2px 0 var(--sh);color:var(--ink)}
+.ux-oc .ic{width:20px;height:20px}
+.ux-oc.on{background:linear-gradient(180deg,var(--gold),#e8a92a);color:#3a2016;box-shadow:inset 0 -3px 0 var(--gold2),2px 2px 0 var(--sh)}
+.ux-hero{display:flex;align-items:center;gap:12px;margin:10px 0;padding:10px 12px;border:3px solid var(--line);background:linear-gradient(135deg,var(--vip),#a3281a);color:#fff4d6;box-shadow:4px 4px 0 var(--sh),inset 0 0 0 2px var(--gold)}
+.ux-hero .q{color:#ffe3b0}
+.ux-cd{font-size:22px;font-weight:700;color:var(--gold);text-shadow:2px 2px 0 rgba(0,0,0,.35);white-space:nowrap}
+.ux-steps{border:3px solid var(--line);background:var(--panel2);padding:2px 10px;margin:10px 0 6px}
+.ux-list{display:flex;flex-direction:column;gap:6px}
+.ux-dish{display:flex;align-items:center;gap:10px;width:100%;text-align:left;border:3px solid var(--line);background:var(--panel);color:var(--ink);padding:7px 10px;cursor:pointer;box-shadow:3px 3px 0 var(--sh);font:inherit}
+.ux-dish:active{transform:translate(2px,2px);box-shadow:1px 1px 0 var(--sh)}
+.ux-dish>.ic{width:30px;height:30px;flex:none}
+.ux-dt{flex:1;min-width:0;display:flex;flex-direction:column;line-height:1.2}.ux-dt small{color:var(--muted);font-size:14px}
+.ux-calc{border:3px solid var(--line);background:var(--panel);margin-top:6px}
+.ux-ci{display:flex;align-items:center;gap:10px;padding:7px 10px;border-bottom:2px dashed var(--bg);cursor:pointer}
+.ux-calc .ux-ci:last-child{border-bottom:0}
+.ux-ci input{width:22px;height:22px;flex:none;accent-color:var(--ok)}.ux-ci>span{flex:1;min-width:0}.ux-ci small{font-size:13px}
+.ux-ci>b.pf{white-space:nowrap}
+.ux-tip{margin-top:10px;padding:8px 10px;border:3px solid var(--line);background:var(--gold3);color:var(--ink)}
+.ux-plan{margin:4px 0 0;padding-left:22px}.ux-plan li{margin:4px 0}.ux-plan li.done{opacity:.55;text-decoration:line-through}
+.ux-plan li.now{background:var(--gold3);outline:3px solid var(--gold2);outline-offset:1px;padding:2px 4px}
+.ux-tips{margin:4px 0 0;padding-left:20px}.ux-tips li{margin:4px 0}
+.ux-kb{border:3px solid var(--line);background:var(--panel);margin:6px 0;box-shadow:2px 2px 0 var(--sh)}
+.ux-kb summary{cursor:pointer;padding:8px 10px;display:flex;justify-content:space-between;align-items:center;gap:8px;list-style:none}
+.ux-kb summary::-webkit-details-marker{display:none}
+.ux-kb summary::after{content:"▸";font-weight:700}.ux-kb[open] summary::after{content:"▾"}
+.ux-kb summary small{font-size:13px;margin-left:auto}
+.ux-kb ul{margin:0;padding:0 12px 10px 30px}.ux-kb li{margin:4px 0;font-size:17px}
+#kbq{margin:10px 0 4px}
+.ux-know{margin-top:12px;border:3px solid var(--line);background:var(--gold3);padding:8px 10px;box-shadow:3px 3px 0 var(--sh)}
+.ux-kh{display:flex;align-items:center;gap:8px;margin-bottom:6px}.ux-kh .ic{width:22px;height:22px}
+.ux-ct{margin-bottom:6px;font-size:17px}
+.chips.wrapc{flex-wrap:wrap;overflow:visible}
+/* blokk: helyek */
+.rcsum{display:flex;gap:6px;flex-wrap:wrap;margin:10px 0 4px}
+.rcpill{display:inline-flex;align-items:center;gap:5px;border:2px solid var(--line);padding:2px 8px;font-weight:700;font-size:15px;background:var(--panel)}
+.rcpill .ic{width:18px;height:18px}.rcpill.fridge{background:#d7f0ff;color:#1b3d66}.rcpill.freezer{background:#e6e1ff;color:#2d2350}.rcpill.pantry{background:#ffe9bf;color:#3a2016}
+.rcq{display:flex;gap:6px;margin-top:4px}.rcq input{width:84px;flex:none}.rcq select{flex:1;min-width:0;padding:6px}
+.rcrow{align-items:flex-start}.rcrow input[type=checkbox]{margin-top:10px}.rcrow .price{margin-top:8px;white-space:nowrap}
+.rcrow.unk .rcname{border-style:dashed}
+dialog#kbd.kbfull{height:88dvh}
+.rcrow{position:relative}.rcrow .price{position:absolute;right:0;top:4px;margin:0;font-size:16px}
+.rcn .rcname{display:block;width:calc(100% - 84px)}.rcn>.q{display:block;margin-top:2px}
+.rcq input{width:76px;padding:6px 6px}.rcq select{padding:6px 4px;font-size:16px}.rcq select[data-ru]{flex:0 0 66px}.rcq .rcloc{flex:1 1 auto;font-weight:700}
